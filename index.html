@@ -18,8 +18,11 @@ body {margin:0;font-family:Arial,sans-serif;color:white;background:#000;overflow
 .movie-info h4{margin:0;font-size:16px;font-weight:bold;z-index:2;}
 .movie-meta{margin-top:10px;z-index:2;}
 .chip{display:inline-block;padding:6px 12px;margin-right:8px;background:#333;border-radius:20px;font-size:14px;}
-.episode-list-wrapper{overflow-x:auto;white-space:nowrap;padding:10px 0;margin-top:10px;}
-.episode-btn{display:inline-block;padding:8px 12px;margin-right:8px;background:#e50914;border:none;border-radius:6px;color:white;cursor:pointer;transition:0.2s;}
+/* Scrollable episode list */
+.episode-list-wrapper{overflow-x:auto;white-space:nowrap;padding:10px 0;margin-top:10px;width:100%;}
+.episode-list-wrapper::-webkit-scrollbar{height:8px;}
+.episode-list-wrapper::-webkit-scrollbar-thumb{background:#e50914;border-radius:4px;}
+.episode-btn{display:inline-block;padding:8px 12px;margin-right:8px;background:#e50914;border:none;border-radius:6px;color:white;cursor:pointer;flex-shrink:0;transition:0.2s;}
 .episode-btn.active{background:#f6121d;}
 .modal{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.95);z-index:1000;align-items:center;justify-content:center;}
 .modal-content{position:relative;width:80%;max-width:900px;background:#111;padding:10px;border-radius:10px;}
@@ -96,7 +99,6 @@ function loadSeries(data){
       };
       epContainer.appendChild(btn);
     });
-    // TIDAK otomatis klik → modal tidak muncul saat load
   }
 }
 
