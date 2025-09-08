@@ -12,17 +12,14 @@ body {margin:0;font-family:Arial,sans-serif;color:white;background:#000;overflow
 .poster-wrapper{position:relative;display:inline-block;z-index:2;}
 .movie-poster{width:180px;border-radius:10px;z-index:2;}
 .poster-brand{position:absolute;top:8px;left:8px;font-size:16px;font-weight:bold;color:#fff;text-shadow:0 0 6px rgba(229,9,20,0.9),0 0 12px rgba(229,9,20,0.7);background:rgba(0,0,0,0.6);padding:3px 6px;border-radius:6px;z-index:3;}
-.play-btn{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background-color:#e50914;border-radius:50%;padding:15px;cursor:pointer;transition:transform 0.2s ease;text-decoration:none;z-index:3;}
-.play-btn:hover{transform:translate(-50%,-50%) scale(1.1);}
-.play-btn i{font-size:36px;color:white;}
 .movie-info h4{margin:0;font-size:16px;font-weight:bold;z-index:2;}
 .movie-meta{margin-top:10px;z-index:2;}
 .chip{display:inline-block;padding:6px 12px;margin-right:8px;background:#333;border-radius:20px;font-size:14px;}
 /* Scrollable episode list */
-.episode-list-wrapper{overflow-x:auto;white-space:nowrap;padding:10px 0;margin-top:10px;width:100%;}
+.episode-list-wrapper{overflow-x:auto;white-space:nowrap;width:100%;-webkit-overflow-scrolling:touch;padding:10px 0;margin-top:10px;}
 .episode-list-wrapper::-webkit-scrollbar{height:8px;}
 .episode-list-wrapper::-webkit-scrollbar-thumb{background:#e50914;border-radius:4px;}
-.episode-list{display:flex;gap:8px;} /* Penting agar tombol berjajar horizontal */
+.episode-list{display:flex;gap:8px;}
 .episode-btn{flex-shrink:0;padding:8px 12px;background:#e50914;border:none;border-radius:6px;color:white;cursor:pointer;transition:0.2s;}
 .episode-btn.active{background:#f6121d;}
 .modal{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.95);z-index:1000;align-items:center;justify-content:center;}
