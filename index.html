@@ -1,147 +1,130 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Film Viewer</title>
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Bangers&display=swap" rel="stylesheet">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MRZYB Player Seri Universal</title>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<style>
+body {margin:0;font-family:Arial,sans-serif;color:white;background:#000;overflow-x:hidden;}
+.bg-fondo {position:relative;display:flex;align-items:center;gap:20px;padding:20px;z-index:1;overflow:hidden;}
+.bg-fondo::before {content:"";position:absolute;top:0;left:0;width:100%;height:100%;background-size:cover;background-position:center;filter:blur(15px) brightness(0.4);z-index:-2;transition:background 0.5s ease;}
+.poster-wrapper{position:relative;display:inline-block;z-index:2;}
+.movie-poster{width:180px;border-radius:10px;z-index:2;}
+.poster-brand{position:absolute;top:8px;left:8px;font-size:16px;font-weight:bold;color:#fff;text-shadow:0 0 6px rgba(229,9,20,0.9),0 0 12px rgba(229,9,20,0.7);background:rgba(0,0,0,0.6);padding:3px 6px;border-radius:6px;z-index:3;}
+.play-btn{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background-color:#e50914;border-radius:50%;padding:15px;cursor:pointer;transition:transform 0.2s ease;text-decoration:none;z-index:3;}
+.play-btn:hover{transform:translate(-50%,-50%) scale(1.1);}
+.play-btn i{font-size:36px;color:white;}
+.movie-info h4{margin:0;font-size:16px;font-weight:bold;z-index:2;}
+.movie-meta{margin-top:10px;z-index:2;}
+.chip{display:inline-block;padding:6px 12px;margin-right:8px;background:#333;border-radius:20px;font-size:14px;}
+.episode-list-wrapper{overflow-x:auto;white-space:nowrap;padding:10px 0;margin-top:10px;}
+.episode-btn{display:inline-block;padding:8px 12px;margin-right:8px;background:#e50914;border:none;border-radius:6px;color:white;cursor:pointer;transition:0.2s;}
+.episode-btn.active{background:#f6121d;}
+.modal{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.95);z-index:1000;align-items:center;justify-content:center;}
+.modal-content{position:relative;width:80%;max-width:900px;background:#111;padding:10px;border-radius:10px;}
+.modal iframe{width:100%;height:500px;border:none;}
+.modal-close{position:absolute;top:10px;right:15px;font-size:20px;color:white;cursor:pointer;}
+.input-section{margin:20px;background:rgba(30,30,30,0.9);padding:15px;border-radius:10px;}
+.input-section input,.input-section textarea{width:100%;margin:5px 0 10px 0;padding:8px;border-radius:5px;border:none;background:#222;color:white;}
+.input-section button{width:100%;padding:10px;background:#e50914;border:none;border-radius:6px;color:white;font-weight:bold;cursor:pointer;}
+</style>
 </head>
-<body class="grey darken-4" style="background-color: #000 !important;">
+<body>
 
-  <!-- HEADER: Poster + Judul -->
-  <div class="row bg-fondo">
-    <div class="col s3 m4 l2">
-      <img id="poster" src="" alt="poster" class="responsive-img" />
+<div class="bg-fondo" id="bgFondo">
+  <div class="poster-wrapper">
+    <span class="poster-brand">MRZYB</span>
+    <img id="poster" class="movie-poster" src="" alt="poster">
+    <a href="#modal2" class="play-btn" onclick="openModal()"><i class="material-icons">play_arrow</i></a>
+  </div>
+  <div class="movie-info">
+    <h4 id="title">Judul Film</h4>
+    <div class="movie-meta">
+      <div class="chip" id="genre">Genre</div>
+      <div class="chip" id="rating">⭐ Rating</div>
     </div>
-    <div class="col s9 m8 l10">
-      <h5 class="white-text mrzyb" id="judul" style="margin-top:10px;"></h5>
+    <div class="episode-list-wrapper">
+      <div class="episode-list" id="episode-list"></div>
     </div>
   </div>
+</div>
 
-  <!-- SINOPSIS -->
-  <div class="container white-text">
-    <h6>SINOPSIS</h6>
-    <p class="grey-text text-lighten-1" id="sinopsis"></p>
-
-    <!-- DAFTAR EPISODE -->
-    <h6>DAFTAR EPISODE</h6>
-    <div class="episode-scroll-wrapper">
-      <div class="episode-scroll" id="episode-list">
-        <!-- Episode buttons akan dibuat oleh JS -->
-      </div>
-    </div>
+<div id="modal2" class="modal">
+  <div class="modal-content">
+    <span class="modal-close" onclick="closeModal()">✖</span>
+    <iframe id="video-frame" sandbox="allow-same-origin allow-scripts" scrolling="no" src=""></iframe>
   </div>
+</div>
 
-  <!-- PLAYER MODAL -->
-  <div id="modal2" class="modal grey darken-4">
-    <div class="modal-content white-text">
-      <div class="iframe-container">
-        <iframe allowfullscreen class="responsive-iframe" frameborder="0" id="video-player" sandbox="allow-same-origin allow-scripts" scrolling="no" src="" style="border: none;" width="100%"></iframe>
-      </div>
-    </div>
-    <div class="modal-footer grey darken-4">
-      <a href="#!" class="modal-close waves-effect waves-green btn-flat white-text">MRZYB</a>
-    </div>
-  </div>
+<div class="input-section">
+  <h4>Isi Data Film / Seri</h4>
+  <input id="titleInput" placeholder="Judul Film">
+  <input id="posterInput" placeholder="URL Poster">
+  <input id="genreInput" placeholder="Genre">
+  <input id="ratingInput" placeholder="Rating">
+  <textarea id="episodesInput" placeholder="Masukkan link episode, satu per baris"></textarea>
+  <button onclick="generateSeries()">Generate Link & Load</button>
+  <div id="shareResult" style="margin-top:10px;"></div>
+</div>
 
-  <!-- SCRIPT -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-  <script>
-    M.AutoInit();
+<script>
+function openModal(){document.getElementById('modal2').style.display='flex';}
+function closeModal(){document.getElementById('video-frame').src='';document.getElementById('modal2').style.display='none';}
 
-    function getQueryParam(param) {
-      const urlParams = new URLSearchParams(window.location.search);
-      return urlParams.get(param);
-    }
+function loadSeries(data){
+  if(data.poster) document.getElementById("poster").src=data.poster;
+  if(data.title) document.getElementById("title").innerText=data.title;
+  if(data.genre) document.getElementById("genre").innerText=data.genre;
+  if(data.rating) document.getElementById("rating").innerText="⭐ "+data.rating;
 
-    const judulParam = getQueryParam("judul") || "Film Default";
-    const posterParam = getQueryParam("poster") || "https://via.placeholder.com/150";
-    const sinopsisParam = getQueryParam("sinopsis") || "Sinopsis film belum tersedia.";
-
-    const episodesParam = getQueryParam("episodes") || ""; 
-    const episodeList = episodesParam.split(",");
-
-    // Set judul, poster, sinopsis
-    document.getElementById("judul").textContent = judulParam;
-    document.getElementById("poster").src = posterParam;
-    document.getElementById("sinopsis").textContent = sinopsisParam;
-
-    const epContainer = document.getElementById("episode-list");
-
-    // Buat tombol episode
-    episodeList.forEach((link, index) => {
-      if(link.trim() === "") return;
-      const a = document.createElement("a");
-      a.className = "waves-effect blue btn episode-btn";
-      a.dataset.link = link;
-      a.textContent = "Ep " + (index + 1);
-      epContainer.appendChild(a);
+  const epContainer=document.getElementById("episode-list");
+  epContainer.innerHTML="";
+  if(data.episodes && data.episodes.length>0){
+    data.episodes.forEach((ep,index)=>{
+      const btn=document.createElement("button");
+      btn.className="episode-btn";
+      btn.innerText=ep.name||("Ep "+(index+1));
+      btn.dataset.video=ep.video;
+      btn.onclick=function(){
+        document.querySelectorAll('.episode-btn').forEach(b=>b.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById('video-frame').src=ep.video;
+        openModal();
+      };
+      epContainer.appendChild(btn);
     });
+    epContainer.querySelector("button").click();
+  }
+}
 
-    // Event delegation: klik tombol episode
-    epContainer.addEventListener('click', function(e) {
-      if(e.target && e.target.matches('a.episode-btn')) {
-        epContainer.querySelectorAll('.episode-btn').forEach(el => el.classList.remove('active-episode'));
-        e.target.classList.add('active-episode');
-        document.getElementById('video-player').src = e.target.dataset.link;
-        M.Modal.getInstance(document.getElementById('modal2')).open();
-      }
-    });
-  </script>
+function generateSeries(){
+  const title=document.getElementById("titleInput").value.trim();
+  const poster=document.getElementById("posterInput").value.trim();
+  const genre=document.getElementById("genreInput").value.trim();
+  const rating=document.getElementById("ratingInput").value.trim();
+  const epText=document.getElementById("episodesInput").value.trim();
+  if(!epText){alert("Masukkan setidaknya satu link episode!"); return;}
+  const epLines=epText.split("\n").map((url,i)=>({name:"Ep "+(i+1),video:url}));
+  const data={title,poster,genre,rating,episodes:epLines};
+  loadSeries(data);
+  const encoded=btoa(JSON.stringify(data));
+  const link=window.location.origin+window.location.pathname+"?data="+encoded;
+  document.getElementById("shareResult").innerHTML=`<input style="width:100%;padding:8px;color:#0f0;background:#111;border:none;border-radius:5px;" value="${link}" readonly onclick="this.select()">`;
+}
 
-  <!-- STYLE -->
-  <style>
-    .bg-fondo {
-      display: flex;
-      align-items: flex-end;
-      padding: 10px;
-      padding-top: 150px;
-      position: relative;
-      background: none !important;
-    }
-
-    .iframe-container {
-      position: relative;
-      width: 100%;
-      padding-top: 56.25%;
-    }
-
-    .responsive-iframe {
-      position: absolute;
-      top: 0; left: 0;
-      width: 100%;
-      height: 100%;
-    }
-
-    .episode-scroll-wrapper {
-      overflow-x: auto;
-      padding: 10px 0;
-    }
-
-    .episode-scroll {
-      display: flex;
-      gap: 10px;
-    }
-
-    .episode-btn {
-      flex-shrink: 0;
-      min-width: 60px;
-      text-align: center;
-    }
-
-    .episode-btn.active-episode {
-      background-color: red !important;
-    }
-
-    .mrzyb {
-      text-shadow:
-        0 0 4px #000,
-        0 0 8px #000,
-        0 0 12px #000;
-    }
-  </style>
-
+// Load dari URL Base64 jika ada
+window.addEventListener("DOMContentLoaded",()=>{
+  const params=new URLSearchParams(window.location.search);
+  const encoded=params.get("data");
+  if(encoded){
+    try{
+      const decoded=atob(encoded);
+      const obj=JSON.parse(decoded);
+      loadSeries(obj);
+    }catch(e){console.error("Link tidak valid!");}
+  }
+});
+</script>
 </body>
 </html>
