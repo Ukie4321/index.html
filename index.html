@@ -22,7 +22,8 @@ body {margin:0;font-family:Arial,sans-serif;color:white;background:#000;overflow
 .episode-list-wrapper{overflow-x:auto;white-space:nowrap;padding:10px 0;margin-top:10px;width:100%;}
 .episode-list-wrapper::-webkit-scrollbar{height:8px;}
 .episode-list-wrapper::-webkit-scrollbar-thumb{background:#e50914;border-radius:4px;}
-.episode-btn{display:inline-block;padding:8px 12px;margin-right:8px;background:#e50914;border:none;border-radius:6px;color:white;cursor:pointer;flex-shrink:0;transition:0.2s;}
+.episode-list{display:flex;gap:8px;} /* Penting agar tombol berjajar horizontal */
+.episode-btn{flex-shrink:0;padding:8px 12px;background:#e50914;border:none;border-radius:6px;color:white;cursor:pointer;transition:0.2s;}
 .episode-btn.active{background:#f6121d;}
 .modal{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.95);z-index:1000;align-items:center;justify-content:center;}
 .modal-content{position:relative;width:80%;max-width:900px;background:#111;padding:10px;border-radius:10px;}
@@ -94,6 +95,44 @@ function loadSeries(data){
       btn.onclick=function(){
         document.querySelectorAll('.episode-btn').forEach(b=>b.classList.remove('active'));
         btn.classList.add('active');
+        document.getElementById('video-frame').src=ep.video;
+        openModal();
+      };
+      epContainer.appendChild(btn);
+    });
+  }
+}
+
+function generateSeries(){
+  const title=document.getElementById("titleInput").value.trim();
+  const poster=document.getElementById("posterInput").value.trim();
+  const genre=document.getElementById("genreInput").value.trim();
+  const rating=document.getElementById("ratingInput").value.trim();
+  const epText=document.getElementById("episodesInput").value.trim();
+  if(!epText){alert("Masukkan setidaknya satu link episode!"); return;}
+  const epLines=epText.split("\n").map((url,i)=>({name:"Ep "+(i+1),video:url}));
+  const data={title,poster,genre,rating,episodes:epLines};
+  loadSeries(data);
+  const encoded=btoa(JSON.stringify(data));
+  const link=window.location.origin+window.location.pathname+"?data="+encoded;
+  document.getElementById("shareResult").innerHTML=`<input style="width:100%;padding:8px;color:#0f0;background:#111;border:none;border-radius:5px;" value="${link}" readonly onclick="this.select()">`;
+}
+
+// Load dari URL Base64 jika ada
+window.addEventListener("DOMContentLoaded",()=>{
+  const params=new URLSearchParams(window.location.search);
+  const encoded=params.get("data");
+  if(encoded){
+    try{
+      const decoded=atob(encoded);
+      const obj=JSON.parse(decoded);
+      loadSeries(obj);
+    }catch(e){console.error("Link tidak valid!");}
+  }
+});
+</script>
+</body>
+</html>
         document.getElementById('video-frame').src=ep.video;
         openModal();
       };
