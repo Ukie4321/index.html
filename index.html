@@ -1,133 +1,155 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MRZYB Player Seri Universal</title>
-<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
-<style>
-body{margin:0;font-family:Arial,sans-serif;color:white;background:#000;}
-.bg-fondo{display:flex;align-items:flex-end;padding:10px;padding-top:150px;position:relative;background:none;}
-.bg-fondo::before{content:'';position:absolute;top:0;left:0;width:100%;height:100%;background-size:cover;background-position:center;z-index:-1;opacity:1 !important;}
-.iframe-container{position:relative;width:100%;padding-top:56.25%;}
-.responsive-iframe{position:absolute;top:0;left:0;width:100%;height:100%;}
-.episode-scroll-wrapper{overflow-x:auto;padding:10px 0;-webkit-overflow-scrolling:touch;}
-.episode-scroll{display:flex;gap:10px;}
-.episode-btn{flex-shrink:0;min-width:60px;text-align:center;}
-.episode-btn.active-episode{background-color:red !important;}
-.mrzyb{text-shadow:0 0 4px #000,0 0 8px #000,0 0 12px #000;}
-.modal-content{position:relative;background:#111;padding:10px;border-radius:10px;}
-.modal-close{position:absolute;top:10px;right:15px;font-size:20px;color:white;cursor:pointer;}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Romper el círculo (2024)</title>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" />
 </head>
-<body class="grey darken-4">
+<body class="grey darken-4" style="background-color: #000 !important;">
 
-<!-- HEADER: Poster + Judul -->
-<div class="row bg-fondo" id="bgFondo">
-  <div class="col s3 m4 l2">
-    <img id="poster" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQAlGKrUpV0HWQsFq_WSbm9CU6OG3Pvz-92su1VM5dgq4587jCmQ9sD-mk&s=10" class="responsive-img" />
-    <span class="mrzyb poster-brand" style="position:absolute;top:8px;left:8px;">MRZYB</span>
-  </div>
-  <div class="col s9 m8 l10">
-    <h5 class="white-text mrzyb" id="title" style="margin-top:10px;">CHALKZONE</h5>
-    <div class="movie-meta">
-      <div class="chip" id="genre">School</div>
-      <div class="chip" id="rating">⭐ 10</div>
+<link href="https://fonts.googleapis.com/css2?family=Bangers&display=swap" rel="stylesheet">
+
+
+  <!-- HEADER: Poster + Judul -->
+  <div class="row bg-fondo">
+    <div class="col s3 m4 l2">
+      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT0YM7-5VQMq_6DLtvjMMcI8YqCtzydvGWkRf4lc4Ifrf4CfI81DgBSbKg&s=10" alt="poster" class="responsive-img" />
     </div>
+    <div class="col s9 m8 l10">
+<h5 class="white-text mrzyb" style="margin-top:10px;">Wednesday (Season 2)</h5>
+
+
+    </div>
+  </div>
+
+  <!-- SINOPSIS -->
+  <div class="container white-text">
+    <h6>SINOPSIS</h6>
+    <p class="grey-text text-lighten-1">
+      Musim kedua ini akan melanjutkan kisah Wednesday Addams dalam menghadapi serangkaian misteri baru di Nevermore Academy, termasuk ancaman supernatural, konflik keluarga, serta kehadiran musuh-musuh baru
+    </p>
+
+    <!-- DAFTAR EPISODE -->
     <h6>DAFTAR EPISODE</h6>
     <div class="episode-scroll-wrapper">
-      <div class="episode-scroll" id="episode-list">
-        <!-- Tombol episode akan di-generate JS -->
+      <div class="episode-scroll">
+        <a class="waves-effect blue btn episode-btn" data-link="https://drive.google.com/file/d/14r67Aq2bBdCRNZBWPASAH9SW2skSJ49m/preview">Ep 1</a>
+        <a class="waves-effect blue btn episode-btn" data-link="https://drive.google.com/file/d/1FCdqx90v9MimX4uv-WVWBQo4ROdjk1-i/preview">Ep 2</a>
+        <a class="waves-effect blue btn episode-btn" data-link="https://drive.google.com/file/d/1Y6nCtzs1KsGloZsnTCtif8o9DRMYAIgI/preview">Ep 3</a>
+        <a class="waves-effect blue btn episode-btn" data-link="https://drive.google.com/file/d/14Kfnwv2L1yvn3rTZ_vtgHXEU2Jt0lcvg/preview">Ep 4</a>
+        <a class="waves-effect blue btn episode-btn" data-link="https://drive.google.com/file/d/1GlOIj-a0aP8iMzxRBoE4KHwhrd4ZnXsC/preview">Ep 5</a>
+        <a class="waves-effect blue btn episode-btn" data-link="https://drive.google.com/file/d/1gcP1lcZgl6Cf-mebkciTxmJBT3bvxkpv/preview">Ep 6</a>
+        <a class="waves-effect blue btn episode-btn" data-link="https://drive.google.com/file/d/153z6iKeO8JFvQBTkvSqyeFDEeOKBV2wl/preview">Ep 7</a>
+        <a class="waves-effect blue btn episode-btn" data-link="https://drive.google.com/file/d/1hduX7-mBKDovvkJN6giQ8W8MYlg4peQ2/preview">Ep 8</a>
+
+
+
+        <!-- Tambah episode sesuai kebutuhan -->
       </div>
     </div>
   </div>
-</div>
+  
+  
 
-<!-- PLAYER MODAL -->
-<div id="modal2" class="modal grey darken-4">
-  <div class="modal-content white-text">
-    <span class="modal-close" onclick="closeModal()">✖</span>
-    <div class="iframe-container">
-      <iframe allowfullscreen class="responsive-iframe" id="video-player" sandbox="allow-same-origin allow-scripts" scrolling="no"></iframe>
+
+  
+
+  <!-- PLAYER MODAL -->
+  <div id="modal2" class="modal grey darken-4">
+    <div class="modal-content white-text">
+      <div class="iframe-container">
+        <iframe allowfullscreen class="responsive-iframe" frameborder="0" id="video-player" sandbox="allow-same-origin allow-scripts" scrolling="no" src="" style="border: none;" width="100%"></iframe>
+      </div>
+    </div>
+    <div class="modal-footer grey darken-4">
+      <a href="#!" class="modal-close waves-effect waves-green btn-flat white-text">MRZYB</a>
     </div>
   </div>
-</div>
 
-<!-- INPUT GENERATE -->
-<div class="container input-section">
-  <h6>Isi Data Film / Seri</h6>
-  <input type="text" id="titleInput" placeholder="Judul Film">
-  <input type="text" id="posterInput" placeholder="URL Poster">
-  <input type="text" id="genreInput" placeholder="Genre">
-  <input type="text" id="ratingInput" placeholder="Rating">
-  <textarea id="episodesInput" placeholder="Masukkan link episode, satu per baris"></textarea>
-  <button onclick="generateSeries()">Generate Link & Load</button>
-  <div id="shareResult" style="margin-top:10px;"></div>
-</div>
-
-<!-- SCRIPT -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-<script>
-M.AutoInit();
-
-function openModal(){document.getElementById('modal2').style.display='flex';}
-function closeModal(){document.getElementById('video-player').src='';document.getElementById('modal2').style.display='none';}
-
-function loadSeries(data){
-  if(data.poster) document.getElementById("poster").src=data.poster;
-  if(data.title) document.getElementById("title").innerText=data.title;
-  if(data.genre) document.getElementById("genre").innerText=data.genre;
-  if(data.rating) document.getElementById("rating").innerText="⭐ "+data.rating;
-
-  const epContainer=document.getElementById("episode-list");
-  epContainer.innerHTML="";
-  if(data.episodes && data.episodes.length>0){
-    data.episodes.forEach((ep,index)=>{
-      const btn=document.createElement("a");
-      btn.className="waves-effect blue btn episode-btn";
-      btn.innerText=ep.name||("Ep "+(index+1));
-      btn.href="#!";
-      btn.dataset.video=ep.video;
-      btn.onclick=function(){
-        document.querySelectorAll('.episode-btn').forEach(b=>b.classList.remove('active-episode'));
+  <!-- SCRIPT -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+  <script>
+    M.AutoInit();
+    document.querySelectorAll('.episode-btn').forEach(function(btn) {
+      btn.addEventListener('click', function () {
+        document.querySelectorAll('.episode-btn').forEach(el => el.classList.remove('active-episode'));
         btn.classList.add('active-episode');
-        document.getElementById('video-player').src=ep.video;
-        openModal();
-      };
-      epContainer.appendChild(btn);
+        document.getElementById('video-player').src = btn.getAttribute('data-link');
+        M.Modal.getInstance(document.getElementById('modal2')).open();
+      });
     });
-  }
+  </script>
+
+  <!-- STYLE -->
+  <style>
+    .bg-fondo {
+      display: flex;
+      align-items: flex-end;
+      padding: 10px;
+      padding-top: 150px;
+      position: relative;
+      background: none !important;
+    }
+
+    .bg-fondo::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: url(https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTS5g7uxEe3Nhse1PBkJ6nFV0J7I8sHLmnB9_sV28a_MITv22K7rFRNDTUx&s=10) no-repeat center center / cover;
+      z-index: -1;
+      opacity: 1 !important;
+    }
+
+    .iframe-container {
+      position: relative;
+      width: 100%;
+      padding-top: 56.25%;
+    }
+
+    .responsive-iframe {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .episode-scroll-wrapper {
+      overflow-x: auto;
+      padding: 10px 0;
+    }
+
+    .episode-scroll {
+      display: flex;
+      gap: 10px;
+    }
+
+    .episode-btn {
+      flex-shrink: 0;
+      min-width: 60px;
+      text-align: center;
+    }
+
+    .episode-btn.active-episode {
+      background-color: red !important;
+    }
+    
+
+.mrzyb {
+  text-shadow:
+    0 0 4px #000,
+    0 0 8px #000,
+    0 0 12px #000;
 }
 
-function generateSeries(){
-  const title=document.getElementById("titleInput").value.trim();
-  const poster=document.getElementById("posterInput").value.trim();
-  const genre=document.getElementById("genreInput").value.trim();
-  const rating=document.getElementById("ratingInput").value.trim();
-  const epText=document.getElementById("episodesInput").value.trim();
-  if(!epText){alert("Masukkan setidaknya satu link episode!"); return;}
-  const epLines=epText.split("\n").map((url,i)=>({name:"Ep "+(i+1),video:url}));
-  const data={title,poster,genre,rating,episodes:epLines};
-  loadSeries(data);
-  const encoded=btoa(JSON.stringify(data));
-  const link=window.location.origin+window.location.pathname+"?data="+encoded;
-  document.getElementById("shareResult").innerHTML=`<input style="width:100%;padding:8px;color:#0f0;background:#111;border:none;border-radius:5px;" value="${link}" readonly onclick="this.select()">`;
+.bg-fondo::before {
+  opacity: 1 !important;
 }
 
-// Load dari URL Base64 jika ada
-window.addEventListener("DOMContentLoaded",()=>{
-  const params=new URLSearchParams(window.location.search);
-  const encoded=params.get("data");
-  if(encoded){
-    try{
-      const decoded=atob(encoded);
-      const obj=JSON.parse(decoded);
-      loadSeries(obj);
-    }catch(e){console.error("Link tidak valid!");}
-  }
-});
-</script>
 
+
+    
+  </style>
 </body>
 </html>
