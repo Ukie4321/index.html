@@ -4,12 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MRZYB-HT BLACK EDITION</title>
-  <script>
-    const APP_VERSION = "v9"; 
-    if (!window.location.search.includes(APP_VERSION)) {
-        window.location.href = window.location.pathname + "?" + APP_VERSION;
-    }
-  </script>
   <style>
     body { background-color: #000; color: #a3e635; font-family: 'Courier New', monospace; margin: 0; display: flex; justify-content: center; min-height: 100vh; align-items: center; }
     .ht-body { background: #121212; border: 4px solid #333; border-radius: 20px; padding: 20px; width: 90%; max-width: 360px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
@@ -87,7 +81,7 @@
     "999.999": "admin"
   };
 
-  // AMBIL DATA DARI MEMORI HP SAAT DIBUKA
+  // AMBIL DATA & INISIALISASI KONEKSI SETELAH DOM SIAP
   window.addEventListener('DOMContentLoaded', () => {
     const savedNick = localStorage.getItem('ht_nick');
     const savedFreq = localStorage.getItem('ht_freq');
@@ -103,6 +97,9 @@
     document.getElementById('nickInput').addEventListener('change', (e) => {
       localStorage.setItem('ht_nick', e.target.value.trim());
     });
+
+    // Mulai koneksi setelah data dari localStorage selesai dibaca
+    connect();
   });
 
   function connect() {
@@ -110,17 +107,26 @@
 
     ws.onopen = () => {
       const savedPass = localStorage.getItem('ht_pass') || '';
-      joinFrequency(currentFreq, savedPass);
+      const savedNick = localStorage.getItem('ht_nick') || 'Anonim';
+      
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({ 
+          type: 'join', 
+          freq: currentFreq, 
+          sender: savedNick,
+          password: savedPass 
+        }));
+      }
     };
 
     ws.onmessage = async (event) => {
       try {
         const data = JSON.parse(event.data);
 
-        // FITUR BARU: Menampilkan riwayat chat dari KV saat pertama join
+        // Menampilkan riwayat chat dari Cloudflare KV saat pertama terhubung
         if (data.type === 'history') {
           const chatBox = document.getElementById('chatBox');
-          chatBox.innerHTML = ''; // Restart tampilan kotak chat
+          chatBox.innerHTML = ''; 
           addChat(`[SYS] Terhubung ke frekuensi ${currentFreq}`);
           
           if (data.messages && data.messages.length > 0) {
@@ -165,14 +171,18 @@
 
     currentFreq = freq;
     
-    // SIMPAN KE LOCALSTORAGE
     const nick = document.getElementById('nickInput').value.trim() || 'Anonim';
     localStorage.setItem('ht_nick', nick);
     localStorage.setItem('ht_freq', freq);
     localStorage.setItem('ht_pass', password);
 
     if (ws && ws.readyState === WebSocket.OPEN) {
-      ws.send(JSON.stringify({ type: 'join', freq: freq, sender: nick }));
+      ws.send(JSON.stringify({ 
+        type: 'join', 
+        freq: freq, 
+        sender: nick,
+        password: password 
+      }));
     }
   }
 
@@ -269,8 +279,6 @@
     const alert = document.getElementById('errorAlert');
     alert.style.display = 'none';
   }
-
-  connect();
 </script>
 </body>
 </html>
