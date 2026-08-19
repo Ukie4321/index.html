@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MRZYB-HT BLACK EDITION</title>
   <script>
-    const APP_VERSION = "v7"; 
+    const APP_VERSION = "v8"; 
     if (!window.location.search.includes(APP_VERSION)) {
         window.location.href = window.location.pathname + "?" + APP_VERSION;
     }
@@ -29,6 +29,7 @@
     .ptt-btn.active { background: #ef4444; box-shadow: 0 0 15px #ef4444; }
     
     .error-msg { color: #ef4444; font-size: 11px; text-align: center; margin-bottom: 10px; display: none; }
+    .status-msg { color: #3b82f6; font-size: 10px; text-align: center; margin-bottom: 5px; }
     .private-badge { font-size: 10px; color: #f59e0b; margin-top: 2px; }
   </style>
 </head>
@@ -43,6 +44,7 @@
   </div>
 
   <div id="errorAlert" class="error-msg"></div>
+  <div id="statusAlert" class="status-msg">Tekan PTT untuk mengaktifkan Suara</div>
 
   <!-- PANEL USER ONLINE -->
   <div class="user-list">
@@ -79,7 +81,8 @@
   let ws;
   let currentFreq = "145.820";
   
-  // Audio PTT Variables
+  // Web Audio Context untuk playback yang lancar di HP
+  let audioCtx;
   let mediaRecorder;
   let audioChunks = [];
   let isRecording = false;
@@ -88,6 +91,15 @@
     "111.111": "1234",
     "999.999": "admin"
   };
+
+  function initAudioContext() {
+    if (!audioCtx) {
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    if (audioCtx.state === 'suspended') {
+      audioCtx.resume();
+    }
+  }
 
   function connect() {
     ws = new WebSocket(WORKER_URL);
@@ -98,13 +110,12 @@
     };
 
     ws.onmessage = (event) => {
-      // Jika pesan berupa audio binary
+      // Jika data audio binary masuk
       if (event.data instanceof ArrayBuffer) {
-        playAudioBuffer(event.data);
+        playAudioArrayBuffer(event.data);
         return;
       }
 
-      // Jika pesan berupa teks JSON
       try {
         const data = JSON.parse(event.data);
 
@@ -126,9 +137,7 @@
           box.innerHTML += `<div><strong>[${data.sender}]</strong>: ${data.message}</div>`;
           box.scrollTop = box.scrollHeight;
         }
-      } catch (e) {
-        console.log("Receive data", e);
-      }
+      } catch (e) {}
     };
 
     ws.onclose = () => setTimeout(connect, 2000);
@@ -177,27 +186,48 @@
     if (e.key === 'Enter') sendTextMessage();
   }
 
-  // --- LOGIKA AUDIO PTT (REKAM & SEBARKAN) ---
+  // --- LOGIKA AUDIO REKAM & PEMANCARAN ---
   const pttBtn = document.getElementById('pttBtn');
 
   async function startRecording() {
+    initAudioContext();
     if (isRecording) return;
+
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      mediaRecorder = new MediaRecorder(stream);
+      
+      // Pilih mimeType yang didukung oleh perangkat
+      let options = {};
+      if (MediaRecorder.isTypeSupported('audio/webm;codecs=opus')) {
+        options = { mimeType: 'audio/webm;codecs=opus' };
+      } else if (MediaRecorder.isTypeSupported('audio/mp4')) {
+        options = { mimeType: 'audio/mp4' };
+      }
+
+      mediaRecorder = new MediaRecorder(stream, options);
       audioChunks = [];
 
       mediaRecorder.ondataavailable = (e) => {
-        if (e.data.size > 0 && ws && ws.readyState === WebSocket.OPEN) {
-          e.data.arrayBuffer().then(buffer => ws.send(buffer));
+        if (e.data.size > 0) {
+          audioChunks.push(e.data);
         }
       };
 
-      mediaRecorder.start(250); // Kirim chunk audio setiap 250ms
+      mediaRecorder.onstop = () => {
+        const audioBlob = new Blob(audioChunks, { type: mediaRecorder.mimeType });
+        audioBlob.arrayBuffer().then(buffer => {
+          if (ws && ws.readyState === WebSocket.OPEN) {
+            ws.send(buffer); // Kirim suara setelah PTT dilepas
+          }
+        });
+      };
+
+      mediaRecorder.start();
       isRecording = true;
       pttBtn.classList.add('active');
+      document.getElementById('statusAlert').innerText = "🎙️ Transmitting (Memancar)...";
     } catch (err) {
-      showError("Izin Mikrofon Ditolak!");
+      showError("Izin mikrofon ditolak / tidak didukung!");
     }
   }
 
@@ -209,20 +239,33 @@
     }
     isRecording = false;
     pttBtn.classList.remove('active');
+    document.getElementById('statusAlert').innerText = "Standby";
   }
 
-  // Event listener tombol PTT (Tahan untuk bicara)
+  // Touch & Mouse Event Handlers
   pttBtn.addEventListener('mousedown', startRecording);
   pttBtn.addEventListener('mouseup', stopRecording);
   pttBtn.addEventListener('touchstart', (e) => { e.preventDefault(); startRecording(); });
   pttBtn.addEventListener('touchend', (e) => { e.preventDefault(); stopRecording(); });
 
-  // Playback Audio yang Diterima
-  function playAudioBuffer(buffer) {
-    const blob = new Blob([buffer], { type: 'audio/webm' });
+  // --- PLAYBACK AUDIO MENGGUNAKAN AUDIO CONTEXT ---
+  function playAudioArrayBuffer(arrayBuffer) {
+    initAudioContext();
+    
+    // Konversi blob audio menjadi HTML Audio Element agar kompatibel di semua HP
+    const blob = new Blob([arrayBuffer]);
     const url = URL.createObjectURL(blob);
     const audio = new Audio(url);
-    audio.play().catch(e => console.log("Autoplay ditolak browser", e));
+    
+    document.getElementById('statusAlert').innerText = "🔊 Receiving (Menerima Suara)...";
+    audio.play().then(() => {
+      setTimeout(() => {
+        document.getElementById('statusAlert').innerText = "Standby";
+      }, 1500);
+    }).catch(e => {
+      console.log("Audio play error:", e);
+      document.getElementById('statusAlert').innerText = "Standby";
+    });
   }
 
   function showError(msg) {
