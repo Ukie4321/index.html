@@ -30,6 +30,11 @@
 <body>
 
 <div class="ht-body">
+  <!-- LOGO APLIKASI -->
+  <div style="text-align: center; margin-bottom: 10px;">
+    <img src="logo.png" alt="Logo" style="width: 50px; height: 50px; border-radius: 50%;" onerror="this.style.display='none'">
+  </div>
+
   <h2 style="text-align: center; color: #a3e635; margin-top: 0; font-size: 18px; letter-spacing: 2px;">MRZYB-HT</h2>
 
   <div class="screen">
@@ -98,7 +103,10 @@
       localStorage.setItem('ht_nick', e.target.value.trim());
     });
 
-    // Mulai koneksi setelah data dari localStorage selesai dibaca
+    // LANGSUNG MUAT CHAT LOKAL SEBELUM WEBSOCKET TERHUBUNG
+    loadLocalHistory(currentFreq);
+
+    // Mulai koneksi WebSocket
     connect();
   });
 
@@ -123,16 +131,19 @@
       try {
         const data = JSON.parse(event.data);
 
-        // Menampilkan riwayat chat dari Cloudflare KV saat pertama terhubung
+        // Menampilkan riwayat chat dari Server Cloudflare KV
         if (data.type === 'history') {
-          const chatBox = document.getElementById('chatBox');
-          chatBox.innerHTML = ''; 
-          addChat(`[SYS] Terhubung ke frekuensi ${currentFreq}`);
-          
           if (data.messages && data.messages.length > 0) {
+            const chatBox = document.getElementById('chatBox');
+            chatBox.innerHTML = ''; 
+            addSystemMsg(`Terhubung ke frekuensi ${currentFreq}`);
+            
             data.messages.forEach(msg => {
-              addChat(`[${msg.sender}]: ${msg.message}`);
+              appendChatToBox(`[${msg.sender}]: ${msg.message}`);
             });
+
+            // Sinkronkan ke penyimpanan lokal HP
+            localStorage.setItem(`local_chat_${currentFreq}`, JSON.stringify(data.messages));
           }
         }
         else if (data.type === 'join_success') {
@@ -149,7 +160,8 @@
           document.getElementById('namesList').innerText = data.users.length > 0 ? data.users.join(', ') : '-';
         } 
         else if (data.type === 'text') {
-          addChat(`[${data.sender}]: ${data.message}`);
+          // Tambah pesan baru ke UI & Simpan ke Local
+          saveAndAddSingleChat(data.sender, data.message);
         } 
         else if (data.type === 'audio') {
           playAudio(data.audio);
@@ -175,6 +187,9 @@
     localStorage.setItem('ht_nick', nick);
     localStorage.setItem('ht_freq', freq);
     localStorage.setItem('ht_pass', password);
+
+    // Muat riwayat lokal frekuensi baru
+    loadLocalHistory(freq);
 
     if (ws && ws.readyState === WebSocket.OPEN) {
       ws.send(JSON.stringify({ 
@@ -210,13 +225,38 @@
     if (e.key === 'Enter') sendText();
   }
 
-  function addChat(msg) {
+  // LOGIKA SIMPAN CHAT LOKAL SUPAYA TIDAK HILANG SAAT DITUTUP
+  function saveAndAddSingleChat(sender, message) {
+    appendChatToBox(`[${sender}]: ${message}`);
+
+    let localMsgs = JSON.parse(localStorage.getItem(`local_chat_${currentFreq}`)) || [];
+    localMsgs.push({ sender, message });
+    if (localMsgs.length > 30) localMsgs.shift(); // Simpan maks 30 pesan terakhir
+    localStorage.setItem(`local_chat_${currentFreq}`, JSON.stringify(localMsgs));
+  }
+
+  function loadLocalHistory(freq) {
+    const chatBox = document.getElementById('chatBox');
+    chatBox.innerHTML = '';
+    addSystemMsg(`Frekuensi: ${freq}`);
+
+    const localMsgs = JSON.parse(localStorage.getItem(`local_chat_${freq}`)) || [];
+    localMsgs.forEach(msg => {
+      appendChatToBox(`[${msg.sender}]: ${msg.message}`);
+    });
+  }
+
+  function appendChatToBox(msg) {
     const box = document.getElementById('chatBox');
     box.innerHTML += `<div>${msg}</div>`;
     box.scrollTop = box.scrollHeight;
   }
 
-  // LOGIKA REKAM SUARA BASE64
+  function addSystemMsg(msg) {
+    appendChatToBox(`[SYS] ${msg}`);
+  }
+
+  // LOGIKA PTT RECORDING
   navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
     mediaRecorder = new MediaRecorder(stream);
     
