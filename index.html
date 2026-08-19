@@ -1,41 +1,42 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MRZYB-HT VIRTUAL</title>
+  <title>MRZYB-HT BLACK EDITION</title>
   <style>
-    body { background-color: #0f120c; color: #a3e635; font-family: 'Courier New', monospace; margin: 0; display: flex; justify-content: center; min-height: 100vh; align-items: center; }
+    /* Tema Blackout */
+    body { background-color: #000; color: #a3e635; font-family: 'Courier New', monospace; margin: 0; display: flex; justify-content: center; min-height: 100vh; align-items: center; }
     
-    /* Body HT */
-    .ht-body { background: #2b331f; border: 4px solid #4d5c36; border-radius: 25px; padding: 25px; width: 90%; max-width: 360px; box-shadow: 0 15px 35px rgba(0,0,0,0.5); position: relative; }
+    /* Chassis HT (Matte Black) */
+    .ht-body { background: #121212; border: 4px solid #333; border-radius: 20px; padding: 25px; width: 90%; max-width: 360px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); position: relative; }
     
-    /* Layar Utama */
-    .screen { background: #000; border: 3px solid #5a6e38; padding: 15px; border-radius: 12px; margin-bottom: 15px; text-align: center; box-shadow: inset 0 0 10px rgba(163, 230, 53, 0.2); }
+    /* Layar Hitam Legam */
+    .screen { background: #050505; border: 2px solid #222; padding: 15px; border-radius: 8px; margin-bottom: 20px; text-align: center; box-shadow: inset 0 0 15px rgba(0,0,0,1); }
     .freq { font-size: 32px; font-weight: bold; text-shadow: 0 0 8px #a3e635; }
     
-    .chat-box { background: #050703; height: 140px; overflow-y: scroll; border: 1px solid #5a6e38; padding: 8px; font-size: 12px; margin-bottom: 10px; border-radius: 5px; word-wrap: break-word; }
+    .chat-box { background: #000; height: 120px; overflow-y: scroll; border: 1px solid #333; padding: 8px; font-size: 12px; margin-bottom: 15px; border-radius: 4px; word-wrap: break-word; color: #888; }
     
+    /* Input dan Tombol Bergaya Industrial */
     .input-group { display: flex; gap: 5px; margin-bottom: 10px; }
-    .input-group input { flex: 1; background: #0f140a; border: 1px solid #5a6e38; color: #a3e635; padding: 8px; font-family: inherit; border-radius: 4px; }
-    .input-group button { background: #4d5c36; color: #fff; border: none; padding: 8px 12px; cursor: pointer; font-weight: bold; border-radius: 4px; }
-    .input-group button:active { background: #5a6e38; }
+    .input-group input { flex: 1; background: #0a0a0a; border: 1px solid #333; color: #a3e635; padding: 8px; font-family: inherit; border-radius: 3px; }
+    .input-group button { background: #222; color: #a3e635; border: 1px solid #444; padding: 8px 12px; cursor: pointer; font-weight: bold; border-radius: 3px; }
+    .input-group button:hover { background: #333; }
 
     /* Tombol PTT */
     .ptt-btn { 
-      background: linear-gradient(145deg, #dc2626, #991b1b); 
-      color: white; border: 4px solid #7f1d1d; border-radius: 50%; 
-      width: 120px; height: 120px; margin: 15px auto; display: block; 
-      font-weight: bold; cursor: pointer; user-select: none; box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+      background: linear-gradient(145deg, #b91c1c, #7f1d1d); 
+      color: white; border: 3px solid #450a0a; border-radius: 50%; 
+      width: 110px; height: 110px; margin: 20px auto; display: block; 
+      font-weight: bold; cursor: pointer; user-select: none; box-shadow: 0 4px 10px rgba(0,0,0,0.5);
       transition: transform 0.1s, box-shadow 0.1s;
     }
-    .ptt-btn:active { transform: scale(0.95); box-shadow: 0 2px 5px rgba(0,0,0,0.3); }
+    .ptt-btn:active { transform: scale(0.95); background: #991b1b; }
     
-    .status { text-align: center; font-size: 11px; margin-top: 5px; opacity: 0.8; }
+    .status { text-align: center; font-size: 10px; margin-top: 10px; color: #555; text-transform: uppercase; letter-spacing: 1px; }
     
-    /* Watermark */
-    .watermark { position: absolute; bottom: 12px; right: 20px; font-size: 10px; opacity: 0.4; letter-spacing: 2px; font-weight: bold; }
+    /* Watermark Minimalis */
+    .watermark { position: absolute; bottom: 15px; right: 20px; font-size: 9px; opacity: 0.3; letter-spacing: 2px; font-weight: bold; color: #fff; }
   </style>
 </head>
 <body>
@@ -45,26 +46,23 @@
 
   <div class="screen">
     <div class="freq" id="freqDisplay">145.820</div>
-    <div style="font-size: 10px;">MHz FM</div>
+    <div style="font-size: 10px; color: #444;">MHz FM</div>
   </div>
 
-  <!-- Input Callsign/Nama -->
   <div class="input-group">
-    <input type="text" id="nickInput" placeholder="Callsign (cth: MRZYB-01)">
+    <input type="text" id="nickInput" placeholder="Set your name ...">
   </div>
 
-  <!-- Input Frekuensi -->
   <div class="input-group">
-    <input type="text" id="freqInput" placeholder="Freq Baru...">
+    <input type="text" id="freqInput" placeholder="Frequensi...">
     <button onclick="changeFreq()">SET</button>
   </div>
 
   <div class="chat-box" id="chatBox"></div>
 
-  <!-- Input Pesan Teks -->
   <div class="input-group">
-    <input type="text" id="msgInput" placeholder="Ketik pesan...">
-    <button onclick="sendText()">KIRIM</button>
+    <input type="text" id="msgInput" placeholder="Pesan...">
+    <button onclick="sendText()">SEND</button>
   </div>
 
   <button class="ptt-btn" id="pttBtn">PTT</button>
@@ -77,6 +75,12 @@
   let currentFreq = "145.820";
   let mediaRecorder;
   let audioChunks = [];
+
+  // DAFTAR FREKUENSI YANG DIKUNCI KHUSUS (Ubah/tambah di sini)
+  const LOCKED_FREQUENCIES = {
+    "145.990": "1234",     // Frekuensi 145.990 butuh password '1234'
+    "145.000": "rahasia"   // Frekuensi 145.000 butuh password 'rahasia'
+  };
 
   function connect() {
     ws = new WebSocket(WORKER_URL);
@@ -102,27 +106,34 @@
   }
 
   function changeFreq() {
-    const val = document.getElementById('freqInput').value;
-    if (val) joinFrequency(val);
+    const targetFreq = document.getElementById('freqInput').value.trim();
+    if (!targetFreq) return;
+
+    // Cek apakah frekuensi tujuan termasuk yang dikunci
+    if (LOCKED_FREQUENCIES[targetFreq]) {
+      const passInput = prompt(`Frekuensi ${targetFreq} TERKUNCI! Masukkan Password:`);
+      
+      // Jika password salah / dibatalkan
+      if (passInput !== LOCKED_FREQUENCIES[targetFreq]) {
+        alert("❌ Password Salah! Akses ditolak.");
+        return; // Batalkan pindah frekuensi
+      }
+      alert("✅ Password Benar! Membuka frekuensi...");
+    }
+
+    // Jika tidak dikunci / password benar, pindah ke frekuensi
+    joinFrequency(targetFreq);
+    document.getElementById('freqInput').value = '';
   }
 
   function sendText() {
     const input = document.getElementById('msgInput');
     const nickInput = document.getElementById('nickInput');
-    
-    // Gunakan nama dari input, atau default 'Anonymous'
     const senderName = nickInput.value.trim() || 'Anonymous';
-    
-    // Simpan Callsign ke memori browser
     localStorage.setItem('myCallsign', senderName);
 
     if (input.value && ws && ws.readyState === WebSocket.OPEN) {
-      ws.send(JSON.stringify({ 
-        type: 'text', 
-        freq: currentFreq, 
-        sender: senderName, 
-        message: input.value 
-      }));
+      ws.send(JSON.stringify({ type: 'text', freq: currentFreq, sender: senderName, message: input.value }));
       addChat(`[${currentFreq}] Saya (${senderName}): ${input.value}`);
       input.value = '';
     }
@@ -134,7 +145,6 @@
     box.scrollTop = box.scrollHeight;
   }
 
-  // Rekam Audio PTT
   navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
     mediaRecorder = new MediaRecorder(stream);
     mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
@@ -151,37 +161,20 @@
     };
 
     const pttBtn = document.getElementById('pttBtn');
-    const start = (e) => { 
-      e.preventDefault();
-      if (mediaRecorder.state === "inactive") {
-        mediaRecorder.start(); 
-        document.getElementById('micStatus').innerText = "🎙️ TRANSMITTING..."; 
-      }
-    };
-    const stop = (e) => { 
-      e.preventDefault();
-      if (mediaRecorder.state === "recording") {
-        mediaRecorder.stop(); 
-        document.getElementById('micStatus').innerText = "Standby"; 
-      }
-    };
+    const start = (e) => { e.preventDefault(); mediaRecorder.start(); document.getElementById('micStatus').innerText = "🎙️ TX..."; };
+    const stop = (e) => { e.preventDefault(); mediaRecorder.stop(); document.getElementById('micStatus').innerText = "Standby"; };
 
     pttBtn.addEventListener('mousedown', start);
     pttBtn.addEventListener('mouseup', stop);
     pttBtn.addEventListener('touchstart', start);
     pttBtn.addEventListener('touchend', stop);
-  }).catch(() => {
-    document.getElementById('micStatus').innerText = "Mikrofon tidak diizinkan";
   });
 
   function playAudio(base64Data) { new Audio(base64Data).play(); }
 
-  // Muat Callsign otomatis saat halaman pertama kali dibuka
   window.onload = () => {
     const savedName = localStorage.getItem('myCallsign');
-    if (savedName) {
-      document.getElementById('nickInput').value = savedName;
-    }
+    if (savedName) document.getElementById('nickInput').value = savedName;
   };
 
   connect();
