@@ -5,8 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MRZYB-HT BLACK EDITION</title>
   <script>
-    // Strategi Versioning untuk Bypass Cache Browser
-    const APP_VERSION = "v4"; 
+    const APP_VERSION = "v6"; 
     if (!window.location.search.includes(APP_VERSION)) {
         window.location.href = window.location.pathname + "?" + APP_VERSION;
     }
@@ -17,7 +16,6 @@
     .screen { background: #050505; border: 2px solid #222; padding: 15px; border-radius: 8px; margin-bottom: 15px; text-align: center; }
     .freq { font-size: 32px; font-weight: bold; }
     
-    /* Tampilan List User Online */
     .user-list { border: 1px solid #222; background: #080808; padding: 8px; border-radius: 5px; margin-bottom: 15px; font-size: 11px; }
     .user-count { color: #a3e635; font-weight: bold; }
     .user-names { color: #888; font-size: 10px; margin-top: 4px; word-break: break-all; }
@@ -28,16 +26,23 @@
     button { background: #222; color: #a3e635; border: 1px solid #444; padding: 8px 12px; cursor: pointer; border-radius: 3px; }
     .ptt-btn { background: #b91c1c; color: white; border-radius: 50%; width: 90px; height: 90px; margin: 10px auto 0; display: block; border: none; font-weight: bold; font-family: inherit; cursor: pointer; }
     .ptt-btn:active { background: #ef4444; }
+    .error-msg { color: #ef4444; font-size: 11px; text-align: center; margin-bottom: 10px; display: none; }
+    .private-badge { font-size: 10px; color: #f59e0b; margin-top: 2px; }
   </style>
 </head>
 <body>
 
 <div class="ht-body">
+  <h2 style="text-align: center; color: #a3e635; margin-top: 0; font-size: 18px; letter-spacing: 2px;">MRZYB-HT</h2>
+
   <div class="screen">
     <div class="freq" id="freqDisplay">145.820</div>
+    <div id="privateBadge" class="private-badge"></div>
   </div>
 
-  <!-- PANEL PRESENCE (USER ONLINE) -->
+  <div id="errorAlert" class="error-msg"></div>
+
+  <!-- PANEL USER ONLINE -->
   <div class="user-list">
     <span>Online: </span><span class="user-count" id="onlineCount">0</span>
     <div class="user-names" id="namesList">Belum ada user</div>
@@ -48,6 +53,9 @@
   </div>
   <div class="input-group">
     <input type="text" id="freqInput" placeholder="Freq (misal: 145.820)">
+  </div>
+  <div class="input-group">
+    <input type="password" id="passInput" placeholder="Password Private (jika ada)">
     <button onclick="changeFreq()">SET</button>
   </div>
 
@@ -60,6 +68,15 @@
   let ws;
   let currentFreq = "145.820";
 
+  // =============================================================
+  // ATUR 2 CHANNEL PRIVATE & PASSWORDNYA DI SINI
+  // =============================================================
+  const PRIVATE_CHANNELS = {
+    "111.111": "1234",  // Channel Private 1 (Frekuensi: 111.111, Password: 1234)
+    "999.999": "admin"  // Channel Private 2 (Frekuensi: 999.999, Password: admin)
+  };
+  // =============================================================
+
   function connect() {
     ws = new WebSocket(WORKER_URL);
 
@@ -71,8 +88,18 @@
       try {
         const data = JSON.parse(event.data);
 
-        // Menampilkan daftar & jumlah user online
-        if (data.type === 'presence') {
+        if (data.type === 'join_success') {
+          hideError();
+          document.getElementById('freqDisplay').innerText = data.freq;
+          
+          // Tampilkan penanda jika masuk channel private
+          if (PRIVATE_CHANNELS[data.freq]) {
+            document.getElementById('privateBadge').innerText = "🔒 PRIVATE CHANNEL";
+          } else {
+            document.getElementById('privateBadge').innerText = "";
+          }
+        }
+        else if (data.type === 'presence') {
           document.getElementById('onlineCount').innerText = data.users.length;
           document.getElementById('namesList').innerText = data.users.length > 0 ? data.users.join(', ') : '-';
         } 
@@ -89,9 +116,17 @@
     ws.onclose = () => setTimeout(connect, 2000);
   }
 
-  function joinFrequency(freq) {
+  function joinFrequency(freq, password = '') {
+    // Cek apakah frekuensi tujuan termasuk Channel Private
+    if (PRIVATE_CHANNELS[freq]) {
+      const correctPass = PRIVATE_CHANNELS[freq];
+      if (password !== correctPass) {
+        showError("🔒 Frekuensi Private! Password Salah.");
+        return;
+      }
+    }
+
     currentFreq = freq;
-    document.getElementById('freqDisplay').innerText = freq;
     const nick = document.getElementById('nickInput').value.trim() || 'Anonim';
     if (ws && ws.readyState === WebSocket.OPEN) {
       ws.send(JSON.stringify({ type: 'join', freq: freq, sender: nick }));
@@ -100,7 +135,19 @@
 
   function changeFreq() {
     const newFreq = document.getElementById('freqInput').value.trim();
-    if (newFreq) joinFrequency(newFreq);
+    const pass = document.getElementById('passInput').value.trim();
+    if (newFreq) joinFrequency(newFreq, pass);
+  }
+
+  function showError(msg) {
+    const alert = document.getElementById('errorAlert');
+    alert.innerText = msg;
+    alert.style.display = 'block';
+  }
+
+  function hideError() {
+    const alert = document.getElementById('errorAlert');
+    alert.style.display = 'none';
   }
 
   connect();
