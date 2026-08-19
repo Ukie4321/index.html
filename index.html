@@ -1,155 +1,189 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Romper el círculo (2024)</title>
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" />
-</head>
-<body class="grey darken-4" style="background-color: #000 !important;">
-
-<link href="https://fonts.googleapis.com/css2?family=Bangers&display=swap" rel="stylesheet">
-
-
-  <!-- HEADER: Poster + Judul -->
-  <div class="row bg-fondo">
-    <div class="col s3 m4 l2">
-      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT0YM7-5VQMq_6DLtvjMMcI8YqCtzydvGWkRf4lc4Ifrf4CfI81DgBSbKg&s=10" alt="poster" class="responsive-img" />
-    </div>
-    <div class="col s9 m8 l10">
-<h5 class="white-text mrzyb" style="margin-top:10px;">Wednesday (Season 2)</h5>
-
-
-    </div>
-  </div>
-
-  <!-- SINOPSIS -->
-  <div class="container white-text">
-    <h6>SINOPSIS</h6>
-    <p class="grey-text text-lighten-1">
-      Musim kedua ini akan melanjutkan kisah Wednesday Addams dalam menghadapi serangkaian misteri baru di Nevermore Academy, termasuk ancaman supernatural, konflik keluarga, serta kehadiran musuh-musuh baru
-    </p>
-
-    <!-- DAFTAR EPISODE -->
-    <h6>DAFTAR EPISODE</h6>
-    <div class="episode-scroll-wrapper">
-      <div class="episode-scroll">
-        <a class="waves-effect blue btn episode-btn" data-link="https://drive.google.com/file/d/14r67Aq2bBdCRNZBWPASAH9SW2skSJ49m/preview">Ep 1</a>
-        <a class="waves-effect blue btn episode-btn" data-link="https://drive.google.com/file/d/1FCdqx90v9MimX4uv-WVWBQo4ROdjk1-i/preview">Ep 2</a>
-        <a class="waves-effect blue btn episode-btn" data-link="https://drive.google.com/file/d/1Y6nCtzs1KsGloZsnTCtif8o9DRMYAIgI/preview">Ep 3</a>
-        <a class="waves-effect blue btn episode-btn" data-link="https://drive.google.com/file/d/14Kfnwv2L1yvn3rTZ_vtgHXEU2Jt0lcvg/preview">Ep 4</a>
-        <a class="waves-effect blue btn episode-btn" data-link="https://drive.google.com/file/d/1GlOIj-a0aP8iMzxRBoE4KHwhrd4ZnXsC/preview">Ep 5</a>
-        <a class="waves-effect blue btn episode-btn" data-link="https://drive.google.com/file/d/1gcP1lcZgl6Cf-mebkciTxmJBT3bvxkpv/preview">Ep 6</a>
-        <a class="waves-effect blue btn episode-btn" data-link="https://drive.google.com/file/d/153z6iKeO8JFvQBTkvSqyeFDEeOKBV2wl/preview">Ep 7</a>
-        <a class="waves-effect blue btn episode-btn" data-link="https://drive.google.com/file/d/1hduX7-mBKDovvkJN6giQ8W8MYlg4peQ2/preview">Ep 8</a>
-
-
-
-        <!-- Tambah episode sesuai kebutuhan -->
-      </div>
-    </div>
-  </div>
-  
-  
-
-
-  
-
-  <!-- PLAYER MODAL -->
-  <div id="modal2" class="modal grey darken-4">
-    <div class="modal-content white-text">
-      <div class="iframe-container">
-        <iframe allowfullscreen class="responsive-iframe" frameborder="0" id="video-player" sandbox="allow-same-origin allow-scripts" scrolling="no" src="" style="border: none;" width="100%"></iframe>
-      </div>
-    </div>
-    <div class="modal-footer grey darken-4">
-      <a href="#!" class="modal-close waves-effect waves-green btn-flat white-text">MRZYB</a>
-    </div>
-  </div>
-
-  <!-- SCRIPT -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-  <script>
-    M.AutoInit();
-    document.querySelectorAll('.episode-btn').forEach(function(btn) {
-      btn.addEventListener('click', function () {
-        document.querySelectorAll('.episode-btn').forEach(el => el.classList.remove('active-episode'));
-        btn.classList.add('active-episode');
-        document.getElementById('video-player').src = btn.getAttribute('data-link');
-        M.Modal.getInstance(document.getElementById('modal2')).open();
-      });
-    });
-  </script>
-
-  <!-- STYLE -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MRZYB-HT VIRTUAL</title>
   <style>
-    .bg-fondo {
-      display: flex;
-      align-items: flex-end;
-      padding: 10px;
-      padding-top: 150px;
-      position: relative;
-      background: none !important;
-    }
-
-    .bg-fondo::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background: url(https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTS5g7uxEe3Nhse1PBkJ6nFV0J7I8sHLmnB9_sV28a_MITv22K7rFRNDTUx&s=10) no-repeat center center / cover;
-      z-index: -1;
-      opacity: 1 !important;
-    }
-
-    .iframe-container {
-      position: relative;
-      width: 100%;
-      padding-top: 56.25%;
-    }
-
-    .responsive-iframe {
-      position: absolute;
-      top: 0; left: 0;
-      width: 100%;
-      height: 100%;
-    }
-
-    .episode-scroll-wrapper {
-      overflow-x: auto;
-      padding: 10px 0;
-    }
-
-    .episode-scroll {
-      display: flex;
-      gap: 10px;
-    }
-
-    .episode-btn {
-      flex-shrink: 0;
-      min-width: 60px;
-      text-align: center;
-    }
-
-    .episode-btn.active-episode {
-      background-color: red !important;
-    }
+    body { background-color: #0f120c; color: #a3e635; font-family: 'Courier New', monospace; margin: 0; display: flex; justify-content: center; min-height: 100vh; align-items: center; }
     
-
-.mrzyb {
-  text-shadow:
-    0 0 4px #000,
-    0 0 8px #000,
-    0 0 12px #000;
-}
-
-.bg-fondo::before {
-  opacity: 1 !important;
-}
-
-
-
+    /* Body HT */
+    .ht-body { background: #2b331f; border: 4px solid #4d5c36; border-radius: 25px; padding: 25px; width: 90%; max-width: 360px; box-shadow: 0 15px 35px rgba(0,0,0,0.5); position: relative; }
     
+    /* Layar Utama */
+    .screen { background: #000; border: 3px solid #5a6e38; padding: 15px; border-radius: 12px; margin-bottom: 15px; text-align: center; box-shadow: inset 0 0 10px rgba(163, 230, 53, 0.2); }
+    .freq { font-size: 32px; font-weight: bold; text-shadow: 0 0 8px #a3e635; }
+    
+    .chat-box { background: #050703; height: 140px; overflow-y: scroll; border: 1px solid #5a6e38; padding: 8px; font-size: 12px; margin-bottom: 10px; border-radius: 5px; word-wrap: break-word; }
+    
+    .input-group { display: flex; gap: 5px; margin-bottom: 10px; }
+    .input-group input { flex: 1; background: #0f140a; border: 1px solid #5a6e38; color: #a3e635; padding: 8px; font-family: inherit; border-radius: 4px; }
+    .input-group button { background: #4d5c36; color: #fff; border: none; padding: 8px 12px; cursor: pointer; font-weight: bold; border-radius: 4px; }
+    .input-group button:active { background: #5a6e38; }
+
+    /* Tombol PTT */
+    .ptt-btn { 
+      background: linear-gradient(145deg, #dc2626, #991b1b); 
+      color: white; border: 4px solid #7f1d1d; border-radius: 50%; 
+      width: 120px; height: 120px; margin: 15px auto; display: block; 
+      font-weight: bold; cursor: pointer; user-select: none; box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+      transition: transform 0.1s, box-shadow 0.1s;
+    }
+    .ptt-btn:active { transform: scale(0.95); box-shadow: 0 2px 5px rgba(0,0,0,0.3); }
+    
+    .status { text-align: center; font-size: 11px; margin-top: 5px; opacity: 0.8; }
+    
+    /* Watermark */
+    .watermark { position: absolute; bottom: 12px; right: 20px; font-size: 10px; opacity: 0.4; letter-spacing: 2px; font-weight: bold; }
   </style>
+</head>
+<body>
+
+<div class="ht-body">
+  <div class="watermark">MRZYB-HT</div>
+
+  <div class="screen">
+    <div class="freq" id="freqDisplay">145.820</div>
+    <div style="font-size: 10px;">MHz FM</div>
+  </div>
+
+  <!-- Input Callsign/Nama -->
+  <div class="input-group">
+    <input type="text" id="nickInput" placeholder="Callsign (cth: MRZYB-01)">
+  </div>
+
+  <!-- Input Frekuensi -->
+  <div class="input-group">
+    <input type="text" id="freqInput" placeholder="Freq Baru...">
+    <button onclick="changeFreq()">SET</button>
+  </div>
+
+  <div class="chat-box" id="chatBox"></div>
+
+  <!-- Input Pesan Teks -->
+  <div class="input-group">
+    <input type="text" id="msgInput" placeholder="Ketik pesan...">
+    <button onclick="sendText()">KIRIM</button>
+  </div>
+
+  <button class="ptt-btn" id="pttBtn">PTT</button>
+  <div class="status" id="micStatus">Standby</div>
+</div>
+
+<script>
+  const WORKER_URL = "wss://my-ht-project.ukielaki8387.workers.dev"; 
+  let ws;
+  let currentFreq = "145.820";
+  let mediaRecorder;
+  let audioChunks = [];
+
+  function connect() {
+    ws = new WebSocket(WORKER_URL);
+    ws.onopen = () => joinFrequency(currentFreq);
+    ws.onmessage = async (event) => {
+      const data = JSON.parse(event.data);
+      if (data.type === 'text') {
+        addChat(`[${data.freq}] ${data.sender}: ${data.message}`);
+      } else if (data.type === 'audio') {
+        playAudio(data.audio);
+      }
+    };
+    ws.onclose = () => setTimeout(connect, 2000);
+  }
+
+  function joinFrequency(freq) {
+    currentFreq = freq;
+    document.getElementById('freqDisplay').innerText = freq;
+    if (ws && ws.readyState === WebSocket.OPEN) {
+      ws.send(JSON.stringify({ type: 'join', freq: currentFreq }));
+      addChat(`[SYS] Pindah ke ${freq}`);
+    }
+  }
+
+  function changeFreq() {
+    const val = document.getElementById('freqInput').value;
+    if (val) joinFrequency(val);
+  }
+
+  function sendText() {
+    const input = document.getElementById('msgInput');
+    const nickInput = document.getElementById('nickInput');
+    
+    // Gunakan nama dari input, atau default 'Anonymous'
+    const senderName = nickInput.value.trim() || 'Anonymous';
+    
+    // Simpan Callsign ke memori browser
+    localStorage.setItem('myCallsign', senderName);
+
+    if (input.value && ws && ws.readyState === WebSocket.OPEN) {
+      ws.send(JSON.stringify({ 
+        type: 'text', 
+        freq: currentFreq, 
+        sender: senderName, 
+        message: input.value 
+      }));
+      addChat(`[${currentFreq}] Saya (${senderName}): ${input.value}`);
+      input.value = '';
+    }
+  }
+
+  function addChat(msg) {
+    const box = document.getElementById('chatBox');
+    box.innerHTML += `<div>${msg}</div>`;
+    box.scrollTop = box.scrollHeight;
+  }
+
+  // Rekam Audio PTT
+  navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+    mediaRecorder = new MediaRecorder(stream);
+    mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+    mediaRecorder.onstop = async () => {
+      const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+      audioChunks = [];
+      const reader = new FileReader();
+      reader.readAsDataURL(audioBlob);
+      reader.onloadend = () => {
+        if (ws && ws.readyState === WebSocket.OPEN) {
+          ws.send(JSON.stringify({ type: 'audio', freq: currentFreq, audio: reader.result }));
+        }
+      };
+    };
+
+    const pttBtn = document.getElementById('pttBtn');
+    const start = (e) => { 
+      e.preventDefault();
+      if (mediaRecorder.state === "inactive") {
+        mediaRecorder.start(); 
+        document.getElementById('micStatus').innerText = "🎙️ TRANSMITTING..."; 
+      }
+    };
+    const stop = (e) => { 
+      e.preventDefault();
+      if (mediaRecorder.state === "recording") {
+        mediaRecorder.stop(); 
+        document.getElementById('micStatus').innerText = "Standby"; 
+      }
+    };
+
+    pttBtn.addEventListener('mousedown', start);
+    pttBtn.addEventListener('mouseup', stop);
+    pttBtn.addEventListener('touchstart', start);
+    pttBtn.addEventListener('touchend', stop);
+  }).catch(() => {
+    document.getElementById('micStatus').innerText = "Mikrofon tidak diizinkan";
+  });
+
+  function playAudio(base64Data) { new Audio(base64Data).play(); }
+
+  // Muat Callsign otomatis saat halaman pertama kali dibuka
+  window.onload = () => {
+    const savedName = localStorage.getItem('myCallsign');
+    if (savedName) {
+      document.getElementById('nickInput').value = savedName;
+    }
+  };
+
+  connect();
+</script>
 </body>
 </html>
