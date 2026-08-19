@@ -4,6 +4,15 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MRZYB-HT BLACK EDITION</title>
+
+  <!-- FITUR AUTO-VERSIONING (Anti-Cache) -->
+  <script>
+    const APP_VERSION = "v1"; // Ubah ke "v2", "v3", dst saat Anda update kode di masa depan
+    if (!window.location.search.includes(APP_VERSION)) {
+        window.location.href = window.location.pathname + "?" + APP_VERSION;
+    }
+  </script>
+
   <style>
     /* Tema Blackout */
     body { background-color: #000; color: #a3e635; font-family: 'Courier New', monospace; margin: 0; display: flex; justify-content: center; min-height: 100vh; align-items: center; }
@@ -50,11 +59,11 @@
   </div>
 
   <div class="input-group">
-    <input type="text" id="nickInput" placeholder="Set your name ...">
+    <input type="text" id="nickInput" placeholder="Callsign...">
   </div>
 
   <div class="input-group">
-    <input type="text" id="freqInput" placeholder="Frequensi...">
+    <input type="text" id="freqInput" placeholder="Freq...">
     <button onclick="changeFreq()">SET</button>
   </div>
 
@@ -76,10 +85,10 @@
   let mediaRecorder;
   let audioChunks = [];
 
-  // DAFTAR FREKUENSI YANG DIKUNCI KHUSUS (Ubah/tambah di sini)
+  // DAFTAR FREKUENSI YANG DIKUNCI (bisa ditambah/ubah)
   const LOCKED_FREQUENCIES = {
-    "145.990": "1234",     // Frekuensi 145.990 butuh password '1234'
-    "145.000": "rahasia"   // Frekuensi 145.000 butuh password 'rahasia'
+    "145.990": "1234",
+    "145.000": "rahasia"
   };
 
   function connect() {
@@ -109,19 +118,13 @@
     const targetFreq = document.getElementById('freqInput').value.trim();
     if (!targetFreq) return;
 
-    // Cek apakah frekuensi tujuan termasuk yang dikunci
     if (LOCKED_FREQUENCIES[targetFreq]) {
       const passInput = prompt(`Frekuensi ${targetFreq} TERKUNCI! Masukkan Password:`);
-      
-      // Jika password salah / dibatalkan
       if (passInput !== LOCKED_FREQUENCIES[targetFreq]) {
-        alert("❌ Password Salah! Akses ditolak.");
-        return; // Batalkan pindah frekuensi
+        alert("❌ Password Salah!");
+        return;
       }
-      alert("✅ Password Benar! Membuka frekuensi...");
     }
-
-    // Jika tidak dikunci / password benar, pindah ke frekuensi
     joinFrequency(targetFreq);
     document.getElementById('freqInput').value = '';
   }
