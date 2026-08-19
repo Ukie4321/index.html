@@ -16,7 +16,7 @@
 
     .chat-box { background: #050505; height: 100px; overflow-y: auto; border: 1px solid #222; padding: 8px; font-size: 11px; margin-bottom: 10px; border-radius: 5px; color: #ccc; word-wrap: break-word; }
     .input-group { display: flex; gap: 5px; margin-bottom: 10px; }
-    input { flex: 1; background: #0a0a0a; border: 1px solid #333; color: #a3e635; padding: 8px; border-radius: 3px; font-family: inherit; }
+    input, select { flex: 1; background: #0a0a0a; border: 1px solid #333; color: #a3e635; padding: 8px; border-radius: 3px; font-family: inherit; }
     button { background: #222; color: #a3e635; border: 1px solid #444; padding: 8px 12px; cursor: pointer; border-radius: 3px; }
     
     .ptt-btn { background: #b91c1c; color: white; border-radius: 50%; width: 100px; height: 100px; margin: 10px auto 0; display: block; border: none; font-weight: bold; font-family: inherit; cursor: pointer; user-select: none; touch-action: manipulation; }
@@ -25,6 +25,7 @@
     .error-msg { color: #ef4444; font-size: 11px; text-align: center; margin-bottom: 10px; display: none; }
     .status { text-align: center; font-size: 11px; margin-top: 5px; color: #888; }
     .private-badge { font-size: 10px; color: #f59e0b; margin-top: 2px; }
+    .radio-panel { border: 1px dashed #333; padding: 8px; border-radius: 5px; margin-bottom: 12px; background: #080808; }
   </style>
 </head>
 <body>
@@ -41,6 +42,21 @@
     <div class="freq" id="freqDisplay">145.820</div>
     <div id="privateBadge" class="private-badge"></div>
   </div>
+
+  <!-- PANEL RADIO ONLINE -->
+  <div class="radio-panel">
+    <div style="font-size: 10px; color: #888; margin-bottom: 5px; text-align: center;">📻 MONITORING RADIO FM</div>
+    <div class="input-group" style="margin-bottom: 0;">
+      <select id="radioSelect" onchange="changeRadioChannel()">
+        <option value="https://n08.radiojar.com/7csmg90fuqruv.mp3?1673348819=&rj-tok=AAABhZtmUCUAwkYyBBgriH-X9g&rj-ttl=5">HardRock</option>
+        <option value="https://n0a.radiojar.com/4ywdgup3bnzuv?1673348637=&rj-tok=AAABhZtjYesAbqf2VnMskbfVxQ&rj-ttl=5">Iswara</option>
+        <option value="https://stream.denger.in/">Dmi</option>
+        <option value="https://stream.rcs.revma.com/ugpyzu9n5k3vv">Musik Indonesia</option>
+      </select>
+      <button id="radioBtn" onclick="toggleRadio()">PLAY</button>
+    </div>
+  </div>
+  <audio id="radioPlayer" crossorigin="anonymous"></audio>
 
   <div id="errorAlert" class="error-msg"></div>
 
@@ -80,13 +96,14 @@
   let currentFreq = "145.820";
   let mediaRecorder;
   let audioChunks = [];
+  let isRadioPlaying = false;
 
   const PRIVATE_CHANNELS = {
     "111.111": "1234",
     "999.999": "admin"
   };
 
-  // AMBIL DATA & INISIALISASI KONEKSI SETELAH DOM SIAP
+  // 1. DOKUMEN SIAP & LOAD MEMORI
   window.addEventListener('DOMContentLoaded', () => {
     const savedNick = localStorage.getItem('ht_nick');
     const savedFreq = localStorage.getItem('ht_freq');
@@ -103,13 +120,11 @@
       localStorage.setItem('ht_nick', e.target.value.trim());
     });
 
-    // LANGSUNG MUAT CHAT LOKAL SEBELUM WEBSOCKET TERHUBUNG
     loadLocalHistory(currentFreq);
-
-    // Mulai koneksi WebSocket
     connect();
   });
 
+  // 2. KONEKSI WEBSOCKET
   function connect() {
     ws = new WebSocket(WORKER_URL);
 
@@ -131,7 +146,6 @@
       try {
         const data = JSON.parse(event.data);
 
-        // Menampilkan riwayat chat dari Server Cloudflare KV
         if (data.type === 'history') {
           if (data.messages && data.messages.length > 0) {
             const chatBox = document.getElementById('chatBox');
@@ -142,7 +156,6 @@
               appendChatToBox(`[${msg.sender}]: ${msg.message}`);
             });
 
-            // Sinkronkan ke penyimpanan lokal HP
             localStorage.setItem(`local_chat_${currentFreq}`, JSON.stringify(data.messages));
           }
         }
@@ -160,7 +173,6 @@
           document.getElementById('namesList').innerText = data.users.length > 0 ? data.users.join(', ') : '-';
         } 
         else if (data.type === 'text') {
-          // Tambah pesan baru ke UI & Simpan ke Local
           saveAndAddSingleChat(data.sender, data.message);
         } 
         else if (data.type === 'audio') {
@@ -172,6 +184,48 @@
     ws.onclose = () => setTimeout(connect, 2000);
   }
 
+  // 3. LOGIKA RADIO ONLINE
+  function toggleRadio() {
+    const player = document.getElementById('radioPlayer');
+    const btn = document.getElementById('radioBtn');
+    const select = document.getElementById('radioSelect');
+
+    if (!isRadioPlaying) {
+      player.src = select.value;
+      player.volume = 1.0;
+      player.play().catch(() => alert("Gagal memutar Radio. Periksa koneksi internet."));
+      btn.innerText = "STOP";
+      btn.style.background = "#b91c1c";
+      isRadioPlaying = true;
+    } else {
+      player.pause();
+      player.src = "";
+      btn.innerText = "PLAY";
+      btn.style.background = "#222";
+      isRadioPlaying = false;
+    }
+  }
+
+  function changeRadioChannel() {
+    const player = document.getElementById('radioPlayer');
+    const select = document.getElementById('radioSelect');
+
+    if (isRadioPlaying) {
+      player.pause();
+      player.src = select.value;
+      player.load();
+      player.play().catch(() => {});
+    }
+  }
+
+  function setRadioVolume(level) {
+    const player = document.getElementById('radioPlayer');
+    if (isRadioPlaying) {
+      player.volume = level;
+    }
+  }
+
+  // 4. KONTROL FREKUENSI & CHAT
   function joinFrequency(freq, password = '') {
     if (PRIVATE_CHANNELS[freq]) {
       const correctPass = PRIVATE_CHANNELS[freq];
@@ -188,7 +242,6 @@
     localStorage.setItem('ht_freq', freq);
     localStorage.setItem('ht_pass', password);
 
-    // Muat riwayat lokal frekuensi baru
     loadLocalHistory(freq);
 
     if (ws && ws.readyState === WebSocket.OPEN) {
@@ -225,13 +278,12 @@
     if (e.key === 'Enter') sendText();
   }
 
-  // LOGIKA SIMPAN CHAT LOKAL SUPAYA TIDAK HILANG SAAT DITUTUP
   function saveAndAddSingleChat(sender, message) {
     appendChatToBox(`[${sender}]: ${message}`);
 
     let localMsgs = JSON.parse(localStorage.getItem(`local_chat_${currentFreq}`)) || [];
     localMsgs.push({ sender, message });
-    if (localMsgs.length > 30) localMsgs.shift(); // Simpan maks 30 pesan terakhir
+    if (localMsgs.length > 30) localMsgs.shift();
     localStorage.setItem(`local_chat_${currentFreq}`, JSON.stringify(localMsgs));
   }
 
@@ -256,7 +308,7 @@
     appendChatToBox(`[SYS] ${msg}`);
   }
 
-  // LOGIKA PTT RECORDING
+  // 5. PTT & AUDIO LOGIC
   navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
     mediaRecorder = new MediaRecorder(stream);
     
@@ -283,6 +335,7 @@
     const startRecording = (e) => {
       e.preventDefault();
       if (mediaRecorder && mediaRecorder.state === "inactive") {
+        setRadioVolume(0.1);
         mediaRecorder.start();
         document.getElementById('micStatus').innerText = "🎙️ MEREKAM...";
       }
@@ -293,6 +346,7 @@
       if (mediaRecorder && mediaRecorder.state === "recording") {
         mediaRecorder.stop();
         document.getElementById('micStatus').innerText = "Mikrofon Siap";
+        setTimeout(() => setRadioVolume(1.0), 1000);
       }
     };
 
@@ -305,8 +359,12 @@
   });
 
   function playAudio(base64Data) {
+    setRadioVolume(0.1);
     const audio = new Audio(base64Data);
     audio.play();
+    audio.onended = () => {
+      setRadioVolume(1.0);
+    };
   }
 
   function showError(msg) {
