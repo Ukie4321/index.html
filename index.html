@@ -4,181 +4,104 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MRZYB-HT BLACK EDITION</title>
-
-  <!-- FITUR AUTO-VERSIONING (Anti-Cache) -->
   <script>
-    const APP_VERSION = "v1"; // Ubah ke "v2", "v3", dst saat Anda update kode di masa depan
+    // Strategi Versioning untuk Bypass Cache Browser
+    const APP_VERSION = "v4"; 
     if (!window.location.search.includes(APP_VERSION)) {
         window.location.href = window.location.pathname + "?" + APP_VERSION;
     }
   </script>
-
   <style>
-    /* Tema Blackout */
     body { background-color: #000; color: #a3e635; font-family: 'Courier New', monospace; margin: 0; display: flex; justify-content: center; min-height: 100vh; align-items: center; }
+    .ht-body { background: #121212; border: 4px solid #333; border-radius: 20px; padding: 20px; width: 90%; max-width: 360px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
+    .screen { background: #050505; border: 2px solid #222; padding: 15px; border-radius: 8px; margin-bottom: 15px; text-align: center; }
+    .freq { font-size: 32px; font-weight: bold; }
     
-    /* Chassis HT (Matte Black) */
-    .ht-body { background: #121212; border: 4px solid #333; border-radius: 20px; padding: 25px; width: 90%; max-width: 360px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); position: relative; }
-    
-    /* Layar Hitam Legam */
-    .screen { background: #050505; border: 2px solid #222; padding: 15px; border-radius: 8px; margin-bottom: 20px; text-align: center; box-shadow: inset 0 0 15px rgba(0,0,0,1); }
-    .freq { font-size: 32px; font-weight: bold; text-shadow: 0 0 8px #a3e635; }
-    
-    .chat-box { background: #000; height: 120px; overflow-y: scroll; border: 1px solid #333; padding: 8px; font-size: 12px; margin-bottom: 15px; border-radius: 4px; word-wrap: break-word; color: #888; }
-    
-    /* Input dan Tombol Bergaya Industrial */
-    .input-group { display: flex; gap: 5px; margin-bottom: 10px; }
-    .input-group input { flex: 1; background: #0a0a0a; border: 1px solid #333; color: #a3e635; padding: 8px; font-family: inherit; border-radius: 3px; }
-    .input-group button { background: #222; color: #a3e635; border: 1px solid #444; padding: 8px 12px; cursor: pointer; font-weight: bold; border-radius: 3px; }
-    .input-group button:hover { background: #333; }
+    /* Tampilan List User Online */
+    .user-list { border: 1px solid #222; background: #080808; padding: 8px; border-radius: 5px; margin-bottom: 15px; font-size: 11px; }
+    .user-count { color: #a3e635; font-weight: bold; }
+    .user-names { color: #888; font-size: 10px; margin-top: 4px; word-break: break-all; }
 
-    /* Tombol PTT */
-    .ptt-btn { 
-      background: linear-gradient(145deg, #b91c1c, #7f1d1d); 
-      color: white; border: 3px solid #450a0a; border-radius: 50%; 
-      width: 110px; height: 110px; margin: 20px auto; display: block; 
-      font-weight: bold; cursor: pointer; user-select: none; box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-      transition: transform 0.1s, box-shadow 0.1s;
-    }
-    .ptt-btn:active { transform: scale(0.95); background: #991b1b; }
-    
-    .status { text-align: center; font-size: 10px; margin-top: 10px; color: #555; text-transform: uppercase; letter-spacing: 1px; }
-    
-    /* Watermark Minimalis */
-    .watermark { position: absolute; bottom: 15px; right: 20px; font-size: 9px; opacity: 0.3; letter-spacing: 2px; font-weight: bold; color: #fff; }
+    .chat-box { background: #050505; height: 100px; overflow-y: auto; border: 1px solid #222; padding: 8px; font-size: 11px; margin-bottom: 15px; border-radius: 5px; color: #ccc; }
+    .input-group { display: flex; gap: 5px; margin-bottom: 10px; }
+    input { flex: 1; background: #0a0a0a; border: 1px solid #333; color: #a3e635; padding: 8px; border-radius: 3px; font-family: inherit; }
+    button { background: #222; color: #a3e635; border: 1px solid #444; padding: 8px 12px; cursor: pointer; border-radius: 3px; }
+    .ptt-btn { background: #b91c1c; color: white; border-radius: 50%; width: 90px; height: 90px; margin: 10px auto 0; display: block; border: none; font-weight: bold; font-family: inherit; cursor: pointer; }
+    .ptt-btn:active { background: #ef4444; }
   </style>
 </head>
 <body>
 
 <div class="ht-body">
-  <div class="watermark">MRZYB-HT</div>
-
   <div class="screen">
     <div class="freq" id="freqDisplay">145.820</div>
-    <div style="font-size: 10px; color: #444;">MHz FM</div>
+  </div>
+
+  <!-- PANEL PRESENCE (USER ONLINE) -->
+  <div class="user-list">
+    <span>Online: </span><span class="user-count" id="onlineCount">0</span>
+    <div class="user-names" id="namesList">Belum ada user</div>
   </div>
 
   <div class="input-group">
-    <input type="text" id="nickInput" placeholder="Callsign...">
+    <input type="text" id="nickInput" placeholder="Callsign/Nama...">
   </div>
-
   <div class="input-group">
-    <input type="text" id="freqInput" placeholder="Freq...">
+    <input type="text" id="freqInput" placeholder="Freq (misal: 145.820)">
     <button onclick="changeFreq()">SET</button>
   </div>
 
   <div class="chat-box" id="chatBox"></div>
-
-  <div class="input-group">
-    <input type="text" id="msgInput" placeholder="Pesan...">
-    <button onclick="sendText()">SEND</button>
-  </div>
-
   <button class="ptt-btn" id="pttBtn">PTT</button>
-  <div class="status" id="micStatus">Standby</div>
 </div>
 
 <script>
-  const WORKER_URL = "wss://my-ht-project.ukielaki8387.workers.dev"; 
+  const WORKER_URL = "wss://my-ht-project.ukielaki8387.workers.dev";
   let ws;
   let currentFreq = "145.820";
-  let mediaRecorder;
-  let audioChunks = [];
-
-  // DAFTAR FREKUENSI YANG DIKUNCI (bisa ditambah/ubah)
-  const LOCKED_FREQUENCIES = {
-    "145.990": "1234",
-    "145.000": "rahasia"
-  };
 
   function connect() {
     ws = new WebSocket(WORKER_URL);
-    ws.onopen = () => joinFrequency(currentFreq);
-    ws.onmessage = async (event) => {
-      const data = JSON.parse(event.data);
-      if (data.type === 'text') {
-        addChat(`[${data.freq}] ${data.sender}: ${data.message}`);
-      } else if (data.type === 'audio') {
-        playAudio(data.audio);
+
+    ws.onopen = () => {
+      joinFrequency(currentFreq);
+    };
+
+    ws.onmessage = (event) => {
+      try {
+        const data = JSON.parse(event.data);
+
+        // Menampilkan daftar & jumlah user online
+        if (data.type === 'presence') {
+          document.getElementById('onlineCount').innerText = data.users.length;
+          document.getElementById('namesList').innerText = data.users.length > 0 ? data.users.join(', ') : '-';
+        } 
+        else if (data.type === 'text') {
+          const box = document.getElementById('chatBox');
+          box.innerHTML += `<div><strong>[${data.sender}]</strong>: ${data.message}</div>`;
+          box.scrollTop = box.scrollHeight;
+        }
+      } catch (e) {
+        console.log("Audio/Raw data");
       }
     };
+
     ws.onclose = () => setTimeout(connect, 2000);
   }
 
   function joinFrequency(freq) {
     currentFreq = freq;
     document.getElementById('freqDisplay').innerText = freq;
+    const nick = document.getElementById('nickInput').value.trim() || 'Anonim';
     if (ws && ws.readyState === WebSocket.OPEN) {
-      ws.send(JSON.stringify({ type: 'join', freq: currentFreq }));
-      addChat(`[SYS] Pindah ke ${freq}`);
+      ws.send(JSON.stringify({ type: 'join', freq: freq, sender: nick }));
     }
   }
 
   function changeFreq() {
-    const targetFreq = document.getElementById('freqInput').value.trim();
-    if (!targetFreq) return;
-
-    if (LOCKED_FREQUENCIES[targetFreq]) {
-      const passInput = prompt(`Frekuensi ${targetFreq} TERKUNCI! Masukkan Password:`);
-      if (passInput !== LOCKED_FREQUENCIES[targetFreq]) {
-        alert("❌ Password Salah!");
-        return;
-      }
-    }
-    joinFrequency(targetFreq);
-    document.getElementById('freqInput').value = '';
+    const newFreq = document.getElementById('freqInput').value.trim();
+    if (newFreq) joinFrequency(newFreq);
   }
-
-  function sendText() {
-    const input = document.getElementById('msgInput');
-    const nickInput = document.getElementById('nickInput');
-    const senderName = nickInput.value.trim() || 'Anonymous';
-    localStorage.setItem('myCallsign', senderName);
-
-    if (input.value && ws && ws.readyState === WebSocket.OPEN) {
-      ws.send(JSON.stringify({ type: 'text', freq: currentFreq, sender: senderName, message: input.value }));
-      addChat(`[${currentFreq}] Saya (${senderName}): ${input.value}`);
-      input.value = '';
-    }
-  }
-
-  function addChat(msg) {
-    const box = document.getElementById('chatBox');
-    box.innerHTML += `<div>${msg}</div>`;
-    box.scrollTop = box.scrollHeight;
-  }
-
-  navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
-    mediaRecorder = new MediaRecorder(stream);
-    mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
-    mediaRecorder.onstop = async () => {
-      const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
-      audioChunks = [];
-      const reader = new FileReader();
-      reader.readAsDataURL(audioBlob);
-      reader.onloadend = () => {
-        if (ws && ws.readyState === WebSocket.OPEN) {
-          ws.send(JSON.stringify({ type: 'audio', freq: currentFreq, audio: reader.result }));
-        }
-      };
-    };
-
-    const pttBtn = document.getElementById('pttBtn');
-    const start = (e) => { e.preventDefault(); mediaRecorder.start(); document.getElementById('micStatus').innerText = "🎙️ TX..."; };
-    const stop = (e) => { e.preventDefault(); mediaRecorder.stop(); document.getElementById('micStatus').innerText = "Standby"; };
-
-    pttBtn.addEventListener('mousedown', start);
-    pttBtn.addEventListener('mouseup', stop);
-    pttBtn.addEventListener('touchstart', start);
-    pttBtn.addEventListener('touchend', stop);
-  });
-
-  function playAudio(base64Data) { new Audio(base64Data).play(); }
-
-  window.onload = () => {
-    const savedName = localStorage.getItem('myCallsign');
-    if (savedName) document.getElementById('nickInput').value = savedName;
-  };
 
   connect();
 </script>
