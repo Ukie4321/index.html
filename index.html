@@ -117,7 +117,19 @@
       try {
         const data = JSON.parse(event.data);
 
-        if (data.type === 'join_success') {
+        // FITUR BARU: Menampilkan riwayat chat dari KV saat pertama join
+        if (data.type === 'history') {
+          const chatBox = document.getElementById('chatBox');
+          chatBox.innerHTML = ''; // Restart tampilan kotak chat
+          addChat(`[SYS] Terhubung ke frekuensi ${currentFreq}`);
+          
+          if (data.messages && data.messages.length > 0) {
+            data.messages.forEach(msg => {
+              addChat(`[${msg.sender}]: ${msg.message}`);
+            });
+          }
+        }
+        else if (data.type === 'join_success') {
           hideError();
           document.getElementById('freqDisplay').innerText = data.freq;
           if (PRIVATE_CHANNELS[data.freq]) {
@@ -161,7 +173,6 @@
 
     if (ws && ws.readyState === WebSocket.OPEN) {
       ws.send(JSON.stringify({ type: 'join', freq: freq, sender: nick }));
-      addChat(`[SYS] Berpindah ke frekuensi ${freq}`);
     }
   }
 
