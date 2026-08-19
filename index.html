@@ -82,17 +82,35 @@
   let mediaRecorder;
   let audioChunks = [];
 
-  // PENGATURAN PASSWORD PRIVATE CHANNEL
   const PRIVATE_CHANNELS = {
     "111.111": "1234",
     "999.999": "admin"
   };
 
+  // AMBIL DATA DARI MEMORI HP SAAT DIBUKA
+  window.addEventListener('DOMContentLoaded', () => {
+    const savedNick = localStorage.getItem('ht_nick');
+    const savedFreq = localStorage.getItem('ht_freq');
+    const savedPass = localStorage.getItem('ht_pass');
+
+    if (savedNick) document.getElementById('nickInput').value = savedNick;
+    if (savedFreq) {
+      document.getElementById('freqInput').value = savedFreq;
+      currentFreq = savedFreq;
+    }
+    if (savedPass) document.getElementById('passInput').value = savedPass;
+
+    document.getElementById('nickInput').addEventListener('change', (e) => {
+      localStorage.setItem('ht_nick', e.target.value.trim());
+    });
+  });
+
   function connect() {
     ws = new WebSocket(WORKER_URL);
 
     ws.onopen = () => {
-      joinFrequency(currentFreq);
+      const savedPass = localStorage.getItem('ht_pass') || '';
+      joinFrequency(currentFreq, savedPass);
     };
 
     ws.onmessage = async (event) => {
@@ -134,7 +152,13 @@
     }
 
     currentFreq = freq;
+    
+    // SIMPAN KE LOCALSTORAGE
     const nick = document.getElementById('nickInput').value.trim() || 'Anonim';
+    localStorage.setItem('ht_nick', nick);
+    localStorage.setItem('ht_freq', freq);
+    localStorage.setItem('ht_pass', password);
+
     if (ws && ws.readyState === WebSocket.OPEN) {
       ws.send(JSON.stringify({ type: 'join', freq: freq, sender: nick }));
       addChat(`[SYS] Berpindah ke frekuensi ${freq}`);
@@ -171,7 +195,7 @@
     box.scrollTop = box.scrollHeight;
   }
 
-  // --- LOGIKA REKAM SUARA BASE64 (PERSIS DENGAN KODE AWAL) ---
+  // LOGIKA REKAM SUARA BASE64
   navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
     mediaRecorder = new MediaRecorder(stream);
     
