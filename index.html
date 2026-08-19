@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MRZYB-HT BLACK EDITION</title>
   <script>
-    const APP_VERSION = "v6"; 
+    const APP_VERSION = "v7"; 
     if (!window.location.search.includes(APP_VERSION)) {
         window.location.href = window.location.pathname + "?" + APP_VERSION;
     }
@@ -20,12 +20,14 @@
     .user-count { color: #a3e635; font-weight: bold; }
     .user-names { color: #888; font-size: 10px; margin-top: 4px; word-break: break-all; }
 
-    .chat-box { background: #050505; height: 100px; overflow-y: auto; border: 1px solid #222; padding: 8px; font-size: 11px; margin-bottom: 15px; border-radius: 5px; color: #ccc; }
+    .chat-box { background: #050505; height: 100px; overflow-y: auto; border: 1px solid #222; padding: 8px; font-size: 11px; margin-bottom: 10px; border-radius: 5px; color: #ccc; }
     .input-group { display: flex; gap: 5px; margin-bottom: 10px; }
     input { flex: 1; background: #0a0a0a; border: 1px solid #333; color: #a3e635; padding: 8px; border-radius: 3px; font-family: inherit; }
     button { background: #222; color: #a3e635; border: 1px solid #444; padding: 8px 12px; cursor: pointer; border-radius: 3px; }
-    .ptt-btn { background: #b91c1c; color: white; border-radius: 50%; width: 90px; height: 90px; margin: 10px auto 0; display: block; border: none; font-weight: bold; font-family: inherit; cursor: pointer; }
-    .ptt-btn:active { background: #ef4444; }
+    
+    .ptt-btn { background: #b91c1c; color: white; border-radius: 50%; width: 90px; height: 90px; margin: 10px auto 0; display: block; border: none; font-weight: bold; font-family: inherit; cursor: pointer; user-select: none; touch-action: manipulation; }
+    .ptt-btn.active { background: #ef4444; box-shadow: 0 0 15px #ef4444; }
+    
     .error-msg { color: #ef4444; font-size: 11px; text-align: center; margin-bottom: 10px; display: none; }
     .private-badge { font-size: 10px; color: #f59e0b; margin-top: 2px; }
   </style>
@@ -59,7 +61,16 @@
     <button onclick="changeFreq()">SET</button>
   </div>
 
+  <!-- AREA CHAT BOX -->
   <div class="chat-box" id="chatBox"></div>
+  
+  <!-- INPUT KHUSUS CHAT TEKS -->
+  <div class="input-group">
+    <input type="text" id="chatInput" placeholder="Ketik pesan..." onkeypress="handleKeyPress(event)">
+    <button onclick="sendTextMessage()">KIRIM</button>
+  </div>
+
+  <!-- TOMBOL PTT AUDIO -->
   <button class="ptt-btn" id="pttBtn">PTT</button>
 </div>
 
@@ -67,32 +78,39 @@
   const WORKER_URL = "wss://my-ht-project.ukielaki8387.workers.dev";
   let ws;
   let currentFreq = "145.820";
+  
+  // Audio PTT Variables
+  let mediaRecorder;
+  let audioChunks = [];
+  let isRecording = false;
 
-  // =============================================================
-  // ATUR 2 CHANNEL PRIVATE & PASSWORDNYA DI SINI
-  // =============================================================
   const PRIVATE_CHANNELS = {
-    "111.111": "1234",  // Channel Private 1 (Frekuensi: 111.111, Password: 1234)
-    "999.999": "admin"  // Channel Private 2 (Frekuensi: 999.999, Password: admin)
+    "111.111": "1234",
+    "999.999": "admin"
   };
-  // =============================================================
 
   function connect() {
     ws = new WebSocket(WORKER_URL);
+    ws.binaryType = "arraybuffer";
 
     ws.onopen = () => {
       joinFrequency(currentFreq);
     };
 
     ws.onmessage = (event) => {
+      // Jika pesan berupa audio binary
+      if (event.data instanceof ArrayBuffer) {
+        playAudioBuffer(event.data);
+        return;
+      }
+
+      // Jika pesan berupa teks JSON
       try {
         const data = JSON.parse(event.data);
 
         if (data.type === 'join_success') {
           hideError();
           document.getElementById('freqDisplay').innerText = data.freq;
-          
-          // Tampilkan penanda jika masuk channel private
           if (PRIVATE_CHANNELS[data.freq]) {
             document.getElementById('privateBadge').innerText = "🔒 PRIVATE CHANNEL";
           } else {
@@ -109,7 +127,7 @@
           box.scrollTop = box.scrollHeight;
         }
       } catch (e) {
-        console.log("Audio/Raw data");
+        console.log("Receive data", e);
       }
     };
 
@@ -117,7 +135,6 @@
   }
 
   function joinFrequency(freq, password = '') {
-    // Cek apakah frekuensi tujuan termasuk Channel Private
     if (PRIVATE_CHANNELS[freq]) {
       const correctPass = PRIVATE_CHANNELS[freq];
       if (password !== correctPass) {
@@ -137,6 +154,75 @@
     const newFreq = document.getElementById('freqInput').value.trim();
     const pass = document.getElementById('passInput').value.trim();
     if (newFreq) joinFrequency(newFreq, pass);
+  }
+
+  // --- LOGIKA KIRIM CHAT TEKS ---
+  function sendTextMessage() {
+    const input = document.getElementById('chatInput');
+    const msg = input.value.trim();
+    const nick = document.getElementById('nickInput').value.trim() || 'Anonim';
+
+    if (msg && ws && ws.readyState === WebSocket.OPEN) {
+      ws.send(JSON.stringify({
+        type: 'text',
+        freq: currentFreq,
+        sender: nick,
+        message: msg
+      }));
+      input.value = '';
+    }
+  }
+
+  function handleKeyPress(e) {
+    if (e.key === 'Enter') sendTextMessage();
+  }
+
+  // --- LOGIKA AUDIO PTT (REKAM & SEBARKAN) ---
+  const pttBtn = document.getElementById('pttBtn');
+
+  async function startRecording() {
+    if (isRecording) return;
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      mediaRecorder = new MediaRecorder(stream);
+      audioChunks = [];
+
+      mediaRecorder.ondataavailable = (e) => {
+        if (e.data.size > 0 && ws && ws.readyState === WebSocket.OPEN) {
+          e.data.arrayBuffer().then(buffer => ws.send(buffer));
+        }
+      };
+
+      mediaRecorder.start(250); // Kirim chunk audio setiap 250ms
+      isRecording = true;
+      pttBtn.classList.add('active');
+    } catch (err) {
+      showError("Izin Mikrofon Ditolak!");
+    }
+  }
+
+  function stopRecording() {
+    if (!isRecording) return;
+    if (mediaRecorder && mediaRecorder.state !== "inactive") {
+      mediaRecorder.stop();
+      mediaRecorder.stream.getTracks().forEach(track => track.stop());
+    }
+    isRecording = false;
+    pttBtn.classList.remove('active');
+  }
+
+  // Event listener tombol PTT (Tahan untuk bicara)
+  pttBtn.addEventListener('mousedown', startRecording);
+  pttBtn.addEventListener('mouseup', stopRecording);
+  pttBtn.addEventListener('touchstart', (e) => { e.preventDefault(); startRecording(); });
+  pttBtn.addEventListener('touchend', (e) => { e.preventDefault(); stopRecording(); });
+
+  // Playback Audio yang Diterima
+  function playAudioBuffer(buffer) {
+    const blob = new Blob([buffer], { type: 'audio/webm' });
+    const url = URL.createObjectURL(blob);
+    const audio = new Audio(url);
+    audio.play().catch(e => console.log("Autoplay ditolak browser", e));
   }
 
   function showError(msg) {
