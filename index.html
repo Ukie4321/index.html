@@ -26,7 +26,8 @@
     .ht-body.theme-pink .extra-tools { background: #1f0412; border-color: #701a45; }
     .ht-body.theme-pink .modern-slider::-webkit-slider-thumb { background: #f472b6; box-shadow: 0 0 5px #f472b6; }
 
-    /* --- PTT BUTTON --- */
+    /* --- PTT BUTTON & LOCK --- */
+    .ptt-container { text-align: center; margin-top: 10px; }
     .ptt-btn, .ht-body.theme-green .ptt-btn, .ht-body.theme-pink .ptt-btn { 
       background: #b91c1c !important; 
       color: #ffffff !important; 
@@ -34,7 +35,7 @@
       border-radius: 50% !important;
       width: 100px; 
       height: 100px; 
-      margin: 10px auto 0; 
+      margin: 0 auto; 
       display: block; 
       font-weight: bold; 
       font-family: inherit; 
@@ -42,20 +43,46 @@
       user-select: none; 
       touch-action: manipulation;
       box-shadow: 0 4px 15px rgba(185, 28, 28, 0.5) !important;
+      transition: all 0.2s;
     }
     .ptt-btn:active, .ht-body.theme-green .ptt-btn:active, .ht-body.theme-pink .ptt-btn:active { background: #ef4444 !important; }
+    
+    .ptt-btn.locked {
+      background: #15803d !important;
+      border-color: #22c55e !important;
+      box-shadow: 0 0 20px rgba(34, 197, 94, 0.8) !important;
+      animation: pulse-green 1.5s infinite;
+    }
+
+    @keyframes pulse-green {
+      0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); }
+      70% { box-shadow: 0 0 0 15px rgba(34, 197, 94, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+    }
+
+    .lock-btn {
+      margin-top: 8px;
+      font-size: 10px;
+      padding: 4px 10px;
+      background: #181818;
+      color: #f59e0b;
+      border: 1px solid #f59e0b;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+    }
 
     .screen { background: #050505; border: 2px solid #222; padding: 12px; border-radius: 8px; margin-bottom: 12px; text-align: center; position: relative; }
     .status-bar { display: flex; justify-content: space-between; font-size: 9px; color: #888; margin-bottom: 4px; }
     .signal-meter { color: #a3e635; font-weight: bold; letter-spacing: 1px; }
-    .freq { font-size: 30px; font-weight: bold; line-height: 1.1; }
+    .freq { font-size: 26px; font-weight: bold; line-height: 1.1; word-break: break-all; }
 
     .user-list { border: 1px solid #222; background: #080808; padding: 8px; border-radius: 5px; margin-bottom: 12px; font-size: 11px; }
     .user-count { color: #a3e635; font-weight: bold; }
     .user-names { color: #888; font-size: 10px; margin-top: 4px; word-break: break-all; }
 
     .chat-box { background: #050505; height: 110px; overflow-y: auto; border: 1px solid #222; padding: 8px; font-size: 11px; margin-bottom: 8px; border-radius: 5px; color: #ccc; word-wrap: break-word; }
-    .chat-box a { color: #60a5fa; text-decoration: underline; }
+    .chat-box a { color: #60a5fa; text-decoration: underline; font-weight: bold; word-break: break-all; }
     .input-group { display: flex; gap: 5px; margin-bottom: 8px; }
     input, select { flex: 1; background: #0a0a0a; border: 1px solid #333; color: #a3e635; padding: 8px; border-radius: 3px; font-family: inherit; }
     button { background: #222; color: #a3e635; border: 1px solid #444; padding: 8px 12px; cursor: pointer; border-radius: 3px; }
@@ -85,49 +112,153 @@
     .modal-btn-ok { background: #b91c1c; color: #fff; border: 1px solid #ef4444; padding: 6px 15px; font-size: 11px; cursor: pointer; }
     .modal-btn-cancel { background: #222; color: #888; border: 1px solid #444; padding: 6px 15px; font-size: 11px; cursor: pointer; }
 
-    /* --- STYLES POPUP KOMPAS --- */
-    .close-x-btn {
-      position: absolute;
-      top: 8px;
-      right: 12px;
-      background: transparent;
-      border: none;
-      color: #ef4444;
-      font-size: 18px;
-      font-weight: bold;
-      cursor: pointer;
-      padding: 0;
-    }
-    .compass-circle-outer {
-      width: 140px;
-      height: 140px;
-      border: 3px solid #f59e0b;
-      border-radius: 50%;
-      margin: 10px auto;
-      position: relative;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background: radial-gradient(circle, #1a1a1a 0%, #050505 100%);
-      box-shadow: 0 0 15px rgba(245, 158, 11, 0.2);
-    }
-    .compass-dial {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      border-radius: 50%;
-      transition: transform 0.1s ease-out;
-    }
+    .close-x-btn { position: absolute; top: 8px; right: 12px; background: transparent; border: none; color: #ef4444; font-size: 18px; font-weight: bold; cursor: pointer; padding: 0; }
+    .compass-circle-outer { width: 140px; height: 140px; border: 3px solid #f59e0b; border-radius: 50%; margin: 10px auto; position: relative; display: flex; justify-content: center; align-items: center; background: radial-gradient(circle, #1a1a1a 0%, #050505 100%); box-shadow: 0 0 15px rgba(245, 158, 11, 0.2); }
+    .compass-dial { position: absolute; width: 100%; height: 100%; border-radius: 50%; transition: transform 0.1s ease-out; }
     .compass-mark-u { position: absolute; top: 4px; left: 50%; transform: translateX(-50%); color: #ef4444; font-weight: bold; font-size: 12px; }
     .compass-mark-s { position: absolute; bottom: 4px; left: 50%; transform: translateX(-50%); color: #fff; font-size: 10px; }
     .compass-mark-t { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); color: #fff; font-size: 10px; }
     .compass-mark-b { position: absolute; left: 6px; top: 50%; transform: translateY(-50%); color: #fff; font-size: 10px; }
-    .compass-pointer {
-      width: 4px;
-      height: 50px;
-      background: linear-gradient(to bottom, #ef4444 50%, #ffffff 50%);
-      position: absolute;
-      border-radius: 2px;
+    .compass-pointer { width: 4px; height: 50px; background: linear-gradient(to bottom, #ef4444 50%, #ffffff 50%); position: absolute; border-radius: 2px; }
+
+    /* --- MODE CHAT FULLSCREEN ALA WHATSAPP --- */
+    .fullscreen-chat-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      height: 100dvh;
+      background: #0b141a;
+      z-index: 9999;
+      flex-direction: column;
+    }
+    
+    .fullscreen-chat-overlay.active {
+      display: flex;
+    }
+
+    .fs-header {
+      background: #1f2c34;
+      padding: 12px 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #2a3942;
+      color: #e9edef;
+    }
+
+    .fs-header-title {
+      font-weight: bold;
+      font-size: 15px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .fs-chat-body {
+      flex: 1;
+      padding: 15px;
+      overflow-y: auto;
+      background-color: #0b141a;
+      background-image: radial-gradient(#182229 1px, transparent 1px);
+      background-size: 16px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      position: relative;
+    }
+
+    .fs-chat-footer {
+      background: #1f2c34;
+      padding: 10px 12px;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .fs-chat-footer input {
+      background: #2a3942;
+      border: none;
+      color: #e9edef;
+      padding: 12px;
+      border-radius: 20px;
+      font-size: 14px;
+      outline: none;
+    }
+
+    .fs-chat-footer button {
+      background: #00a884;
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      width: 42px;
+      height: 42px;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+
+    /* TOMBOL REKAM SUARA / PTT MELAYANG (FULLSCREEN MODE) */
+    .fs-ptt-btn {
+      background: #b91c1c;
+      color: #fff;
+      border: 2px solid #ef4444;
+      border-radius: 50%;
+      width: 42px;
+      height: 42px;
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      user-select: none;
+      touch-action: manipulation;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+      transition: all 0.2s;
+    }
+
+    .fs-ptt-btn:active {
+      background: #ef4444;
+      transform: scale(1.1);
+    }
+
+    /* STYLE BUBBLE VOICE NOTE ALA WA */
+    .vn-player-bubble {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #1f2c34;
+      border: 1px solid #00a884;
+      padding: 4px 10px;
+      border-radius: 12px;
+      margin-top: 4px;
+      margin-bottom: 2px;
+    }
+
+    .vn-play-btn {
+      background: #00a884;
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      width: 26px;
+      height: 26px;
+      font-size: 10px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+    }
+
+    .vn-label {
+      font-size: 10px;
+      color: #00a884;
+      font-weight: bold;
     }
   </style>
 </head>
@@ -191,17 +322,29 @@
   <div class="input-group">
     <input type="text" id="nickInput" placeholder="Callsign/Nama...">
   </div>
+
   <div class="input-group">
-    <input type="text" id="freqInput" placeholder="Freq (misal: 145.820)">
+    <select id="groupSelect" onchange="switchGroupFromDropdown()">
+      <option value="145.820||">🌐 General (145.820)</option>
+    </select>
+    <button onclick="openCreateGroupModal()" style="font-size: 11px; background: #065f46; border-color: #10b981; color: #fff;">➕ GRUP</button>
+  </div>
+
+  <div class="input-group">
+    <input type="text" id="freqInput" placeholder="Freq/Grup ID (misal: 145.820)">
   </div>
   <div class="input-group">
     <input type="password" id="passInput" placeholder="Password Private (jika ada)">
     <button onclick="changeFreq()">SET</button>
   </div>
 
+  <!-- HEADER RIWAYAT CHAT + TOMBOL FULLSCREEN -->
   <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
     <span style="font-size: 10px; color: #888;">RIWAYAT CHAT:</span>
-    <button onclick="openClearModal()" style="font-size: 9px; padding: 2px 6px; background: #181818; color: #ef4444; border: 1px solid #333;">HAPUS CHAT</button>
+    <div style="display: flex; gap: 4px;">
+      <button onclick="openFullscreenChat()" style="font-size: 9px; padding: 2px 6px; background: #181818; color: #60a5fa; border: 1px solid #333;">⛶ FULLSCREEN</button>
+      <button onclick="openClearModal()" style="font-size: 9px; padding: 2px 6px; background: #181818; color: #ef4444; border: 1px solid #333;">HAPUS CHAT</button>
+    </div>
   </div>
 
   <div class="chat-box" id="chatBox"></div>
@@ -214,12 +357,39 @@
   </div>
 
   <div class="input-group">
-    <input type="text" id="msgInput" placeholder="Ketik pesan..." onkeypress="handleKeyPress(event)">
+    <input type="text" id="msgInput" placeholder="Ketik pesan / tempel link..." onkeypress="handleKeyPress(event)">
     <button onclick="sendText()">KIRIM</button>
   </div>
 
-  <button class="ptt-btn" id="pttBtn">TEKAN &<br>TAHAN UTK<br>BICARA</button>
+  <button onclick="replayLastAudio()" id="replayBtn" style="width: 100%; margin-bottom: 10px; background: #181818; border: 1px solid #333; padding: 6px 12px; display: flex; align-items: center; justify-content: center; font-size: 10px; cursor: pointer;">
+    <span class="white-icon">▶</span> REPLAY LAST AUDIO
+  </button>
+
+  <div class="ptt-container">
+    <button class="ptt-btn" id="pttBtn">TEKAN &<br>TAHAN UTK<br>BICARA</button>
+    <button class="lock-btn" id="lockPttBtn" onclick="togglePttLock()">🔓 KUNCI PTT (HANDS-FREE)</button>
+  </div>
   <div class="status" id="micStatus">Mikrofon Siap</div>
+</div>
+
+<!-- CONTAINER FULLSCREEN CHAT ALA WHATSAPP + REKAM SUARA -->
+<div class="fullscreen-chat-overlay" id="fullscreenChat">
+  <div class="fs-header">
+    <div class="fs-header-title">
+      <button onclick="closeFullscreenChat()" style="background:transparent; border:none; color:#00a884; font-size:18px; padding:0; cursor:pointer;">←</button>
+      <span>💬 Chat Frekuensi <span id="fsFreqTitle" style="color:#00a884;">145.820</span></span>
+    </div>
+    <button onclick="closeFullscreenChat()" style="background:#2a3942; border:none; color:#e9edef; font-size:11px; padding:5px 10px; border-radius:4px;">TUTUP</button>
+  </div>
+
+  <div class="fs-chat-body" id="fsChatBox"></div>
+
+  <div class="fs-chat-footer">
+    <input type="text" id="fsMsgInput" placeholder="Ketik pesan..." onkeypress="handleFsKeyPress(event)">
+    <button onclick="sendFsText()">➤</button>
+    <!-- TOMBOL REKAM SUARA (HOLD TO RECORD) -->
+    <button class="fs-ptt-btn" id="fsPttBtn" title="Tahan untuk Rekam Suara">🎙️</button>
+  </div>
 </div>
 
 <!-- MODAL POPUP GENERAL -->
@@ -228,6 +398,20 @@
     <div class="modal-text" id="modalText">Pemberitahuan</div>
     <div class="modal-btns" id="modalBtns">
       <button class="modal-btn-ok" onclick="closeModal()">OK</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL POPUP BUAT GRUP BARU -->
+<div id="createGroupModal" class="modal-overlay">
+  <div class="modal-box" style="border-color: #10b981;">
+    <div style="color: #10b981; font-weight: bold; font-size: 14px; margin-bottom: 10px;">👥 BUAT / GABUNG GRUP</div>
+    <input type="text" id="newGroupName" placeholder="Nama Grup (misal: SQUAD-ALPHA)" style="width: 90%; margin-bottom: 8px;">
+    <input type="text" id="newGroupFreq" placeholder="ID/Frekuensi Grup (misal: 888.500)" style="width: 90%; margin-bottom: 8px;">
+    <input type="password" id="newGroupPass" placeholder="PIN/Password (Kosongkan jika Publik)" style="width: 90%; margin-bottom: 12px;">
+    <div class="modal-btns">
+      <button class="modal-btn-cancel" onclick="closeCreateGroupModal()">BATAL</button>
+      <button class="modal-btn-ok" style="background: #065f46; border-color: #10b981;" onclick="confirmCreateGroup()">SIMPAN & JOIN</button>
     </div>
   </div>
 </div>
@@ -262,8 +446,12 @@
   let mediaRecorder;
   let audioChunks = [];
   let micStream = null;
+  let activePttSource = 'main'; // 'main' atau 'fullscreen'
   let isRadioPlaying = false;
   let customRadioVolume = 0.8;
+  let lastAudioData = null;
+
+  let isPttLocked = false;
 
   let isScanning = false;
   let scanInterval;
@@ -306,7 +494,7 @@
     if ("Notification" in window && Notification.permission === "granted") {
       try {
         new Notification(`Pesan HT [${currentFreq}] dari ${sender}`, {
-          body: message,
+          body: message.includes("audio-vn-data") ? "🎙️ Pesan Suara (VN)" : message,
           icon: 'logo.png',
           vibrate: [200, 100, 200]
         });
@@ -421,10 +609,72 @@
       localStorage.setItem('ht_nick', e.target.value.trim());
     });
 
+    loadSavedGroupsUI();
     loadLocalHistory(currentFreq);
     connect();
     setupPTT();
   });
+
+  function loadSavedGroupsUI() {
+    const groupSelect = document.getElementById('groupSelect');
+    groupSelect.innerHTML = `<option value="145.820||">🌐 General (145.820)</option>`;
+    
+    const savedGroups = JSON.parse(localStorage.getItem('ht_my_groups')) || [];
+    savedGroups.forEach(g => {
+      const option = document.createElement('option');
+      option.value = `${g.freq}||${g.pass || ''}`;
+      option.innerText = `👥 ${g.name} (${g.freq})`;
+      groupSelect.appendChild(option);
+    });
+  }
+
+  function openCreateGroupModal() {
+    document.getElementById('createGroupModal').style.display = 'flex';
+  }
+
+  function closeCreateGroupModal() {
+    document.getElementById('createGroupModal').style.display = 'none';
+  }
+
+  function confirmCreateGroup() {
+    const name = document.getElementById('newGroupName').value.trim();
+    const freq = document.getElementById('newGroupFreq').value.trim();
+    const pass = document.getElementById('newGroupPass').value.trim();
+
+    if (!name || !freq) {
+      showAlert("Nama dan ID/Frekuensi Grup wajib diisi!");
+      return;
+    }
+
+    let savedGroups = JSON.parse(localStorage.getItem('ht_my_groups')) || [];
+    savedGroups = savedGroups.filter(g => g.freq !== freq);
+    savedGroups.push({ name, freq, pass });
+    localStorage.setItem('ht_my_groups', JSON.stringify(savedGroups));
+
+    document.getElementById('freqInput').value = freq;
+    document.getElementById('passInput').value = pass;
+    
+    closeCreateGroupModal();
+    loadSavedGroupsUI();
+
+    document.getElementById('groupSelect').value = `${freq}||${pass}`;
+    joinFrequency(freq, pass);
+
+    document.getElementById('newGroupName').value = '';
+    document.getElementById('newGroupFreq').value = '';
+    document.getElementById('newGroupPass').value = '';
+  }
+
+  function switchGroupFromDropdown() {
+    const val = document.getElementById('groupSelect').value;
+    const parts = val.split('||');
+    const freq = parts[0];
+    const pass = parts[1] || '';
+
+    document.getElementById('freqInput').value = freq;
+    document.getElementById('passInput').value = pass;
+    joinFrequency(freq, pass);
+  }
 
   function connect() {
     ws = new WebSocket(WORKER_URL);
@@ -457,7 +707,8 @@
         else if (data.type === 'join_success') {
           hideError();
           document.getElementById('freqDisplay').innerText = data.freq;
-          document.getElementById('privateBadge').innerText = PRIVATE_CHANNELS[data.freq] ? "🔒 PRIVATE CHANNEL" : "";
+          document.getElementById('fsFreqTitle').innerText = data.freq;
+          document.getElementById('privateBadge').innerText = (PRIVATE_CHANNELS[data.freq] || (localStorage.getItem('ht_pass') !== '')) ? "🔒 PRIVATE CHANNEL / GRUP" : "";
         }
         else if (data.type === 'presence') {
           const uniqueUsers = [...new Set((data.users || []).filter(u => u && u.trim() !== ''))];
@@ -478,17 +729,28 @@
           if (data.sender !== myNick) {
             showBannerNotification(data.sender, data.message);
             playRogerBeep();
-            speakText(`${data.sender} berkata ${data.message}`);
+            if(!data.message.includes("audio-vn-data")) {
+              speakText(`${data.sender} berkata ${data.message}`);
+            }
           }
 
           saveAndAddSingleChat(data.msgId, data.sender, data.message);
         } 
         else if (data.type === 'audio') {
+          lastAudioData = data.audio;
           playAudio(data.audio);
         }
       } catch (e) {}
     };
     ws.onclose = () => setTimeout(connect, 2000);
+  }
+
+  function replayLastAudio() {
+    if (lastAudioData) {
+      playAudio(lastAudioData);
+    } else {
+      showAlert("Tidak ada audio tersimpan.");
+    }
   }
 
   function toggleRadio() {
@@ -592,7 +854,6 @@
     sendText();
   }
 
-  // --- FITUR KIRIM KOORDINAT GPS ---
   function sendGPSLocation() {
     if (!navigator.geolocation) {
       showAlert("Fitur GPS tidak didukung pada browser/perangkat ini.");
@@ -606,7 +867,7 @@
         const lat = position.coords.latitude.toFixed(5);
         const lon = position.coords.longitude.toFixed(5);
         const mapUrl = `https://maps.google.com/?q=${lat},${lon}`;
-        const gpsMsg = `📍 POSISI GPS: ${lat}, ${lon} (${mapUrl})`;
+        const gpsMsg = `📍 POSISI GPS: ${mapUrl}`;
 
         const nick = document.getElementById('nickInput').value.trim() || 'Anonim';
         if (ws && ws.readyState === WebSocket.OPEN) {
@@ -686,78 +947,193 @@
     closeModal();
   }
 
+  function playVNFromData(base64Data) {
+    playAudio(base64Data);
+  }
+
   function appendChatToBox(msg) {
     const box = document.getElementById('chatBox');
     const time = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
     
-    // Format URL otomatis menjadi link aktif yang bisa diklik
-    const urlRegex = /(https?:\/\/[^\s]+)/g;
-    const formattedMsg = msg.replace(urlRegex, (url) => `<a href="${url}" target="_blank" rel="noopener noreferrer">[Buka Peta]</a>`);
+    let formattedMsg = msg;
+    
+    // FORMAT TAMPILAN JIKA BERUPA VOICE NOTE (VN)
+    if (msg.includes("audio-vn-data:")) {
+      const parts = msg.split("audio-vn-data:");
+      const senderInfo = parts[0]; 
+      const audioBase64 = parts[1];
+      
+      formattedMsg = `${senderInfo}<br>
+        <div class="vn-player-bubble">
+          <button class="vn-play-btn" onclick="playVNFromData('${audioBase64}')">▶</button>
+          <span class="vn-label">🎙️ Voice Note</span>
+        </div>`;
+    } else {
+      const urlRegex = /(https?:\/\/[^\s]+)/g;
+      formattedMsg = msg.replace(urlRegex, (url) => {
+        return `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`;
+      });
+    }
 
-    box.innerHTML += `<div><span class="time-stamp">[${time}]</span>${formattedMsg}</div>`;
+    const content = `<div><span class="time-stamp">[${time}]</span>${formattedMsg}</div>`;
+    box.innerHTML += content;
     box.scrollTop = box.scrollHeight;
+
+    const fsBox = document.getElementById('fsChatBox');
+    if (fsBox) {
+      fsBox.innerHTML += content;
+      fsBox.scrollTop = fsBox.scrollHeight;
+    }
   }
 
   function addSystemMsg(msg) { appendChatToBox(`[SYS] ${msg}`); }
 
-  function setupPTT() {
-    const pttBtn = document.getElementById('pttBtn');
+  /* --- FULLSCREEN CHAT MODE --- */
+  function openFullscreenChat() {
+    document.getElementById('fsFreqTitle').innerText = currentFreq;
+    const fsBox = document.getElementById('fsChatBox');
+    const chatBox = document.getElementById('chatBox');
+    
+    fsBox.innerHTML = chatBox.innerHTML;
+    document.getElementById('fullscreenChat').classList.add('active');
+    fsBox.scrollTop = fsBox.scrollHeight;
+  }
 
-    const startRecording = async (e) => {
-      e.preventDefault();
-      if (mediaRecorder && mediaRecorder.state === "recording") return;
+  function closeFullscreenChat() {
+    document.getElementById('fullscreenChat').classList.remove('active');
+  }
 
-      try {
-        micStream = await navigator.mediaDevices.getUserMedia({
-          audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true }
-        });
+  function sendFsText() {
+    const input = document.getElementById('fsMsgInput');
+    const nick = document.getElementById('nickInput').value.trim() || 'Anonim';
+    const msgText = input.value.trim();
+    
+    if (msgText && ws && ws.readyState === WebSocket.OPEN) {
+      const msgId = Date.now() + '_' + Math.random().toString(36).substr(2, 5);
+      
+      ws.send(JSON.stringify({ 
+        type: 'text', 
+        freq: currentFreq, 
+        sender: nick, 
+        message: msgText,
+        msgId: msgId
+      }));
+      input.value = '';
+    }
+  }
 
+  function handleFsKeyPress(e) {
+    if (e.key === 'Enter') sendFsText();
+  }
+
+  async function startRecordingAudio(source = 'main') {
+    activePttSource = source;
+    if (mediaRecorder && mediaRecorder.state === "recording") return;
+
+    try {
+      micStream = await navigator.mediaDevices.getUserMedia({
+        audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true }
+      });
+
+      audioChunks = [];
+      mediaRecorder = new MediaRecorder(micStream);
+
+      mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+      mediaRecorder.onstop = async () => {
+        const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
         audioChunks = [];
-        mediaRecorder = new MediaRecorder(micStream);
-
-        mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
-        mediaRecorder.onstop = async () => {
-          const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
-          audioChunks = [];
-          const reader = new FileReader();
-          reader.readAsDataURL(audioBlob);
-          reader.onloadend = () => {
-            const base64Audio = reader.result;
-            if (ws && ws.readyState === WebSocket.OPEN) {
+        const reader = new FileReader();
+        reader.readAsDataURL(audioBlob);
+        reader.onloadend = () => {
+          const base64Audio = reader.result;
+          const nick = document.getElementById('nickInput').value.trim() || 'Anonim';
+          
+          if (ws && ws.readyState === WebSocket.OPEN) {
+            if (activePttSource === 'fullscreen') {
+              // Kirim sebagai Voice Note (Tersimpan di Chat & Bisa di-Play)
+              const msgId = Date.now() + '_' + Math.random().toString(36).substr(2, 5);
+              const vnPayload = `audio-vn-data:${base64Audio}`;
+              ws.send(JSON.stringify({
+                type: 'text',
+                freq: currentFreq,
+                sender: nick,
+                message: vnPayload,
+                msgId: msgId
+              }));
+            } else {
+              // Memancar PTT Langsung Suara Saja (HT Mode Standard)
               ws.send(JSON.stringify({ type: 'audio', freq: currentFreq, audio: base64Audio }));
             }
-          };
-
-          if (micStream) {
-            micStream.getTracks().forEach(track => track.stop());
-            micStream = null;
           }
         };
 
-        playSquelchNoise(0.1);
-        duckRadioVolume();
-        mediaRecorder.start();
-        document.getElementById('micStatus').innerText = "🎙️ MEREKAM...";
-      } catch (err) {
-        document.getElementById('micStatus').innerText = "Akses mikrofon ditolak/gagal";
-      }
-    };
+        if (micStream) {
+          micStream.getTracks().forEach(track => track.stop());
+          micStream = null;
+        }
+      };
 
-    const stopRecording = (e) => {
-      e.preventDefault();
-      if (mediaRecorder && mediaRecorder.state === "recording") {
-        mediaRecorder.stop();
-        playRogerBeep();
-        document.getElementById('micStatus').innerText = "Mikrofon Siap";
-        restoreRadioVolume();
-      }
-    };
+      playSquelchNoise(0.1);
+      duckRadioVolume();
+      mediaRecorder.start();
+      document.getElementById('micStatus').innerText = "🎙️ MEREKAM (TRANSMIT)...";
+    } catch (err) {
+      document.getElementById('micStatus').innerText = "Akses mikrofon ditolak/gagal";
+      if (isPttLocked) togglePttLock(); 
+    }
+  }
 
-    pttBtn.addEventListener('mousedown', startRecording);
-    pttBtn.addEventListener('mouseup', stopRecording);
-    pttBtn.addEventListener('mouseleave', stopRecording);
-    pttBtn.addEventListener('touchstart', startRecording);
-    pttBtn.addEventListener('touchend', stopRecording);
+  function stopRecordingAudio() {
+    if (mediaRecorder && mediaRecorder.state === "recording") {
+      mediaRecorder.stop();
+      playRogerBeep();
+      document.getElementById('micStatus').innerText = "Mikrofon Siap";
+      restoreRadioVolume();
+    }
+  }
+
+  function setupPTT() {
+    const pttBtn = document.getElementById('pttBtn');
+    const fsPttBtn = document.getElementById('fsPttBtn');
+
+    // Handle PTT Utama
+    pttBtn.addEventListener('mousedown', (e) => { e.preventDefault(); if (!isPttLocked) startRecordingAudio('main'); });
+    pttBtn.addEventListener('mouseup', (e) => { e.preventDefault(); if (!isPttLocked) stopRecordingAudio(); });
+    pttBtn.addEventListener('mouseleave', (e) => { e.preventDefault(); if (!isPttLocked) stopRecordingAudio(); });
+    pttBtn.addEventListener('touchstart', (e) => { e.preventDefault(); if (!isPttLocked) startRecordingAudio('main'); });
+    pttBtn.addEventListener('touchend', (e) => { e.preventDefault(); if (!isPttLocked) stopRecordingAudio(); });
+
+    // Handle PTT Fullscreen Chat (Tahan -> Kirim Voice Note ala WA)
+    if (fsPttBtn) {
+      fsPttBtn.addEventListener('mousedown', (e) => { e.preventDefault(); startRecordingAudio('fullscreen'); });
+      fsPttBtn.addEventListener('mouseup', (e) => { e.preventDefault(); stopRecordingAudio(); });
+      fsPttBtn.addEventListener('mouseleave', (e) => { e.preventDefault(); stopRecordingAudio(); });
+      fsPttBtn.addEventListener('touchstart', (e) => { e.preventDefault(); startRecordingAudio('fullscreen'); });
+      fsPttBtn.addEventListener('touchend', (e) => { e.preventDefault(); stopRecordingAudio(); });
+    }
+  }
+
+  function togglePttLock() {
+    const pttBtn = document.getElementById('pttBtn');
+    const lockBtn = document.getElementById('lockPttBtn');
+
+    isPttLocked = !isPttLocked;
+
+    if (isPttLocked) {
+      pttBtn.classList.add('locked');
+      pttBtn.innerHTML = "🎙️ MEMANCAR<br>(LOCK ON)";
+      lockBtn.innerText = "🔒 BUKA KUNCI PTT";
+      lockBtn.style.background = "#22c55e";
+      lockBtn.style.color = "#000";
+      startRecordingAudio('main');
+    } else {
+      pttBtn.classList.remove('locked');
+      pttBtn.innerHTML = "TEKAN &<br>TAHAN UTK<br>BICARA";
+      lockBtn.innerText = "🔓 KUNCI PTT (HANDS-FREE)";
+      lockBtn.style.background = "#181818";
+      lockBtn.style.color = "#f59e0b";
+      stopRecordingAudio();
+    }
   }
 
   function playAudio(base64Data) {
@@ -788,7 +1164,6 @@
     alert.style.display = 'none';
   }
 
-  // --- FITUR POPUP KOMPAS HARDWARE ---
   function openCompassModal() {
     if (typeof DeviceOrientationEvent === 'undefined') {
       alert("Sensor tidak didukung pada browser/perangkat ini.");
@@ -820,9 +1195,9 @@
   function handlePopupCompass(event) {
     let heading = 0;
     if (event.webkitCompassHeading !== undefined) {
-      heading = event.webkitCompassHeading; // iOS
+      heading = event.webkitCompassHeading;
     } else if (event.alpha !== null) {
-      heading = 360 - event.alpha; // Android
+      heading = 360 - event.alpha;
     }
 
     const degrees = Math.round(heading);
@@ -832,7 +1207,6 @@
     document.getElementById('popupCompassDeg').innerText = degrees + '°';
     document.getElementById('popupCompassDir').innerText = directions[index];
 
-    // Putar piringan dial kompas secara real-time
     const dial = document.getElementById('compassDial');
     if (dial) {
       dial.style.transform = `rotate(${-degrees}deg)`;
