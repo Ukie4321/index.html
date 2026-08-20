@@ -32,7 +32,7 @@
     .radio-panel { border: 1px dashed #333; padding: 8px; border-radius: 5px; margin-bottom: 12px; background: #080808; }
     .time-stamp { color: #555; font-size: 9px; margin-right: 4px; }
 
-    /* MODAL POP-UP CUSTOM */
+    /* MODAL POP-UP CUSTOM (TANPA URL GITHUB) */
     .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); justify-content: center; align-items: center; z-index: 1000; }
     .modal-box { background: #121212; border: 2px solid #333; padding: 20px; border-radius: 10px; width: 80%; max-width: 280px; text-align: center; box-shadow: 0 0 15px rgba(0,0,0,0.9); }
     .modal-text { color: #ccc; font-size: 12px; margin-bottom: 15px; line-height: 1.4; }
@@ -116,13 +116,12 @@
   <div class="status" id="micStatus">Mikrofon Siap</div>
 </div>
 
-<!-- MODAL KONFIRMASI CUSTOM -->
-<div id="confirmModal" class="modal-overlay">
+<!-- MODAL POP-UP CUSTOM (TANPA URL) -->
+<div id="customModal" class="modal-overlay">
   <div class="modal-box">
-    <div class="modal-text" id="modalText">Yakin ingin menghapus riwayat chat?</div>
-    <div class="modal-btns">
-      <button class="modal-btn-cancel" onclick="closeClearModal()">BATAL</button>
-      <button class="modal-btn-ok" onclick="confirmClearChat()">HAPUS</button>
+    <div class="modal-text" id="modalText">Pemberitahuan</div>
+    <div class="modal-btns" id="modalBtns">
+      <button class="modal-btn-ok" onclick="closeModal()">OK</button>
     </div>
   </div>
 </div>
@@ -243,7 +242,12 @@
     if (!isRadioPlaying) {
       player.src = select.value;
       player.volume = 1.0;
-      player.play().catch(() => alert("Gagal memutar Radio. Periksa koneksi internet."));
+      player.play().catch(() => {
+        showAlert("Gagal memutar Radio. Stream offline atau periksa koneksi internet.");
+        btn.innerText = "PLAY";
+        btn.style.background = "#222";
+        isRadioPlaying = false;
+      });
       btn.innerText = "STOP";
       btn.style.background = "#b91c1c";
       isRadioPlaying = true;
@@ -349,13 +353,24 @@
     });
   }
 
-  function openClearModal() {
-    document.getElementById('modalText').innerText = `Yakin ingin menghapus riwayat chat di frekuensi ${currentFreq}?`;
-    document.getElementById('confirmModal').style.display = 'flex';
+  /* CUSTOM MODAL SYSTEM (MENGGANTIKAN ALERT/CONFIRM/PROMPT) */
+  function showAlert(msg) {
+    document.getElementById('modalText').innerText = msg;
+    document.getElementById('modalBtns').innerHTML = `<button class="modal-btn-ok" onclick="closeModal()">OK</button>`;
+    document.getElementById('customModal').style.display = 'flex';
   }
 
-  function closeClearModal() {
-    document.getElementById('confirmModal').style.display = 'none';
+  function openClearModal() {
+    document.getElementById('modalText').innerText = `Yakin ingin menghapus riwayat chat di frekuensi ${currentFreq}?`;
+    document.getElementById('modalBtns').innerHTML = `
+      <button class="modal-btn-cancel" onclick="closeModal()">BATAL</button>
+      <button class="modal-btn-ok" onclick="confirmClearChat()">HAPUS</button>
+    `;
+    document.getElementById('customModal').style.display = 'flex';
+  }
+
+  function closeModal() {
+    document.getElementById('customModal').style.display = 'none';
   }
 
   function confirmClearChat() {
@@ -363,7 +378,7 @@
     chatBox.innerHTML = '';
     localStorage.removeItem(`local_chat_${currentFreq}`);
     addSystemMsg(`Riwayat chat frekuensi ${currentFreq} telah dibersihkan.`);
-    closeClearModal();
+    closeModal();
   }
 
   function appendChatToBox(msg) {
