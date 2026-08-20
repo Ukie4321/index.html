@@ -78,11 +78,56 @@
     .modern-slider::-webkit-slider-thumb { -webkit-appearance: none; height: 16px; width: 16px; border-radius: 50%; background: #a3e635; margin-top: -5px; box-shadow: 0 0 5px #a3e635; }
 
     .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); justify-content: center; align-items: center; z-index: 1000; }
-    .modal-box { background: #121212; border: 2px solid #333; padding: 20px; border-radius: 10px; width: 80%; max-width: 280px; text-align: center; box-shadow: 0 0 15px rgba(0,0,0,0.9); }
+    .modal-box { background: #121212; border: 2px solid #333; padding: 20px; border-radius: 10px; width: 80%; max-width: 280px; text-align: center; box-shadow: 0 0 15px rgba(0,0,0,0.9); position: relative; }
     .modal-text { color: #ccc; font-size: 12px; margin-bottom: 15px; line-height: 1.4; }
     .modal-btns { display: flex; gap: 10px; justify-content: center; }
     .modal-btn-ok { background: #b91c1c; color: #fff; border: 1px solid #ef4444; padding: 6px 15px; font-size: 11px; cursor: pointer; }
     .modal-btn-cancel { background: #222; color: #888; border: 1px solid #444; padding: 6px 15px; font-size: 11px; cursor: pointer; }
+
+    /* --- STYLES POPUP KOMPAS --- */
+    .close-x-btn {
+      position: absolute;
+      top: 8px;
+      right: 12px;
+      background: transparent;
+      border: none;
+      color: #ef4444;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+      padding: 0;
+    }
+    .compass-circle-outer {
+      width: 140px;
+      height: 140px;
+      border: 3px solid #f59e0b;
+      border-radius: 50%;
+      margin: 10px auto;
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: radial-gradient(circle, #1a1a1a 0%, #050505 100%);
+      box-shadow: 0 0 15px rgba(245, 158, 11, 0.2);
+    }
+    .compass-dial {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      transition: transform 0.1s ease-out;
+    }
+    .compass-mark-u { position: absolute; top: 4px; left: 50%; transform: translateX(-50%); color: #ef4444; font-weight: bold; font-size: 12px; }
+    .compass-mark-s { position: absolute; bottom: 4px; left: 50%; transform: translateX(-50%); color: #fff; font-size: 10px; }
+    .compass-mark-t { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); color: #fff; font-size: 10px; }
+    .compass-mark-b { position: absolute; left: 6px; top: 50%; transform: translateY(-50%); color: #fff; font-size: 10px; }
+    .compass-pointer {
+      width: 4px;
+      height: 50px;
+      background: linear-gradient(to bottom, #ef4444 50%, #ffffff 50%);
+      position: absolute;
+      border-radius: 2px;
+    }
   </style>
 </head>
 <body>
@@ -105,6 +150,7 @@
   </div>
 
   <div class="extra-tools">
+    <button onclick="openCompassModal()" style="font-size: 9px; padding: 3px 6px;">🧭 KOMPAS</button>
     <button onclick="toggleScan()" style="font-size: 9px; padding: 3px 6px;" id="scanBtn">
       <span class="white-icon">🔍</span> SCAN
     </button>
@@ -174,12 +220,36 @@
   <div class="status" id="micStatus">Mikrofon Siap</div>
 </div>
 
+<!-- MODAL POPUP GENERAL -->
 <div id="customModal" class="modal-overlay">
   <div class="modal-box">
     <div class="modal-text" id="modalText">Pemberitahuan</div>
     <div class="modal-btns" id="modalBtns">
       <button class="modal-btn-ok" onclick="closeModal()">OK</button>
     </div>
+  </div>
+</div>
+
+<!-- MODAL POPUP KOMPAS DIGIT & ANALOG -->
+<div id="compassModal" class="modal-overlay">
+  <div class="modal-box" style="border-color: #f59e0b;">
+    <button class="close-x-btn" onclick="closeCompassModal()">✕</button>
+    <div style="color: #f59e0b; font-weight: bold; font-size: 14px; margin-bottom: 5px;">🧭 KOMPAS HARDWARE</div>
+    
+    <div class="compass-circle-outer">
+      <div class="compass-dial" id="compassDial">
+        <span class="compass-mark-u">U</span>
+        <span class="compass-mark-t">T</span>
+        <span class="compass-mark-s">S</span>
+        <span class="compass-mark-b">B</span>
+      </div>
+      <div class="compass-pointer"></div>
+    </div>
+
+    <div style="font-size: 20px; font-weight: bold; color: #fff; margin-top: 5px;" id="popupCompassDeg">0°</div>
+    <div style="font-size: 13px; color: #f59e0b; font-weight: bold; margin-bottom: 12px;" id="popupCompassDir">UTARA</div>
+    
+    <button class="modal-btn-cancel" onclick="closeCompassModal()" style="width: 100%; border-color: #f59e0b; color: #f59e0b;">TUTUP</button>
   </div>
 </div>
 
@@ -198,7 +268,6 @@
   const SCAN_FREQS = ["145.820", "144.000", "143.550", "142.000"];
   let audioCtx;
 
-  // Lacak ID pesan yang sudah dirender di UI
   const renderedMsgIds = new Set();
 
   const PRIVATE_CHANNELS = {
@@ -206,7 +275,6 @@
     "999.999": "admin"
   };
 
-  // MANAJEMEN TEMA (BLACK -> GREEN -> PINK)
   const themes = ['default', 'theme-green', 'theme-pink'];
   let currentThemeIndex = 0;
 
@@ -672,6 +740,57 @@
   function hideError() {
     const alert = document.getElementById('errorAlert');
     alert.style.display = 'none';
+  }
+
+  // --- FITUR POPUP KOMPAS HARDWARE ---
+  function openCompassModal() {
+    if (typeof DeviceOrientationEvent === 'undefined') {
+      alert("Sensor tidak didukung pada browser/perangkat ini.");
+      return;
+    }
+
+    if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+      DeviceOrientationEvent.requestPermission()
+        .then(response => {
+          if (response === 'granted') {
+            window.addEventListener('deviceorientation', handlePopupCompass);
+            document.getElementById('compassModal').style.display = 'flex';
+          } else {
+            alert("Izin sensor ditolak.");
+          }
+        })
+        .catch(err => alert("Gagal mendapatkan izin kompas: " + err));
+    } else {
+      window.addEventListener('deviceorientation', handlePopupCompass);
+      document.getElementById('compassModal').style.display = 'flex';
+    }
+  }
+
+  function closeCompassModal() {
+    window.removeEventListener('deviceorientation', handlePopupCompass);
+    document.getElementById('compassModal').style.display = 'none';
+  }
+
+  function handlePopupCompass(event) {
+    let heading = 0;
+    if (event.webkitCompassHeading !== undefined) {
+      heading = event.webkitCompassHeading; // iOS
+    } else if (event.alpha !== null) {
+      heading = 360 - event.alpha; // Android
+    }
+
+    const degrees = Math.round(heading);
+    const directions = ['UTARA', 'TIMUR LAUT', 'TIMUR', 'TENGGARA', 'SELATAN', 'BARAT DAYA', 'BARAT', 'BARAT LAUT'];
+    const index = Math.round(degrees / 45) % 8;
+
+    document.getElementById('popupCompassDeg').innerText = degrees + '°';
+    document.getElementById('popupCompassDir').innerText = directions[index];
+
+    // Putar piringan dial kompas secara real-time
+    const dial = document.getElementById('compassDial');
+    if (dial) {
+      dial.style.transform = `rotate(${-degrees}deg)`;
+    }
   }
 </script>
 </body>
