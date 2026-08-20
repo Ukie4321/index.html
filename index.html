@@ -55,6 +55,7 @@
     .user-names { color: #888; font-size: 10px; margin-top: 4px; word-break: break-all; }
 
     .chat-box { background: #050505; height: 110px; overflow-y: auto; border: 1px solid #222; padding: 8px; font-size: 11px; margin-bottom: 8px; border-radius: 5px; color: #ccc; word-wrap: break-word; }
+    .chat-box a { color: #60a5fa; text-decoration: underline; }
     .input-group { display: flex; gap: 5px; margin-bottom: 8px; }
     input, select { flex: 1; background: #0a0a0a; border: 1px solid #333; color: #a3e635; padding: 8px; border-radius: 3px; font-family: inherit; }
     button { background: #222; color: #a3e635; border: 1px solid #444; padding: 8px 12px; cursor: pointer; border-radius: 3px; }
@@ -68,7 +69,7 @@
     .radio-panel { border: 1px dashed #333; padding: 8px; border-radius: 5px; margin-bottom: 12px; background: #080808; }
     .time-stamp { color: #555; font-size: 9px; margin-right: 4px; }
 
-    .extra-tools { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-size: 10px; background: #080808; padding: 6px; border-radius: 5px; border: 1px solid #222; }
+    .extra-tools { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-size: 10px; background: #080808; padding: 6px; border-radius: 5px; border: 1px solid #222; gap: 4px; }
     .extra-tools label { display: flex; align-items: center; gap: 4px; cursor: pointer; }
 
     .white-icon { filter: brightness(0) invert(1); display: inline-block; vertical-align: middle; margin-right: 4px; }
@@ -150,11 +151,12 @@
   </div>
 
   <div class="extra-tools">
-    <button onclick="openCompassModal()" style="font-size: 9px; padding: 3px 6px;">🧭 KOMPAS</button>
-    <button onclick="toggleScan()" style="font-size: 9px; padding: 3px 6px;" id="scanBtn">
+    <button onclick="openCompassModal()" style="font-size: 9px; padding: 3px 5px;">🧭 KOMPAS</button>
+    <button onclick="sendGPSLocation()" style="font-size: 9px; padding: 3px 5px;">📍 GPS</button>
+    <button onclick="toggleScan()" style="font-size: 9px; padding: 3px 5px;" id="scanBtn">
       <span class="white-icon">🔍</span> SCAN
     </button>
-    <button onclick="toggleTheme()" style="font-size: 9px; padding: 3px 6px;">🎨 TEMA</button>
+    <button onclick="toggleTheme()" style="font-size: 9px; padding: 3px 5px;">🎨 TEMA</button>
     <label>
       <input type="checkbox" id="ttsToggle" style="flex:none;"> 
       <span class="white-icon">🔊</span> TTS
@@ -590,6 +592,45 @@
     sendText();
   }
 
+  // --- FITUR KIRIM KOORDINAT GPS ---
+  function sendGPSLocation() {
+    if (!navigator.geolocation) {
+      showAlert("Fitur GPS tidak didukung pada browser/perangkat ini.");
+      return;
+    }
+
+    addSystemMsg("Mencari koordinat GPS...");
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const lat = position.coords.latitude.toFixed(5);
+        const lon = position.coords.longitude.toFixed(5);
+        const mapUrl = `https://maps.google.com/?q=${lat},${lon}`;
+        const gpsMsg = `📍 POSISI GPS: ${lat}, ${lon} (${mapUrl})`;
+
+        const nick = document.getElementById('nickInput').value.trim() || 'Anonim';
+        if (ws && ws.readyState === WebSocket.OPEN) {
+          const msgId = Date.now() + '_' + Math.random().toString(36).substr(2, 5);
+          ws.send(JSON.stringify({
+            type: 'text',
+            freq: currentFreq,
+            sender: nick,
+            message: gpsMsg,
+            msgId: msgId
+          }));
+        }
+      },
+      (error) => {
+        let errDesc = "Gagal mengambil lokasi.";
+        if (error.code === error.PERMISSION_DENIED) errDesc = "Izin akses lokasi/GPS ditolak.";
+        else if (error.code === error.POSITION_UNAVAILABLE) errDesc = "Sinyal GPS tidak tersedia.";
+        else if (error.code === error.TIMEOUT) errDesc = "Waktu permintaan GPS habis.";
+        showAlert(errDesc);
+      },
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+    );
+  }
+
   function handleKeyPress(e) {
     if (e.key === 'Enter') sendText();
   }
@@ -648,7 +689,12 @@
   function appendChatToBox(msg) {
     const box = document.getElementById('chatBox');
     const time = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
-    box.innerHTML += `<div><span class="time-stamp">[${time}]</span>${msg}</div>`;
+    
+    // Format URL otomatis menjadi link aktif yang bisa diklik
+    const urlRegex = /(https?:\/\/[^\s]+)/g;
+    const formattedMsg = msg.replace(urlRegex, (url) => `<a href="${url}" target="_blank" rel="noopener noreferrer">[Buka Peta]</a>`);
+
+    box.innerHTML += `<div><span class="time-stamp">[${time}]</span>${formattedMsg}</div>`;
     box.scrollTop = box.scrollHeight;
   }
 
