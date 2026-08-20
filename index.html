@@ -32,13 +32,13 @@
     .radio-panel { border: 1px dashed #333; padding: 8px; border-radius: 5px; margin-bottom: 12px; background: #080808; }
     .time-stamp { color: #555; font-size: 9px; margin-right: 4px; }
 
-    /* CSS UNTUK MODAL POP-UP CUSTOM (TANPA URL) */
-    .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); justify-content: center; align-items: center; z-index: 1000; }
+    /* MODAL POP-UP CUSTOM */
+    .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); justify-content: center; align-items: center; z-index: 1000; }
     .modal-box { background: #121212; border: 2px solid #333; padding: 20px; border-radius: 10px; width: 80%; max-width: 280px; text-align: center; box-shadow: 0 0 15px rgba(0,0,0,0.9); }
     .modal-text { color: #ccc; font-size: 12px; margin-bottom: 15px; line-height: 1.4; }
     .modal-btns { display: flex; gap: 10px; justify-content: center; }
-    .modal-btn-ok { background: #b91c1c; color: #fff; border: 1px solid #ef4444; padding: 6px 15px; font-size: 11px; }
-    .modal-btn-cancel { background: #222; color: #888; border: 1px solid #444; padding: 6px 15px; font-size: 11px; }
+    .modal-btn-ok { background: #b91c1c; color: #fff; border: 1px solid #ef4444; padding: 6px 15px; font-size: 11px; cursor: pointer; }
+    .modal-btn-cancel { background: #222; color: #888; border: 1px solid #444; padding: 6px 15px; font-size: 11px; cursor: pointer; }
   </style>
 </head>
 <body>
@@ -140,7 +140,6 @@
     "999.999": "admin"
   };
 
-  // SINTESIS SUARA BEEP RADIO (Web Audio API)
   function playRogerBeep() {
     try {
       const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -350,7 +349,6 @@
     });
   }
 
-  /* KONTROL MODAL CUSTOM TANPA ALAMAT URL */
   function openClearModal() {
     document.getElementById('modalText').innerText = `Yakin ingin menghapus riwayat chat di frekuensi ${currentFreq}?`;
     document.getElementById('confirmModal').style.display = 'flex';
@@ -380,55 +378,57 @@
   }
 
   // PTT & AUDIO LOGIC
-  navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
-    mediaRecorder = new MediaRecorder(stream);
-    
-    mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
-    mediaRecorder.onstop = async () => {
-      const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
-      audioChunks = [];
-      const reader = new FileReader();
-      reader.readAsDataURL(audioBlob);
-      reader.onloadend = () => {
-        const base64Audio = reader.result;
-        if (ws && ws.readyState === WebSocket.OPEN) {
-          ws.send(JSON.stringify({
-            type: 'audio',
-            freq: currentFreq,
-            audio: base64Audio
-          }));
+  if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+    navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+      mediaRecorder = new MediaRecorder(stream);
+      
+      mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+      mediaRecorder.onstop = async () => {
+        const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+        audioChunks = [];
+        const reader = new FileReader();
+        reader.readAsDataURL(audioBlob);
+        reader.onloadend = () => {
+          const base64Audio = reader.result;
+          if (ws && ws.readyState === WebSocket.OPEN) {
+            ws.send(JSON.stringify({
+              type: 'audio',
+              freq: currentFreq,
+              audio: base64Audio
+            }));
+          }
+        };
+      };
+
+      const pttBtn = document.getElementById('pttBtn');
+      
+      const startRecording = (e) => {
+        e.preventDefault();
+        if (mediaRecorder && mediaRecorder.state === "inactive") {
+          setRadioVolume(0.1);
+          mediaRecorder.start();
+          document.getElementById('micStatus').innerText = "🎙️ MEREKAM...";
         }
       };
-    };
 
-    const pttBtn = document.getElementById('pttBtn');
-    
-    const startRecording = (e) => {
-      e.preventDefault();
-      if (mediaRecorder && mediaRecorder.state === "inactive") {
-        setRadioVolume(0.1);
-        mediaRecorder.start();
-        document.getElementById('micStatus').innerText = "🎙️ MEREKAM...";
-      }
-    };
+      const stopRecording = (e) => {
+        e.preventDefault();
+        if (mediaRecorder && mediaRecorder.state === "recording") {
+          mediaRecorder.stop();
+          playRogerBeep();
+          document.getElementById('micStatus').innerText = "Mikrofon Siap";
+          setTimeout(() => setRadioVolume(1.0), 1000);
+        }
+      };
 
-    const stopRecording = (e) => {
-      e.preventDefault();
-      if (mediaRecorder && mediaRecorder.state === "recording") {
-        mediaRecorder.stop();
-        playRogerBeep();
-        document.getElementById('micStatus').innerText = "Mikrofon Siap";
-        setTimeout(() => setRadioVolume(1.0), 1000);
-      }
-    };
-
-    pttBtn.addEventListener('mousedown', startRecording);
-    pttBtn.addEventListener('mouseup', stopRecording);
-    pttBtn.addEventListener('touchstart', startRecording);
-    pttBtn.addEventListener('touchend', stopRecording);
-  }).catch(err => {
-    document.getElementById('micStatus').innerText = "Akses mikrofon ditolak/tidak didukung";
-  });
+      pttBtn.addEventListener('mousedown', startRecording);
+      pttBtn.addEventListener('mouseup', stopRecording);
+      pttBtn.addEventListener('touchstart', startRecording);
+      pttBtn.addEventListener('touchend', stopRecording);
+    }).catch(err => {
+      document.getElementById('micStatus').innerText = "Akses mikrofon ditolak/tidak didukung";
+    });
+  }
 
   function playAudio(base64Data) {
     setRadioVolume(0.1);
