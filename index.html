@@ -184,6 +184,7 @@
   let currentFreq = "145.820";
   let mediaRecorder;
   let audioChunks = [];
+  let micStream = null; // Menyimpan stream mikrofon
   let isRadioPlaying = false;
   let customRadioVolume = 0.8;
 
@@ -203,14 +204,13 @@
 
   /* FUNGSI NOTIFIKASI SUARA & BANNER LAYAR ATAS HP */
   function showBannerNotification(sender, message) {
-    // 1. Memutar Suara Notifikasi
     try {
-      const notifAudio = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
+      // Menggunakan file MP3 murni yang mendukung network stream
+      const notifAudio = new Audio('https://cdn.freesound.org/previews/536/536108_11861866-lq.mp3');
       notifAudio.volume = 0.8;
       notifAudio.play().catch(() => {});
     } catch(e) {}
 
-    // 2. Menampilkan Banner Notifikasi di Layar Atas HP
     if ("Notification" in window && Notification.permission === "granted") {
       try {
         new Notification(`Pesan HT [${currentFreq}] dari ${sender}`, {
@@ -293,7 +293,6 @@
   }
 
   window.addEventListener('DOMContentLoaded', () => {
-    // Meminta Izin Notifikasi Layar Atas ke Browser HP
     if ("Notification" in window && Notification.permission !== "granted") {
       Notification.requestPermission();
     }
@@ -336,6 +335,7 @@
 
     loadLocalHistory(currentFreq);
     connect();
+    setupPTT();
   });
 
   function connect() {
@@ -372,7 +372,6 @@
         else if (data.type === 'text') {
           const myNick = document.getElementById('nickInput').value.trim() || 'Anonim';
           
-          // Memunculkan Suara & Banner Notifikasi HP jika pesan dari orang lain
           if (data.sender !== myNick) {
             showBannerNotification(data.sender, data.message);
           }
@@ -534,52 +533,67 @@
 
   function addSystemMsg(msg) { appendChatToBox(`[SYS] ${msg}`); }
 
-  if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-    navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
-      mediaRecorder = new MediaRecorder(stream);
-      mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
-      mediaRecorder.onstop = async () => {
-        const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+  /* FITUR MIKROFON PTT (OPTiMASI AUDIO FOCUS) */
+  function setupPTT() {
+    const pttBtn = document.getElementById('pttBtn');
+
+    const startRecording = async (e) => {
+      e.preventDefault();
+      if (mediaRecorder && mediaRecorder.state === "recording") return;
+
+      try {
+        // Akses mikrofon hanya saat tombol PTT ditekan
+        micStream = await navigator.mediaDevices.getUserMedia({
+          audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true }
+        });
+
         audioChunks = [];
-        const reader = new FileReader();
-        reader.readAsDataURL(audioBlob);
-        reader.onloadend = () => {
-          const base64Audio = reader.result;
-          if (ws && ws.readyState === WebSocket.OPEN) {
-            ws.send(JSON.stringify({ type: 'audio', freq: currentFreq, audio: base64Audio }));
+        mediaRecorder = new MediaRecorder(micStream);
+
+        mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+        mediaRecorder.onstop = async () => {
+          const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+          audioChunks = [];
+          const reader = new FileReader();
+          reader.readAsDataURL(audioBlob);
+          reader.onloadend = () => {
+            const base64Audio = reader.result;
+            if (ws && ws.readyState === WebSocket.OPEN) {
+              ws.send(JSON.stringify({ type: 'audio', freq: currentFreq, audio: base64Audio }));
+            }
+          };
+
+          // MELEPAS MIKROFON SEPENUHNYA AGAR VOLUME APLIKASI LAIN NORMAL
+          if (micStream) {
+            micStream.getTracks().forEach(track => track.stop());
+            micStream = null;
           }
         };
-      };
-      
-      const pttBtn = document.getElementById('pttBtn');
-      const startRecording = (e) => {
-        e.preventDefault();
-        if (mediaRecorder && mediaRecorder.state === "inactive") {
-          playSquelchNoise(0.1);
-          duckRadioVolume();
-          mediaRecorder.start();
-          document.getElementById('micStatus').innerText = "🎙️ MEREKAM...";
-        }
-      };
 
-      const stopRecording = (e) => {
-        e.preventDefault();
-        if (mediaRecorder && mediaRecorder.state === "recording") {
-          mediaRecorder.stop();
-          playRogerBeep();
-          document.getElementById('micStatus').innerText = "Mikrofon Siap";
-          restoreRadioVolume();
-        }
-      };
+        playSquelchNoise(0.1);
+        duckRadioVolume();
+        mediaRecorder.start();
+        document.getElementById('micStatus').innerText = "🎙️ MEREKAM...";
+      } catch (err) {
+        document.getElementById('micStatus').innerText = "Akses mikrofon ditolak/gagal";
+      }
+    };
 
-      pttBtn.addEventListener('mousedown', startRecording);
-      pttBtn.addEventListener('mouseup', stopRecording);
-      pttBtn.addEventListener('mouseleave', stopRecording);
-      pttBtn.addEventListener('touchstart', startRecording);
-      pttBtn.addEventListener('touchend', stopRecording);
-    }).catch(err => {
-      document.getElementById('micStatus').innerText = "Akses mikrofon ditolak/tidak didukung";
-    });
+    const stopRecording = (e) => {
+      e.preventDefault();
+      if (mediaRecorder && mediaRecorder.state === "recording") {
+        mediaRecorder.stop();
+        playRogerBeep();
+        document.getElementById('micStatus').innerText = "Mikrofon Siap";
+        restoreRadioVolume();
+      }
+    };
+
+    pttBtn.addEventListener('mousedown', startRecording);
+    pttBtn.addEventListener('mouseup', stopRecording);
+    pttBtn.addEventListener('mouseleave', stopRecording);
+    pttBtn.addEventListener('touchstart', startRecording);
+    pttBtn.addEventListener('touchend', stopRecording);
   }
 
   function playAudio(base64Data) {
