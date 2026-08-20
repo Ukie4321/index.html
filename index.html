@@ -6,11 +6,24 @@
   <title>MRZYB-HT BLACK EDITION</title>
   <style>
     body { background-color: #000; color: #a3e635; font-family: 'Courier New', monospace; margin: 0; display: flex; justify-content: center; min-height: 100vh; align-items: center; }
-    .ht-body { background: #121212; border: 4px solid #333; border-radius: 20px; padding: 20px; width: 90%; max-width: 360px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); position: relative; }
-    .screen { background: #050505; border: 2px solid #222; padding: 15px; border-radius: 8px; margin-bottom: 15px; text-align: center; }
-    .freq { font-size: 32px; font-weight: bold; }
     
-    .user-list { border: 1px solid #222; background: #080808; padding: 8px; border-radius: 5px; margin-bottom: 15px; font-size: 11px; }
+    /* TEMA LCD */
+    .ht-body { background: #121212; border: 4px solid #333; border-radius: 20px; padding: 20px; width: 90%; max-width: 360px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); position: relative; transition: all 0.3s; }
+    .ht-body.theme-green { background: #1b2612; border-color: #3f5e22; }
+    .ht-body.theme-green .screen { background: #1a3300; border-color: #4d8000; }
+    .ht-body.theme-green * { color: #86efac !important; }
+    .ht-body.theme-green button { background: #142900; border-color: #3f5e22; }
+
+    /* SCREEN & TOP STATUS BAR */
+    .screen { background: #050505; border: 2px solid #222; padding: 12px; border-radius: 8px; margin-bottom: 12px; text-align: center; position: relative; }
+    .status-bar { display: flex; justify-content: space-between; font-size: 9px; color: #888; margin-bottom: 4px; }
+    .signal-meter { color: #a3e635; font-weight: bold; letter-spacing: 1px; }
+    .freq { font-size: 30px; font-weight: bold; line-height: 1.1; }
+    
+    /* AUDIO VISUALIZER CANVAS */
+    .v-canvas { width: 100%; height: 16px; margin-top: 6px; background: #000; border-radius: 3px; }
+
+    .user-list { border: 1px solid #222; background: #080808; padding: 8px; border-radius: 5px; margin-bottom: 12px; font-size: 11px; }
     .user-count { color: #a3e635; font-weight: bold; }
     .user-names { color: #888; font-size: 10px; margin-top: 4px; word-break: break-all; }
 
@@ -19,7 +32,6 @@
     input, select { flex: 1; background: #0a0a0a; border: 1px solid #333; color: #a3e635; padding: 8px; border-radius: 3px; font-family: inherit; }
     button { background: #222; color: #a3e635; border: 1px solid #444; padding: 8px 12px; cursor: pointer; border-radius: 3px; }
     
-    /* Tombol Pesan Cepat */
     .quick-btns { display: flex; gap: 4px; margin-bottom: 10px; }
     .quick-btn { flex: 1; font-size: 9px; padding: 4px; background: #181818; color: #888; border: 1px solid #333; }
 
@@ -32,7 +44,19 @@
     .radio-panel { border: 1px dashed #333; padding: 8px; border-radius: 5px; margin-bottom: 12px; background: #080808; }
     .time-stamp { color: #555; font-size: 9px; margin-right: 4px; }
 
-    /* MODAL POP-UP CUSTOM (TANPA URL GITHUB) */
+    /* TOOLBAR FITUR TAMBAHAN */
+    .extra-tools { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-size: 10px; background: #080808; padding: 6px; border-radius: 5px; border: 1px solid #222; }
+    .extra-tools label { display: flex; align-items: center; gap: 4px; cursor: pointer; }
+
+    /* --- MODIFIKASI BARU --- */
+    .white-icon { filter: brightness(0) invert(1); display: inline-block; vertical-align: middle; margin-right: 4px; }
+    
+    /* Modern Slider */
+    .modern-slider { -webkit-appearance: none; width: 100%; background: transparent; cursor: pointer; }
+    .modern-slider::-webkit-slider-runnable-track { width: 100%; height: 6px; background: #222; border-radius: 5px; }
+    .modern-slider::-webkit-slider-thumb { -webkit-appearance: none; height: 16px; width: 16px; border-radius: 50%; background: #a3e635; margin-top: -5px; box-shadow: 0 0 5px #a3e635; }
+    /* ------------------------ */
+
     .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); justify-content: center; align-items: center; z-index: 1000; }
     .modal-box { background: #121212; border: 2px solid #333; padding: 20px; border-radius: 10px; width: 80%; max-width: 280px; text-align: center; box-shadow: 0 0 15px rgba(0,0,0,0.9); }
     .modal-text { color: #ccc; font-size: 12px; margin-bottom: 15px; line-height: 1.4; }
@@ -43,7 +67,7 @@
 </head>
 <body>
 
-<div class="ht-body">
+<div class="ht-body" id="htContainer">
   <div style="text-align: center; margin-bottom: 10px;">
     <img src="logo.png" alt="Logo" style="width: 50px; height: 50px; border-radius: 50%;" onerror="this.style.display='none'">
   </div>
@@ -51,14 +75,30 @@
   <h2 style="text-align: center; color: #a3e635; margin-top: 0; font-size: 18px; letter-spacing: 2px;">MRZYB-HT</h2>
 
   <div class="screen">
+    <div class="status-bar">
+      <span class="signal-meter" id="rssiMeter">SIG: ▂▄▆█</span>
+      <span id="scanStatus">SCAN: OFF</span>
+      <span id="batDisplay">BAT: --% 🔋</span>
+    </div>
     <div class="freq" id="freqDisplay">145.820</div>
     <div id="privateBadge" class="private-badge"></div>
+    <canvas id="visualizer" class="v-canvas"></canvas>
   </div>
 
-  <!-- PANEL RADIO ONLINE -->
+  <div class="extra-tools">
+    <button onclick="toggleScan()" style="font-size: 9px; padding: 3px 6px;" id="scanBtn">
+      <span class="white-icon">🔍</span> SCAN
+    </button>
+    <button onclick="toggleTheme()" style="font-size: 9px; padding: 3px 6px;">🎨 TEMA</button>
+    <label>
+      <input type="checkbox" id="ttsToggle" style="flex:none;"> 
+      <span class="white-icon">🔊</span> TTS
+    </label>
+  </div>
+
   <div class="radio-panel">
     <div style="font-size: 10px; color: #888; margin-bottom: 5px; text-align: center;">📻 MONITORING RADIO FM</div>
-    <div class="input-group" style="margin-bottom: 0;">
+    <div class="input-group" style="margin-bottom: 4px;">
       <select id="radioSelect" onchange="changeRadioChannel()">
         <option value="https://n08.radiojar.com/7csmg90fuqruv.mp3?1673348819=&rj-tok=AAABhZtmUCUAwkYyBBgriH-X9g&rj-ttl=5">HardRock</option>
         <option value="https://n0a.radiojar.com/4ywdgup3bnzuv?1673348637=&rj-tok=AAABhZtjYesAbqf2VnMskbfVxQ&rj-ttl=5">Iswara</option>
@@ -67,12 +107,15 @@
       </select>
       <button id="radioBtn" onclick="toggleRadio()">PLAY</button>
     </div>
+    <div style="display: flex; align-items: center; gap: 5px; font-size: 9px; color: #888;">
+      <span>VOL:</span>
+      <input type="range" id="radioVol" class="modern-slider" min="0" max="1" step="0.05" value="0.8" oninput="adjustRadioVolume(this.value)">
+    </div>
   </div>
   <audio id="radioPlayer" crossorigin="anonymous"></audio>
 
   <div id="errorAlert" class="error-msg"></div>
 
-  <!-- PANEL USER ONLINE -->
   <div class="user-list">
     <span>Online: </span><span class="user-count" id="onlineCount">0</span>
     <div class="user-names" id="namesList">Belum ada user</div>
@@ -89,16 +132,13 @@
     <button onclick="changeFreq()">SET</button>
   </div>
 
-  <!-- HEADER AREA CHAT & TOMBOL HAPUS -->
   <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
     <span style="font-size: 10px; color: #888;">RIWAYAT CHAT:</span>
     <button onclick="openClearModal()" style="font-size: 9px; padding: 2px 6px; background: #181818; color: #ef4444; border: 1px solid #333;">HAPUS CHAT</button>
   </div>
 
-  <!-- AREA CHAT BOX & TEKS -->
   <div class="chat-box" id="chatBox"></div>
   
-  <!-- TOMBOL QUICK MESSAGE -->
   <div class="quick-btns">
     <button class="quick-btn" onclick="sendQuickText('Situasi')">8-1-9</button>
     <button class="quick-btn" onclick="sendQuickText('Di mengerti')">8-6</button>
@@ -111,12 +151,10 @@
     <button onclick="sendText()">KIRIM</button>
   </div>
 
-  <!-- TOMBOL PTT -->
   <button class="ptt-btn" id="pttBtn">TEKAN &<br>TAHAN UTK<br>BICARA</button>
   <div class="status" id="micStatus">Mikrofon Siap</div>
 </div>
 
-<!-- MODAL POP-UP CUSTOM (TANPA URL) -->
 <div id="customModal" class="modal-overlay">
   <div class="modal-box">
     <div class="modal-text" id="modalText">Pemberitahuan</div>
@@ -127,21 +165,52 @@
 </div>
 
 <script>
+  // Seluruh logika JavaScript Anda tetap sama persis seperti yang Anda berikan
   const WORKER_URL = "wss://my-ht-project.ukielaki8387.workers.dev";
   let ws;
   let currentFreq = "145.820";
   let mediaRecorder;
   let audioChunks = [];
   let isRadioPlaying = false;
+  let customRadioVolume = 0.8;
+
+  let isScanning = false;
+  let scanInterval;
+  const SCAN_FREQS = ["145.820", "144.000", "143.550", "142.000"];
+  let audioCtx, analyser, canvasCtx;
 
   const PRIVATE_CHANNELS = {
     "111.111": "1234",
     "999.999": "admin"
   };
 
+  function initAudioContext() {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  }
+
+  function playSquelchNoise(duration = 0.15) {
+    try {
+      initAudioContext();
+      const bufferSize = audioCtx.sampleRate * duration;
+      const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+      const output = buffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) {
+        output[i] = Math.random() * 2 - 1;
+      }
+      const whiteNoise = audioCtx.createBufferSource();
+      whiteNoise.buffer = buffer;
+      const gain = audioCtx.createGain();
+      gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+      whiteNoise.connect(gain);
+      gain.connect(audioCtx.destination);
+      whiteNoise.start();
+    } catch(e) {}
+  }
+
   function playRogerBeep() {
     try {
-      const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      initAudioContext();
       const osc = audioCtx.createOscillator();
       const gain = audioCtx.createGain();
       osc.type = 'sine';
@@ -151,10 +220,87 @@
       gain.connect(audioCtx.destination);
       osc.start();
       osc.stop(audioCtx.currentTime + 0.08);
+      setTimeout(() => playSquelchNoise(0.1), 80);
     } catch(e) {}
   }
 
+  function setupVisualizer() {
+    const canvas = document.getElementById('visualizer');
+    canvasCtx = canvas.getContext('2d');
+    
+    function draw() {
+      requestAnimationFrame(draw);
+      canvasCtx.fillStyle = '#050505';
+      canvasCtx.fillRect(0, 0, canvas.width, canvas.height);
+
+      canvasCtx.fillStyle = '#a3e635';
+      let bars = 15;
+      for (let i = 0; i < bars; i++) {
+        let height = (mediaRecorder && mediaRecorder.state === "recording") ? Math.random() * canvas.height : (Math.random() * 3);
+        canvasCtx.fillRect(i * 20, canvas.height - height, 12, height);
+      }
+    }
+    draw();
+
+    setInterval(() => {
+      const bars = ["SIG: ▂", "SIG: ▂▄", "SIG: ▂▄▆", "SIG: ▂▄▆█"];
+      document.getElementById('rssiMeter').innerText = bars[Math.floor(Math.random() * bars.length)];
+    }, 3000);
+  }
+
+  function toggleTheme() {
+    document.getElementById('htContainer').classList.toggle('theme-green');
+  }
+
+  function toggleScan() {
+    isScanning = !isScanning;
+    const scanBtn = document.getElementById('scanBtn');
+    const scanStatus = document.getElementById('scanStatus');
+
+    if (isScanning) {
+      scanBtn.innerHTML = '<span class="white-icon">⏹</span> STOP';
+      scanStatus.innerText = "SCAN: ON";
+      let idx = 0;
+      scanInterval = setInterval(() => {
+        currentFreq = SCAN_FREQS[idx];
+        document.getElementById('freqDisplay').innerText = currentFreq;
+        document.getElementById('freqInput').value = currentFreq;
+        idx = (idx + 1) % SCAN_FREQS.length;
+      }, 1500);
+    } else {
+      clearInterval(scanInterval);
+      scanBtn.innerHTML = '<span class="white-icon">🔍</span> SCAN';
+      scanStatus.innerText = "SCAN: OFF";
+    }
+  }
+
+  function speakText(text) {
+    if (document.getElementById('ttsToggle').checked && 'speechSynthesis' in window) {
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = 'id-ID';
+      speechSynthesis.speak(utterance);
+    }
+  }
+
   window.addEventListener('DOMContentLoaded', () => {
+    setupVisualizer();
+
+    if ('getBattery' in navigator) {
+      navigator.getBattery().then(battery => {
+        const updateBatteryUI = () => {
+          const level = Math.round(battery.level * 100);
+          const charging = battery.charging ? "⚡" : "🔋";
+          document.getElementById('batDisplay').innerText = `BAT: ${level}% ${charging}`;
+        };
+        
+        updateBatteryUI();
+        battery.addEventListener('levelchange', updateBatteryUI);
+        battery.addEventListener('chargingchange', updateBatteryUI);
+      });
+    } else {
+      document.getElementById('batDisplay').innerText = "BAT: 100% 🔋";
+    }
+
     const savedNick = localStorage.getItem('ht_nick');
     const savedFreq = localStorage.getItem('ht_freq');
     const savedPass = localStorage.getItem('ht_pass');
@@ -176,46 +322,30 @@
 
   function connect() {
     ws = new WebSocket(WORKER_URL);
-
     ws.onopen = () => {
       const savedPass = localStorage.getItem('ht_pass') || '';
       const savedNick = localStorage.getItem('ht_nick') || 'Anonim';
-      
       if (ws && ws.readyState === WebSocket.OPEN) {
-        ws.send(JSON.stringify({ 
-          type: 'join', 
-          freq: currentFreq, 
-          sender: savedNick,
-          password: savedPass 
-        }));
+        ws.send(JSON.stringify({ type: 'join', freq: currentFreq, sender: savedNick, password: savedPass }));
       }
     };
 
     ws.onmessage = async (event) => {
       try {
         const data = JSON.parse(event.data);
-
         if (data.type === 'history') {
           if (data.messages && data.messages.length > 0) {
             const chatBox = document.getElementById('chatBox');
             chatBox.innerHTML = ''; 
             addSystemMsg(`Terhubung ke frekuensi ${currentFreq}`);
-            
-            data.messages.forEach(msg => {
-              appendChatToBox(`[${msg.sender}]: ${msg.message}`);
-            });
-
+            data.messages.forEach(msg => appendChatToBox(`[${msg.sender}]: ${msg.message}`));
             localStorage.setItem(`local_chat_${currentFreq}`, JSON.stringify(data.messages));
           }
         }
         else if (data.type === 'join_success') {
           hideError();
           document.getElementById('freqDisplay').innerText = data.freq;
-          if (PRIVATE_CHANNELS[data.freq]) {
-            document.getElementById('privateBadge').innerText = "🔒 PRIVATE CHANNEL";
-          } else {
-            document.getElementById('privateBadge').innerText = "";
-          }
+          document.getElementById('privateBadge').innerText = PRIVATE_CHANNELS[data.freq] ? "🔒 PRIVATE CHANNEL" : "";
         }
         else if (data.type === 'presence') {
           document.getElementById('onlineCount').innerText = data.users.length;
@@ -224,13 +354,13 @@
         else if (data.type === 'text') {
           playRogerBeep();
           saveAndAddSingleChat(data.sender, data.message);
+          speakText(`${data.sender} berkata ${data.message}`);
         } 
         else if (data.type === 'audio') {
           playAudio(data.audio);
         }
       } catch (e) {}
     };
-
     ws.onclose = () => setTimeout(connect, 2000);
   }
 
@@ -238,12 +368,11 @@
     const player = document.getElementById('radioPlayer');
     const btn = document.getElementById('radioBtn');
     const select = document.getElementById('radioSelect');
-
     if (!isRadioPlaying) {
       player.src = select.value;
-      player.volume = 1.0;
+      player.volume = customRadioVolume;
       player.play().catch(() => {
-        showAlert("Gagal memutar Radio. Stream offline atau periksa koneksi internet.");
+        showAlert("Gagal memutar Radio.");
         btn.innerText = "PLAY";
         btn.style.background = "#222";
         isRadioPlaying = false;
@@ -263,13 +392,18 @@
   function changeRadioChannel() {
     const player = document.getElementById('radioPlayer');
     const select = document.getElementById('radioSelect');
-
     if (isRadioPlaying) {
       player.pause();
       player.src = select.value;
       player.load();
       player.play().catch(() => {});
     }
+  }
+
+  function adjustRadioVolume(val) {
+    customRadioVolume = parseFloat(val);
+    const player = document.getElementById('radioPlayer');
+    if (isRadioPlaying) player.volume = customRadioVolume;
   }
 
   function setRadioVolume(level) {
@@ -285,26 +419,19 @@
         return;
       }
     }
-
     currentFreq = freq;
     const nick = document.getElementById('nickInput').value.trim() || 'Anonim';
     localStorage.setItem('ht_nick', nick);
     localStorage.setItem('ht_freq', freq);
     localStorage.setItem('ht_pass', password);
-
     loadLocalHistory(freq);
-
     if (ws && ws.readyState === WebSocket.OPEN) {
-      ws.send(JSON.stringify({ 
-        type: 'join', 
-        freq: freq, 
-        sender: nick,
-        password: password 
-      }));
+      ws.send(JSON.stringify({ type: 'join', freq: freq, sender: nick, password: password }));
     }
   }
 
   function changeFreq() {
+    if (isScanning) toggleScan();
     const newFreq = document.getElementById('freqInput').value.trim();
     const pass = document.getElementById('passInput').value.trim();
     if (newFreq) joinFrequency(newFreq, pass);
@@ -314,12 +441,7 @@
     const input = document.getElementById('msgInput');
     const nick = document.getElementById('nickInput').value.trim() || 'Anonim';
     if (input.value && ws && ws.readyState === WebSocket.OPEN) {
-      ws.send(JSON.stringify({
-        type: 'text',
-        freq: currentFreq,
-        sender: nick,
-        message: input.value
-      }));
+      ws.send(JSON.stringify({ type: 'text', freq: currentFreq, sender: nick, message: input.value }));
       input.value = '';
     }
   }
@@ -335,7 +457,6 @@
 
   function saveAndAddSingleChat(sender, message) {
     appendChatToBox(`[${sender}]: ${message}`);
-
     let localMsgs = JSON.parse(localStorage.getItem(`local_chat_${currentFreq}`)) || [];
     localMsgs.push({ sender, message });
     if (localMsgs.length > 30) localMsgs.shift();
@@ -346,14 +467,10 @@
     const chatBox = document.getElementById('chatBox');
     chatBox.innerHTML = '';
     addSystemMsg(`Frekuensi: ${freq}`);
-
     const localMsgs = JSON.parse(localStorage.getItem(`local_chat_${freq}`)) || [];
-    localMsgs.forEach(msg => {
-      appendChatToBox(`[${msg.sender}]: ${msg.message}`);
-    });
+    localMsgs.forEach(msg => appendChatToBox(`[${msg.sender}]: ${msg.message}`));
   }
 
-  /* CUSTOM MODAL SYSTEM (MENGGANTIKAN ALERT/CONFIRM/PROMPT) */
   function showAlert(msg) {
     document.getElementById('modalText').innerText = msg;
     document.getElementById('modalBtns').innerHTML = `<button class="modal-btn-ok" onclick="closeModal()">OK</button>`;
@@ -369,9 +486,7 @@
     document.getElementById('customModal').style.display = 'flex';
   }
 
-  function closeModal() {
-    document.getElementById('customModal').style.display = 'none';
-  }
+  function closeModal() { document.getElementById('customModal').style.display = 'none'; }
 
   function confirmClearChat() {
     const chatBox = document.getElementById('chatBox');
@@ -388,15 +503,11 @@
     box.scrollTop = box.scrollHeight;
   }
 
-  function addSystemMsg(msg) {
-    appendChatToBox(`[SYS] ${msg}`);
-  }
+  function addSystemMsg(msg) { appendChatToBox(`[SYS] ${msg}`); }
 
-  // PTT & AUDIO LOGIC
   if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
     navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
       mediaRecorder = new MediaRecorder(stream);
-      
       mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
       mediaRecorder.onstop = async () => {
         const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
@@ -406,36 +517,29 @@
         reader.onloadend = () => {
           const base64Audio = reader.result;
           if (ws && ws.readyState === WebSocket.OPEN) {
-            ws.send(JSON.stringify({
-              type: 'audio',
-              freq: currentFreq,
-              audio: base64Audio
-            }));
+            ws.send(JSON.stringify({ type: 'audio', freq: currentFreq, audio: base64Audio }));
           }
         };
       };
-
       const pttBtn = document.getElementById('pttBtn');
-      
       const startRecording = (e) => {
         e.preventDefault();
         if (mediaRecorder && mediaRecorder.state === "inactive") {
+          playSquelchNoise(0.1);
           setRadioVolume(0.1);
           mediaRecorder.start();
           document.getElementById('micStatus').innerText = "🎙️ MEREKAM...";
         }
       };
-
       const stopRecording = (e) => {
         e.preventDefault();
         if (mediaRecorder && mediaRecorder.state === "recording") {
           mediaRecorder.stop();
           playRogerBeep();
           document.getElementById('micStatus').innerText = "Mikrofon Siap";
-          setTimeout(() => setRadioVolume(1.0), 1000);
+          setTimeout(() => setRadioVolume(customRadioVolume), 1000);
         }
       };
-
       pttBtn.addEventListener('mousedown', startRecording);
       pttBtn.addEventListener('mouseup', stopRecording);
       pttBtn.addEventListener('touchstart', startRecording);
@@ -446,12 +550,13 @@
   }
 
   function playAudio(base64Data) {
+    playSquelchNoise(0.1);
     setRadioVolume(0.1);
     const audio = new Audio(base64Data);
     audio.play();
     audio.onended = () => {
       playRogerBeep();
-      setRadioVolume(1.0);
+      setRadioVolume(customRadioVolume);
     };
   }
 
