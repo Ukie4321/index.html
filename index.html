@@ -7,18 +7,14 @@
   <style>
     body { background-color: #000; color: #a3e635; font-family: 'Courier New', monospace; margin: 0; display: flex; justify-content: center; min-height: 100vh; align-items: center; }
     
-    /* TEMA LCD */
     .ht-body { background: #121212; border: 4px solid #333; border-radius: 20px; padding: 20px; width: 90%; max-width: 360px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); position: relative; transition: all 0.3s; }
     
-    /* PERBAIKAN TEMA KE-2 (GREEN) */
     .ht-body.theme-green { background: #1b2612; border-color: #3f5e22; }
     .ht-body.theme-green .screen { background: #1a3300; border-color: #4d8000; }
     
-    /* Warna teks tema hijau (mengecualikan tombol PTT) */
     .ht-body.theme-green *:not(.ptt-btn):not(.ptt-btn *) { color: #86efac !important; }
     .ht-body.theme-green button:not(.ptt-btn) { background: #142900; border-color: #3f5e22; }
 
-    /* Kunci tombol PTT agar selalu MERAH bulat di tema apapun */
     .ptt-btn, .ht-body.theme-green .ptt-btn { 
       background: #b91c1c !important; 
       color: #ffffff !important; 
@@ -37,7 +33,6 @@
     }
     .ptt-btn:active, .ht-body.theme-green .ptt-btn:active { background: #ef4444 !important; }
 
-    /* SCREEN & TOP STATUS BAR */
     .screen { background: #050505; border: 2px solid #222; padding: 12px; border-radius: 8px; margin-bottom: 12px; text-align: center; position: relative; }
     .status-bar { display: flex; justify-content: space-between; font-size: 9px; color: #888; margin-bottom: 4px; }
     .signal-meter { color: #a3e635; font-weight: bold; letter-spacing: 1px; }
@@ -61,13 +56,11 @@
     .radio-panel { border: 1px dashed #333; padding: 8px; border-radius: 5px; margin-bottom: 12px; background: #080808; }
     .time-stamp { color: #555; font-size: 9px; margin-right: 4px; }
 
-    /* TOOLBAR FITUR TAMBAHAN */
     .extra-tools { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-size: 10px; background: #080808; padding: 6px; border-radius: 5px; border: 1px solid #222; }
     .extra-tools label { display: flex; align-items: center; gap: 4px; cursor: pointer; }
 
     .white-icon { filter: brightness(0) invert(1); display: inline-block; vertical-align: middle; margin-right: 4px; }
     
-    /* Modern Slider */
     .modern-slider { -webkit-appearance: none; width: 100%; background: transparent; cursor: pointer; }
     .modern-slider::-webkit-slider-runnable-track { width: 100%; height: 6px; background: #222; border-radius: 5px; }
     .modern-slider::-webkit-slider-thumb { -webkit-appearance: none; height: 16px; width: 16px; border-radius: 50%; background: #a3e635; margin-top: -5px; box-shadow: 0 0 5px #a3e635; }
@@ -184,7 +177,7 @@
   let currentFreq = "145.820";
   let mediaRecorder;
   let audioChunks = [];
-  let micStream = null; // Menyimpan stream mikrofon
+  let micStream = null;
   let isRadioPlaying = false;
   let customRadioVolume = 0.8;
 
@@ -192,6 +185,9 @@
   let scanInterval;
   const SCAN_FREQS = ["145.820", "144.000", "143.550", "142.000"];
   let audioCtx;
+
+  // Set untuk menyimpan ID pesan yang sudah diproses agar tidak double
+  const processedMsgIds = new Set();
 
   const PRIVATE_CHANNELS = {
     "111.111": "1234",
@@ -202,10 +198,8 @@
     if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
   }
 
-  /* FUNGSI NOTIFIKASI SUARA & BANNER LAYAR ATAS HP */
   function showBannerNotification(sender, message) {
     try {
-      // Menggunakan file MP3 murni yang mendukung network stream
       const notifAudio = new Audio('https://cdn.freesound.org/previews/536/536108_11861866-lq.mp3');
       notifAudio.volume = 0.8;
       notifAudio.play().catch(() => {});
@@ -356,7 +350,10 @@
             const chatBox = document.getElementById('chatBox');
             chatBox.innerHTML = ''; 
             addSystemMsg(`Terhubung ke frekuensi ${currentFreq}`);
-            data.messages.forEach(msg => appendChatToBox(`[${msg.sender}]: ${msg.message}`));
+            data.messages.forEach(msg => {
+              if (msg.msgId) processedMsgIds.add(msg.msgId);
+              appendChatToBox(`[${msg.sender}]: ${msg.message}`);
+            });
             localStorage.setItem(`local_chat_${currentFreq}`, JSON.stringify(data.messages));
           }
         }
@@ -366,10 +363,24 @@
           document.getElementById('privateBadge').innerText = PRIVATE_CHANNELS[data.freq] ? "🔒 PRIVATE CHANNEL" : "";
         }
         else if (data.type === 'presence') {
-          document.getElementById('onlineCount').innerText = data.users.length;
-          document.getElementById('namesList').innerText = data.users.length > 0 ? data.users.join(', ') : '-';
+          // Hanya menampilkan nama-nama unik yang terfilter
+          const uniqueUsers = [...new Set((data.users || []).filter(u => u && u.trim() !== ''))];
+          document.getElementById('onlineCount').innerText = uniqueUsers.length;
+          document.getElementById('namesList').innerText = uniqueUsers.length > 0 ? uniqueUsers.join(', ') : '-';
         } 
         else if (data.type === 'text') {
+          // CEK JIKA PESAN SUDAH PERNAH DITERIMA (DUPLIKAT)
+          if (data.msgId && processedMsgIds.has(data.msgId)) {
+            return;
+          }
+          if (data.msgId) {
+            processedMsgIds.add(data.msgId);
+            if (processedMsgIds.size > 100) {
+              const firstVal = processedMsgIds.values().next().value;
+              processedMsgIds.delete(firstVal);
+            }
+          }
+
           const myNick = document.getElementById('nickInput').value.trim() || 'Anonim';
           
           if (data.sender !== myNick) {
@@ -468,8 +479,19 @@
   function sendText() {
     const input = document.getElementById('msgInput');
     const nick = document.getElementById('nickInput').value.trim() || 'Anonim';
-    if (input.value && ws && ws.readyState === WebSocket.OPEN) {
-      ws.send(JSON.stringify({ type: 'text', freq: currentFreq, sender: nick, message: input.value }));
+    const msgText = input.value.trim();
+    
+    if (msgText && ws && ws.readyState === WebSocket.OPEN) {
+      // Buat ID unik untuk pesan ini
+      const msgId = Date.now() + '_' + Math.random().toString(36).substr(2, 5);
+      
+      ws.send(JSON.stringify({ 
+        type: 'text', 
+        freq: currentFreq, 
+        sender: nick, 
+        message: msgText,
+        msgId: msgId
+      }));
       input.value = '';
     }
   }
@@ -533,7 +555,6 @@
 
   function addSystemMsg(msg) { appendChatToBox(`[SYS] ${msg}`); }
 
-  /* FITUR MIKROFON PTT (OPTiMASI AUDIO FOCUS) */
   function setupPTT() {
     const pttBtn = document.getElementById('pttBtn');
 
@@ -542,7 +563,6 @@
       if (mediaRecorder && mediaRecorder.state === "recording") return;
 
       try {
-        // Akses mikrofon hanya saat tombol PTT ditekan
         micStream = await navigator.mediaDevices.getUserMedia({
           audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true }
         });
@@ -563,7 +583,6 @@
             }
           };
 
-          // MELEPAS MIKROFON SEPENUHNYA AGAR VOLUME APLIKASI LAIN NORMAL
           if (micStream) {
             micStream.getTracks().forEach(track => track.stop());
             micStream = null;
