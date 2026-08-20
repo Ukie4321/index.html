@@ -186,7 +186,7 @@
   const SCAN_FREQS = ["145.820", "144.000", "143.550", "142.000"];
   let audioCtx;
 
-  // Set untuk menyimpan ID pesan yang sudah diproses agar tidak double
+  // Set memori untuk mencegah duplikat pesan secara real-time
   const processedMsgIds = new Set();
 
   const PRIVATE_CHANNELS = {
@@ -350,6 +350,7 @@
             const chatBox = document.getElementById('chatBox');
             chatBox.innerHTML = ''; 
             addSystemMsg(`Terhubung ke frekuensi ${currentFreq}`);
+            
             data.messages.forEach(msg => {
               if (msg.msgId) processedMsgIds.add(msg.msgId);
               appendChatToBox(`[${msg.sender}]: ${msg.message}`);
@@ -363,13 +364,12 @@
           document.getElementById('privateBadge').innerText = PRIVATE_CHANNELS[data.freq] ? "🔒 PRIVATE CHANNEL" : "";
         }
         else if (data.type === 'presence') {
-          // Hanya menampilkan nama-nama unik yang terfilter
           const uniqueUsers = [...new Set((data.users || []).filter(u => u && u.trim() !== ''))];
           document.getElementById('onlineCount').innerText = uniqueUsers.length;
           document.getElementById('namesList').innerText = uniqueUsers.length > 0 ? uniqueUsers.join(', ') : '-';
         } 
         else if (data.type === 'text') {
-          // CEK JIKA PESAN SUDAH PERNAH DITERIMA (DUPLIKAT)
+          // ABAIKAN JIKA PESAN DENGAN ID SAMA SUDAH PERNAH TAMPIL
           if (data.msgId && processedMsgIds.has(data.msgId)) {
             return;
           }
@@ -388,7 +388,7 @@
           }
 
           playRogerBeep();
-          saveAndAddSingleChat(data.sender, data.message);
+          saveAndAddSingleChat(data.msgId, data.sender, data.message);
           speakText(`${data.sender} berkata ${data.message}`);
         } 
         else if (data.type === 'audio') {
@@ -482,7 +482,7 @@
     const msgText = input.value.trim();
     
     if (msgText && ws && ws.readyState === WebSocket.OPEN) {
-      // Buat ID unik untuk pesan ini
+      // Buat msgId unik per pengiriman
       const msgId = Date.now() + '_' + Math.random().toString(36).substr(2, 5);
       
       ws.send(JSON.stringify({ 
@@ -505,12 +505,17 @@
     if (e.key === 'Enter') sendText();
   }
 
-  function saveAndAddSingleChat(sender, message) {
-    appendChatToBox(`[${sender}]: ${message}`);
+  function saveAndAddSingleChat(msgId, sender, message) {
     let localMsgs = JSON.parse(localStorage.getItem(`local_chat_${currentFreq}`)) || [];
-    localMsgs.push({ sender, message });
-    if (localMsgs.length > 30) localMsgs.shift();
-    localStorage.setItem(`local_chat_${currentFreq}`, JSON.stringify(localMsgs));
+    
+    // Cegah duplikasi penyimpanan di memori HP
+    const alreadySaved = localMsgs.some(m => m.msgId === msgId);
+    if (!alreadySaved) {
+      appendChatToBox(`[${sender}]: ${message}`);
+      localMsgs.push({ msgId, sender, message });
+      if (localMsgs.length > 30) localMsgs.shift();
+      localStorage.setItem(`local_chat_${currentFreq}`, JSON.stringify(localMsgs));
+    }
   }
 
   function loadLocalHistory(freq) {
@@ -518,7 +523,10 @@
     chatBox.innerHTML = '';
     addSystemMsg(`Frekuensi: ${freq}`);
     const localMsgs = JSON.parse(localStorage.getItem(`local_chat_${freq}`)) || [];
-    localMsgs.forEach(msg => appendChatToBox(`[${msg.sender}]: ${msg.message}`));
+    localMsgs.forEach(msg => {
+      if (msg.msgId) processedMsgIds.add(msg.msgId);
+      appendChatToBox(`[${msg.sender}]: ${msg.message}`);
+    });
   }
 
   function showAlert(msg) {
