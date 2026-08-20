@@ -482,14 +482,34 @@
 
   function initAudioContext() {
     if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+  }
+
+  // FUNGSI PERBAIKAN: NOTIFIKASI SUARA LOKAL (PASTI BUNYI SINTESIS AUDIO)
+  function playNotificationSound() {
+    try {
+      initAudioContext();
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(880, audioCtx.currentTime); // High pitch notification tone
+      gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.35);
+
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+
+      osc.start();
+      osc.stop(audioCtx.currentTime + 0.35);
+    } catch(e) {
+      console.log("Audio Notification Error:", e);
+    }
   }
 
   function showBannerNotification(sender, message) {
-    try {
-      const notifAudio = new Audio('https://cdn.freesound.org/previews/536/536108_11861866-lq.mp3');
-      notifAudio.volume = 0.8;
-      notifAudio.play().catch(() => {});
-    } catch(e) {}
+    // Memutar notifikasi audio sintetis
+    playNotificationSound();
 
     if ("Notification" in window && Notification.permission === "granted") {
       try {
@@ -539,6 +559,7 @@
   }
 
   function toggleScan() {
+    initAudioContext();
     isScanning = !isScanning;
     const scanBtn = document.getElementById('scanBtn');
     const scanStatus = document.getElementById('scanStatus');
@@ -629,6 +650,7 @@
   }
 
   function openCreateGroupModal() {
+    initAudioContext();
     document.getElementById('createGroupModal').style.display = 'flex';
   }
 
@@ -637,6 +659,7 @@
   }
 
   function confirmCreateGroup() {
+    initAudioContext();
     const name = document.getElementById('newGroupName').value.trim();
     const freq = document.getElementById('newGroupFreq').value.trim();
     const pass = document.getElementById('newGroupPass').value.trim();
@@ -666,6 +689,7 @@
   }
 
   function switchGroupFromDropdown() {
+    initAudioContext();
     const val = document.getElementById('groupSelect').value;
     const parts = val.split('||');
     const freq = parts[0];
@@ -746,6 +770,7 @@
   }
 
   function replayLastAudio() {
+    initAudioContext();
     if (lastAudioData) {
       playAudio(lastAudioData);
     } else {
@@ -754,6 +779,7 @@
   }
 
   function toggleRadio() {
+    initAudioContext();
     const player = document.getElementById('radioPlayer');
     const btn = document.getElementById('radioBtn');
     const select = document.getElementById('radioSelect');
@@ -824,6 +850,7 @@
   }
 
   function changeFreq() {
+    initAudioContext();
     if (isScanning) toggleScan();
     const newFreq = document.getElementById('freqInput').value.trim();
     const pass = document.getElementById('passInput').value.trim();
@@ -831,6 +858,7 @@
   }
 
   function sendText() {
+    initAudioContext();
     const input = document.getElementById('msgInput');
     const nick = document.getElementById('nickInput').value.trim() || 'Anonim';
     const msgText = input.value.trim();
@@ -850,11 +878,13 @@
   }
 
   function sendQuickText(text) {
+    initAudioContext();
     document.getElementById('msgInput').value = text;
     sendText();
   }
 
   function sendGPSLocation() {
+    initAudioContext();
     if (!navigator.geolocation) {
       showAlert("Fitur GPS tidak didukung pada browser/perangkat ini.");
       return;
@@ -928,6 +958,7 @@
   }
 
   function openClearModal() {
+    initAudioContext();
     document.getElementById('modalText').innerText = `Yakin ingin menghapus riwayat chat di frekuensi ${currentFreq}?`;
     document.getElementById('modalBtns').innerHTML = `
       <button class="modal-btn-cancel" onclick="closeModal()">BATAL</button>
@@ -990,6 +1021,7 @@
 
   /* --- FULLSCREEN CHAT MODE --- */
   function openFullscreenChat() {
+    initAudioContext();
     document.getElementById('fsFreqTitle').innerText = currentFreq;
     const fsBox = document.getElementById('fsChatBox');
     const chatBox = document.getElementById('chatBox');
@@ -1004,6 +1036,7 @@
   }
 
   function sendFsText() {
+    initAudioContext();
     const input = document.getElementById('fsMsgInput');
     const nick = document.getElementById('nickInput').value.trim() || 'Anonim';
     const msgText = input.value.trim();
@@ -1027,6 +1060,7 @@
   }
 
   async function startRecordingAudio(source = 'main') {
+    initAudioContext();
     activePttSource = source;
     if (mediaRecorder && mediaRecorder.state === "recording") return;
 
@@ -1050,7 +1084,6 @@
           
           if (ws && ws.readyState === WebSocket.OPEN) {
             if (activePttSource === 'fullscreen') {
-              // Kirim sebagai Voice Note (Tersimpan di Chat & Bisa di-Play)
               const msgId = Date.now() + '_' + Math.random().toString(36).substr(2, 5);
               const vnPayload = `audio-vn-data:${base64Audio}`;
               ws.send(JSON.stringify({
@@ -1061,7 +1094,6 @@
                 msgId: msgId
               }));
             } else {
-              // Memancar PTT Langsung Suara Saja (HT Mode Standard)
               ws.send(JSON.stringify({ type: 'audio', freq: currentFreq, audio: base64Audio }));
             }
           }
@@ -1096,14 +1128,12 @@
     const pttBtn = document.getElementById('pttBtn');
     const fsPttBtn = document.getElementById('fsPttBtn');
 
-    // Handle PTT Utama
     pttBtn.addEventListener('mousedown', (e) => { e.preventDefault(); if (!isPttLocked) startRecordingAudio('main'); });
     pttBtn.addEventListener('mouseup', (e) => { e.preventDefault(); if (!isPttLocked) stopRecordingAudio(); });
     pttBtn.addEventListener('mouseleave', (e) => { e.preventDefault(); if (!isPttLocked) stopRecordingAudio(); });
     pttBtn.addEventListener('touchstart', (e) => { e.preventDefault(); if (!isPttLocked) startRecordingAudio('main'); });
     pttBtn.addEventListener('touchend', (e) => { e.preventDefault(); if (!isPttLocked) stopRecordingAudio(); });
 
-    // Handle PTT Fullscreen Chat (Tahan -> Kirim Voice Note ala WA)
     if (fsPttBtn) {
       fsPttBtn.addEventListener('mousedown', (e) => { e.preventDefault(); startRecordingAudio('fullscreen'); });
       fsPttBtn.addEventListener('mouseup', (e) => { e.preventDefault(); stopRecordingAudio(); });
@@ -1114,6 +1144,7 @@
   }
 
   function togglePttLock() {
+    initAudioContext();
     const pttBtn = document.getElementById('pttBtn');
     const lockBtn = document.getElementById('lockPttBtn');
 
@@ -1137,6 +1168,7 @@
   }
 
   function playAudio(base64Data) {
+    initAudioContext();
     playSquelchNoise(0.1);
     duckRadioVolume();
 
@@ -1165,6 +1197,7 @@
   }
 
   function openCompassModal() {
+    initAudioContext();
     if (typeof DeviceOrientationEvent === 'undefined') {
       alert("Sensor tidak didukung pada browser/perangkat ini.");
       return;
