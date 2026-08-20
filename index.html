@@ -201,6 +201,27 @@
     if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
   }
 
+  /* FUNGSI NOTIFIKASI SUARA & BANNER LAYAR ATAS HP */
+  function showBannerNotification(sender, message) {
+    // 1. Memutar Suara Notifikasi
+    try {
+      const notifAudio = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
+      notifAudio.volume = 0.8;
+      notifAudio.play().catch(() => {});
+    } catch(e) {}
+
+    // 2. Menampilkan Banner Notifikasi di Layar Atas HP
+    if ("Notification" in window && Notification.permission === "granted") {
+      try {
+        new Notification(`Pesan HT [${currentFreq}] dari ${sender}`, {
+          body: message,
+          icon: 'logo.png',
+          vibrate: [200, 100, 200]
+        });
+      } catch(e) {}
+    }
+  }
+
   function playSquelchNoise(duration = 0.15) {
     try {
       initAudioContext();
@@ -272,6 +293,11 @@
   }
 
   window.addEventListener('DOMContentLoaded', () => {
+    // Meminta Izin Notifikasi Layar Atas ke Browser HP
+    if ("Notification" in window && Notification.permission !== "granted") {
+      Notification.requestPermission();
+    }
+
     setInterval(() => {
       const bars = ["SIG: ▂", "SIG: ▂▄", "SIG: ▂▄▆", "SIG: ▂▄▆█"];
       document.getElementById('rssiMeter').innerText = bars[Math.floor(Math.random() * bars.length)];
@@ -344,6 +370,13 @@
           document.getElementById('namesList').innerText = data.users.length > 0 ? data.users.join(', ') : '-';
         } 
         else if (data.type === 'text') {
+          const myNick = document.getElementById('nickInput').value.trim() || 'Anonim';
+          
+          // Memunculkan Suara & Banner Notifikasi HP jika pesan dari orang lain
+          if (data.sender !== myNick) {
+            showBannerNotification(data.sender, data.message);
+          }
+
           playRogerBeep();
           saveAndAddSingleChat(data.sender, data.message);
           speakText(`${data.sender} berkata ${data.message}`);
@@ -397,7 +430,6 @@
     restoreRadioVolume();
   }
 
-  /* KONTROL DUCKING VOLUME BERDASARKAN SLIDER */
   function duckRadioVolume() {
     const player = document.getElementById('radioPlayer');
     if (isRadioPlaying) player.volume = customRadioVolume * 0.1;
