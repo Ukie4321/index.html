@@ -14,11 +14,15 @@
     .user-count { color: #a3e635; font-weight: bold; }
     .user-names { color: #888; font-size: 10px; margin-top: 4px; word-break: break-all; }
 
-    .chat-box { background: #050505; height: 100px; overflow-y: auto; border: 1px solid #222; padding: 8px; font-size: 11px; margin-bottom: 10px; border-radius: 5px; color: #ccc; word-wrap: break-word; }
-    .input-group { display: flex; gap: 5px; margin-bottom: 10px; }
+    .chat-box { background: #050505; height: 110px; overflow-y: auto; border: 1px solid #222; padding: 8px; font-size: 11px; margin-bottom: 8px; border-radius: 5px; color: #ccc; word-wrap: break-word; }
+    .input-group { display: flex; gap: 5px; margin-bottom: 8px; }
     input, select { flex: 1; background: #0a0a0a; border: 1px solid #333; color: #a3e635; padding: 8px; border-radius: 3px; font-family: inherit; }
     button { background: #222; color: #a3e635; border: 1px solid #444; padding: 8px 12px; cursor: pointer; border-radius: 3px; }
     
+    /* Tombol Pesan Cepat */
+    .quick-btns { display: flex; gap: 4px; margin-bottom: 10px; }
+    .quick-btn { flex: 1; font-size: 9px; padding: 4px; background: #181818; color: #888; border: 1px solid #333; }
+
     .ptt-btn { background: #b91c1c; color: white; border-radius: 50%; width: 100px; height: 100px; margin: 10px auto 0; display: block; border: none; font-weight: bold; font-family: inherit; cursor: pointer; user-select: none; touch-action: manipulation; }
     .ptt-btn:active { background: #ef4444; }
     
@@ -26,12 +30,12 @@
     .status { text-align: center; font-size: 11px; margin-top: 5px; color: #888; }
     .private-badge { font-size: 10px; color: #f59e0b; margin-top: 2px; }
     .radio-panel { border: 1px dashed #333; padding: 8px; border-radius: 5px; margin-bottom: 12px; background: #080808; }
+    .time-stamp { color: #555; font-size: 9px; margin-right: 4px; }
   </style>
 </head>
 <body>
 
 <div class="ht-body">
-  <!-- LOGO APLIKASI -->
   <div style="text-align: center; margin-bottom: 10px;">
     <img src="logo.png" alt="Logo" style="width: 50px; height: 50px; border-radius: 50%;" onerror="this.style.display='none'">
   </div>
@@ -77,9 +81,23 @@
     <button onclick="changeFreq()">SET</button>
   </div>
 
+  <!-- HEADER AREA CHAT & TOMBOL HAPUS -->
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+    <span style="font-size: 10px; color: #888;">RIWAYAT CHAT:</span>
+    <button onclick="clearChatHistory()" style="font-size: 9px; padding: 2px 6px; background: #181818; color: #ef4444; border: 1px solid #333;">HAPUS CHAT</button>
+  </div>
+
   <!-- AREA CHAT BOX & TEKS -->
   <div class="chat-box" id="chatBox"></div>
   
+  <!-- TOMBOL QUICK MESSAGE -->
+  <div class="quick-btns">
+    <button class="quick-btn" onclick="sendQuickText('Situasi')">8-1-9</button>
+    <button class="quick-btn" onclick="sendQuickText('Di mengerti')">8-6</button>
+    <button class="quick-btn" onclick="sendQuickText('Posisi')">10-2</button>
+    <button class="quick-btn" onclick="sendQuickText('Terusan berita')">8-7</button>
+  </div>
+
   <div class="input-group">
     <input type="text" id="msgInput" placeholder="Ketik pesan..." onkeypress="handleKeyPress(event)">
     <button onclick="sendText()">KIRIM</button>
@@ -103,7 +121,22 @@
     "999.999": "admin"
   };
 
-  // 1. DOKUMEN SIAP & LOAD MEMORI
+  // SINTESIS SUARA BEEP RADIO (Web Audio API)
+  function playRogerBeep() {
+    try {
+      const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(1200, audioCtx.currentTime); // Frekuensi nada Beep
+      gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start();
+      osc.stop(audioCtx.currentTime + 0.08); // Durasi Beep 0.08 detik
+    } catch(e) {}
+  }
+
   window.addEventListener('DOMContentLoaded', () => {
     const savedNick = localStorage.getItem('ht_nick');
     const savedFreq = localStorage.getItem('ht_freq');
@@ -124,7 +157,6 @@
     connect();
   });
 
-  // 2. KONEKSI WEBSOCKET
   function connect() {
     ws = new WebSocket(WORKER_URL);
 
@@ -173,6 +205,7 @@
           document.getElementById('namesList').innerText = data.users.length > 0 ? data.users.join(', ') : '-';
         } 
         else if (data.type === 'text') {
+          playRogerBeep(); // Bunyi Beep saat pesan masuk
           saveAndAddSingleChat(data.sender, data.message);
         } 
         else if (data.type === 'audio') {
@@ -184,7 +217,6 @@
     ws.onclose = () => setTimeout(connect, 2000);
   }
 
-  // 3. LOGIKA RADIO ONLINE
   function toggleRadio() {
     const player = document.getElementById('radioPlayer');
     const btn = document.getElementById('radioBtn');
@@ -220,12 +252,9 @@
 
   function setRadioVolume(level) {
     const player = document.getElementById('radioPlayer');
-    if (isRadioPlaying) {
-      player.volume = level;
-    }
+    if (isRadioPlaying) player.volume = level;
   }
 
-  // 4. KONTROL FREKUENSI & CHAT
   function joinFrequency(freq, password = '') {
     if (PRIVATE_CHANNELS[freq]) {
       const correctPass = PRIVATE_CHANNELS[freq];
@@ -236,7 +265,6 @@
     }
 
     currentFreq = freq;
-    
     const nick = document.getElementById('nickInput').value.trim() || 'Anonim';
     localStorage.setItem('ht_nick', nick);
     localStorage.setItem('ht_freq', freq);
@@ -274,6 +302,11 @@
     }
   }
 
+  function sendQuickText(text) {
+    document.getElementById('msgInput').value = text;
+    sendText();
+  }
+
   function handleKeyPress(e) {
     if (e.key === 'Enter') sendText();
   }
@@ -298,9 +331,19 @@
     });
   }
 
+  function clearChatHistory() {
+    if (confirm(`Yakin ingin menghapus riwayat chat di frekuensi ${currentFreq}?`)) {
+      const chatBox = document.getElementById('chatBox');
+      chatBox.innerHTML = '';
+      localStorage.removeItem(`local_chat_${currentFreq}`);
+      addSystemMsg(`Riwayat chat frekuensi ${currentFreq} telah dibersihkan.`);
+    }
+  }
+
   function appendChatToBox(msg) {
     const box = document.getElementById('chatBox');
-    box.innerHTML += `<div>${msg}</div>`;
+    const time = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+    box.innerHTML += `<div><span class="time-stamp">[${time}]</span>${msg}</div>`;
     box.scrollTop = box.scrollHeight;
   }
 
@@ -308,7 +351,7 @@
     appendChatToBox(`[SYS] ${msg}`);
   }
 
-  // 5. PTT & AUDIO LOGIC
+  // PTT & AUDIO LOGIC
   navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
     mediaRecorder = new MediaRecorder(stream);
     
@@ -345,6 +388,7 @@
       e.preventDefault();
       if (mediaRecorder && mediaRecorder.state === "recording") {
         mediaRecorder.stop();
+        playRogerBeep(); // Bunyi Roger Beep saat lepas PTT
         document.getElementById('micStatus').innerText = "Mikrofon Siap";
         setTimeout(() => setRadioVolume(1.0), 1000);
       }
@@ -363,6 +407,7 @@
     const audio = new Audio(base64Data);
     audio.play();
     audio.onended = () => {
+      playRogerBeep();
       setRadioVolume(1.0);
     };
   }
