@@ -6,7 +6,7 @@
   <title>MRZYB-HT BLACK EDITION</title>
   <style>
     body { background-color: #000; color: #a3e635; font-family: 'Courier New', monospace; margin: 0; display: flex; justify-content: center; min-height: 100vh; align-items: center; }
-    .ht-body { background: #121212; border: 4px solid #333; border-radius: 20px; padding: 20px; width: 90%; max-width: 360px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
+    .ht-body { background: #121212; border: 4px solid #333; border-radius: 20px; padding: 20px; width: 90%; max-width: 360px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); position: relative; }
     .screen { background: #050505; border: 2px solid #222; padding: 15px; border-radius: 8px; margin-bottom: 15px; text-align: center; }
     .freq { font-size: 32px; font-weight: bold; }
     
@@ -31,6 +31,14 @@
     .private-badge { font-size: 10px; color: #f59e0b; margin-top: 2px; }
     .radio-panel { border: 1px dashed #333; padding: 8px; border-radius: 5px; margin-bottom: 12px; background: #080808; }
     .time-stamp { color: #555; font-size: 9px; margin-right: 4px; }
+
+    /* CSS UNTUK MODAL POP-UP CUSTOM (TANPA URL) */
+    .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); justify-content: center; align-items: center; z-index: 1000; }
+    .modal-box { background: #121212; border: 2px solid #333; padding: 20px; border-radius: 10px; width: 80%; max-width: 280px; text-align: center; box-shadow: 0 0 15px rgba(0,0,0,0.9); }
+    .modal-text { color: #ccc; font-size: 12px; margin-bottom: 15px; line-height: 1.4; }
+    .modal-btns { display: flex; gap: 10px; justify-content: center; }
+    .modal-btn-ok { background: #b91c1c; color: #fff; border: 1px solid #ef4444; padding: 6px 15px; font-size: 11px; }
+    .modal-btn-cancel { background: #222; color: #888; border: 1px solid #444; padding: 6px 15px; font-size: 11px; }
   </style>
 </head>
 <body>
@@ -84,7 +92,7 @@
   <!-- HEADER AREA CHAT & TOMBOL HAPUS -->
   <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
     <span style="font-size: 10px; color: #888;">RIWAYAT CHAT:</span>
-    <button onclick="clearChatHistory()" style="font-size: 9px; padding: 2px 6px; background: #181818; color: #ef4444; border: 1px solid #333;">HAPUS CHAT</button>
+    <button onclick="openClearModal()" style="font-size: 9px; padding: 2px 6px; background: #181818; color: #ef4444; border: 1px solid #333;">HAPUS CHAT</button>
   </div>
 
   <!-- AREA CHAT BOX & TEKS -->
@@ -108,6 +116,17 @@
   <div class="status" id="micStatus">Mikrofon Siap</div>
 </div>
 
+<!-- MODAL KONFIRMASI CUSTOM -->
+<div id="confirmModal" class="modal-overlay">
+  <div class="modal-box">
+    <div class="modal-text" id="modalText">Yakin ingin menghapus riwayat chat?</div>
+    <div class="modal-btns">
+      <button class="modal-btn-cancel" onclick="closeClearModal()">BATAL</button>
+      <button class="modal-btn-ok" onclick="confirmClearChat()">HAPUS</button>
+    </div>
+  </div>
+</div>
+
 <script>
   const WORKER_URL = "wss://my-ht-project.ukielaki8387.workers.dev";
   let ws;
@@ -128,12 +147,12 @@
       const osc = audioCtx.createOscillator();
       const gain = audioCtx.createGain();
       osc.type = 'sine';
-      osc.frequency.setValueAtTime(1200, audioCtx.currentTime); // Frekuensi nada Beep
+      osc.frequency.setValueAtTime(1200, audioCtx.currentTime);
       gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
       osc.connect(gain);
       gain.connect(audioCtx.destination);
       osc.start();
-      osc.stop(audioCtx.currentTime + 0.08); // Durasi Beep 0.08 detik
+      osc.stop(audioCtx.currentTime + 0.08);
     } catch(e) {}
   }
 
@@ -205,7 +224,7 @@
           document.getElementById('namesList').innerText = data.users.length > 0 ? data.users.join(', ') : '-';
         } 
         else if (data.type === 'text') {
-          playRogerBeep(); // Bunyi Beep saat pesan masuk
+          playRogerBeep();
           saveAndAddSingleChat(data.sender, data.message);
         } 
         else if (data.type === 'audio') {
@@ -331,13 +350,22 @@
     });
   }
 
-  function clearChatHistory() {
-    if (confirm(`Yakin ingin menghapus riwayat chat di frekuensi ${currentFreq}?`)) {
-      const chatBox = document.getElementById('chatBox');
-      chatBox.innerHTML = '';
-      localStorage.removeItem(`local_chat_${currentFreq}`);
-      addSystemMsg(`Riwayat chat frekuensi ${currentFreq} telah dibersihkan.`);
-    }
+  /* KONTROL MODAL CUSTOM TANPA ALAMAT URL */
+  function openClearModal() {
+    document.getElementById('modalText').innerText = `Yakin ingin menghapus riwayat chat di frekuensi ${currentFreq}?`;
+    document.getElementById('confirmModal').style.display = 'flex';
+  }
+
+  function closeClearModal() {
+    document.getElementById('confirmModal').style.display = 'none';
+  }
+
+  function confirmClearChat() {
+    const chatBox = document.getElementById('chatBox');
+    chatBox.innerHTML = '';
+    localStorage.removeItem(`local_chat_${currentFreq}`);
+    addSystemMsg(`Riwayat chat frekuensi ${currentFreq} telah dibersihkan.`);
+    closeClearModal();
   }
 
   function appendChatToBox(msg) {
@@ -388,7 +416,7 @@
       e.preventDefault();
       if (mediaRecorder && mediaRecorder.state === "recording") {
         mediaRecorder.stop();
-        playRogerBeep(); // Bunyi Roger Beep saat lepas PTT
+        playRogerBeep();
         document.getElementById('micStatus').innerText = "Mikrofon Siap";
         setTimeout(() => setRadioVolume(1.0), 1000);
       }
