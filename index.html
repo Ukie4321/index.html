@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MRZYB-HT BLACK EDITION</title>
@@ -456,7 +455,6 @@
   const app = initializeApp(firebaseConfig);
   const messaging = getMessaging(app);
 
-  // Mendaftarkan Service Worker untuk Notifikasi Background (Aplikasi Ditutup)
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('/firebase-messaging-sw.js')
       .then((registration) => {
@@ -518,6 +516,70 @@
 
   const themes = ['default', 'theme-green', 'theme-pink'];
   let currentThemeIndex = 0;
+
+  /* --- FUNGSI FULLSCREEN DIDEKLARASIKAN PERTAMA UTK MENCEGAH REFERENCE ERROR --- */
+  function sendFsText() {
+    initAudioContext();
+    const input = document.getElementById('fsMsgInput');
+    const nick = document.getElementById('nickInput').value.trim() || 'Anonim';
+    const msgText = input.value.trim();
+    
+    if (msgText && ws && ws.readyState === WebSocket.OPEN) {
+      const msgId = Date.now() + '_' + Math.random().toString(36).substr(2, 5);
+      
+      ws.send(JSON.stringify({ 
+        type: 'text', 
+        freq: currentFreq, 
+        sender: nick, 
+        message: msgText,
+        msgId: msgId
+      }));
+
+      if (window.targetFcmToken) {
+        kirimNotifikasiKeWorker(window.targetFcmToken, msgText);
+      }
+
+      input.value = '';
+    }
+  }
+
+  function handleFsKeyPress(e) {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      sendFsText();
+    }
+  }
+
+  function openFullscreenChat() {
+    initAudioContext();
+    document.getElementById('fsFreqTitle').innerText = currentFreq;
+    const fsBox = document.getElementById('fsChatBox');
+    const chatBox = document.getElementById('chatBox');
+    
+    fsBox.innerHTML = chatBox.innerHTML;
+    document.getElementById('fullscreenChat').classList.add('active');
+    fsBox.scrollTop = fsBox.scrollHeight;
+
+    bindFsPttEvents();
+  }
+
+  function closeFullscreenChat() {
+    document.getElementById('fullscreenChat').classList.remove('active');
+  }
+
+  function bindFsPttEvents() {
+    const fsPttBtn = document.getElementById('fsPttBtn');
+    if (fsPttBtn) {
+      const newFsBtn = fsPttBtn.cloneNode(true);
+      fsPttBtn.parentNode.replaceChild(newFsBtn, fsPttBtn);
+
+      newFsBtn.addEventListener('mousedown', (e) => { e.preventDefault(); startRecordingAudio('fullscreen'); });
+      newFsBtn.addEventListener('mouseup', (e) => { e.preventDefault(); stopRecordingAudio(); });
+      newFsBtn.addEventListener('mouseleave', (e) => { e.preventDefault(); stopRecordingAudio(); });
+      newFsBtn.addEventListener('touchstart', (e) => { e.preventDefault(); startRecordingAudio('fullscreen'); });
+      newFsBtn.addEventListener('touchend', (e) => { e.preventDefault(); stopRecordingAudio(); });
+    }
+  }
 
   function toggleTheme() {
     const container = document.getElementById('htContainer');
@@ -1087,51 +1149,6 @@
 
   function addSystemMsg(msg) { appendChatToBox(`[SYS] ${msg}`); }
 
-  /* --- FULLSCREEN CHAT MODE --- */
-  function openFullscreenChat() {
-    initAudioContext();
-    document.getElementById('fsFreqTitle').innerText = currentFreq;
-    const fsBox = document.getElementById('fsChatBox');
-    const chatBox = document.getElementById('chatBox');
-    
-    fsBox.innerHTML = chatBox.innerHTML;
-    document.getElementById('fullscreenChat').classList.add('active');
-    fsBox.scrollTop = fsBox.scrollHeight;
-  }
-
-  function closeFullscreenChat() {
-    document.getElementById('fullscreenChat').classList.remove('active');
-  }
-
-  function sendFsText() {
-    initAudioContext();
-    const input = document.getElementById('fsMsgInput');
-    const nick = document.getElementById('nickInput').value.trim() || 'Anonim';
-    const msgText = input.value.trim();
-    
-    if (msgText && ws && ws.readyState === WebSocket.OPEN) {
-      const msgId = Date.now() + '_' + Math.random().toString(36).substr(2, 5);
-      
-      ws.send(JSON.stringify({ 
-        type: 'text', 
-        freq: currentFreq, 
-        sender: nick, 
-        message: msgText,
-        msgId: msgId
-      }));
-
-      if (window.targetFcmToken) {
-        kirimNotifikasiKeWorker(window.targetFcmToken, msgText);
-      }
-
-      input.value = '';
-    }
-  }
-
-  function handleFsKeyPress(e) {
-    if (e.key === 'Enter') sendFsText();
-  }
-
   async function startRecordingAudio(source = 'main') {
     initAudioContext();
     activePttSource = source;
@@ -1203,21 +1220,12 @@
 
   function setupPTT() {
     const pttBtn = document.getElementById('pttBtn');
-    const fsPttBtn = document.getElementById('fsPttBtn');
 
     pttBtn.addEventListener('mousedown', (e) => { e.preventDefault(); if (!isPttLocked) startRecordingAudio('main'); });
     pttBtn.addEventListener('mouseup', (e) => { e.preventDefault(); if (!isPttLocked) stopRecordingAudio(); });
     pttBtn.addEventListener('mouseleave', (e) => { e.preventDefault(); if (!isPttLocked) stopRecordingAudio(); });
     pttBtn.addEventListener('touchstart', (e) => { e.preventDefault(); if (!isPttLocked) startRecordingAudio('main'); });
     pttBtn.addEventListener('touchend', (e) => { e.preventDefault(); if (!isPttLocked) stopRecordingAudio(); });
-
-    if (fsPttBtn) {
-      fsPttBtn.addEventListener('mousedown', (e) => { e.preventDefault(); startRecordingAudio('fullscreen'); });
-      fsPttBtn.addEventListener('mouseup', (e) => { e.preventDefault(); stopRecordingAudio(); });
-      fsPttBtn.addEventListener('mouseleave', (e) => { e.preventDefault(); stopRecordingAudio(); });
-      fsPttBtn.addEventListener('touchstart', (e) => { e.preventDefault(); startRecordingAudio('fullscreen'); });
-      fsPttBtn.addEventListener('touchend', (e) => { e.preventDefault(); stopRecordingAudio(); });
-    }
   }
 
   function togglePttLock() {
