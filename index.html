@@ -203,7 +203,6 @@
       flex-shrink: 0;
     }
 
-    /* TOMBOL REKAM SUARA / PTT MELAYANG (FULLSCREEN MODE) */
     .fs-ptt-btn {
       background: #b91c1c;
       color: #fff;
@@ -227,7 +226,6 @@
       transform: scale(1.1);
     }
 
-    /* STYLE BUBBLE VOICE NOTE ALA WA */
     .vn-player-bubble {
       display: inline-flex;
       align-items: center;
@@ -338,7 +336,6 @@
     <button onclick="changeFreq()">SET</button>
   </div>
 
-  <!-- HEADER RIWAYAT CHAT + TOMBOL FULLSCREEN -->
   <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
     <span style="font-size: 10px; color: #888;">RIWAYAT CHAT:</span>
     <div style="display: flex; gap: 4px;">
@@ -372,7 +369,6 @@
   <div class="status" id="micStatus">Mikrofon Siap</div>
 </div>
 
-<!-- CONTAINER FULLSCREEN CHAT ALA WHATSAPP + REKAM SUARA -->
 <div class="fullscreen-chat-overlay" id="fullscreenChat">
   <div class="fs-header">
     <div class="fs-header-title">
@@ -387,12 +383,10 @@
   <div class="fs-chat-footer">
     <input type="text" id="fsMsgInput" placeholder="Ketik pesan..." onkeypress="handleFsKeyPress(event)">
     <button onclick="sendFsText()">➤</button>
-    <!-- TOMBOL REKAM SUARA (HOLD TO RECORD) -->
     <button class="fs-ptt-btn" id="fsPttBtn" title="Tahan untuk Rekam Suara">🎙️</button>
   </div>
 </div>
 
-<!-- MODAL POPUP GENERAL -->
 <div id="customModal" class="modal-overlay">
   <div class="modal-box">
     <div class="modal-text" id="modalText">Pemberitahuan</div>
@@ -402,7 +396,6 @@
   </div>
 </div>
 
-<!-- MODAL POPUP BUAT GRUP BARU -->
 <div id="createGroupModal" class="modal-overlay">
   <div class="modal-box" style="border-color: #10b981;">
     <div style="color: #10b981; font-weight: bold; font-size: 14px; margin-bottom: 10px;">👥 BUAT / GABUNG GRUP</div>
@@ -416,7 +409,6 @@
   </div>
 </div>
 
-<!-- MODAL POPUP KOMPAS DIGIT & ANALOG -->
 <div id="compassModal" class="modal-overlay">
   <div class="modal-box" style="border-color: #f59e0b;">
     <button class="close-x-btn" onclick="closeCompassModal()">✕</button>
@@ -455,7 +447,6 @@
   const app = initializeApp(firebaseConfig);
   const messaging = getMessaging(app);
 
-  // Mendaftarkan Service Worker untuk Notifikasi Background (Aplikasi Ditutup)
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('/firebase-messaging-sw.js')
       .then((registration) => {
@@ -469,27 +460,24 @@
   Notification.requestPermission().then((permission) => {
     if (permission === 'granted') {
       getToken(messaging, { vapidKey: 'BAfJA1rsdLKg7edUjiuKnOjogJpp9pOJ72xJy62oMs9HAJc1bAGuSakesAkYUNLclGpum40OJY9fE5mxewH2dzo' })
-  .then((currentToken) => {
-    if (currentToken) {
-      window.myFcmToken = currentToken;
-      console.log("Token FCM Web Saya:", currentToken);
-
-      // KIRIM TOKEN KITA KE WORKER UNTUK FREKUENSI SAAT INI
-      fetch("https://my-ht-project.ukielaki8387.workers.dev/register-fcm", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          freq: window.currentFreq || "145.820",
-          token: currentToken,
-          callsign: localStorage.getItem('ht_nick') || "Anonim"
+        .then((currentToken) => {
+          if (currentToken) {
+            window.myFcmToken = currentToken;
+            console.log("Token FCM Web Saya:", currentToken);
+            if (typeof window.kirimTokenKeWorker === 'function') {
+              window.kirimTokenKeWorker(window.currentFreq || "145.820");
+            }
+          }
         })
-      });
+        .catch(err => console.error("Gagal dapatkan Token FCM:", err));
     }
   });
 
   onMessage(messaging, (payload) => {
     if (payload.notification) {
-      showBannerNotification(payload.notification.title, payload.notification.body);
+      if (typeof window.showBannerNotification === 'function') {
+        window.showBannerNotification(payload.notification.title, payload.notification.body);
+      }
     }
   });
 </script>
@@ -500,6 +488,7 @@
   
   let ws;
   let currentFreq = "145.820";
+  window.currentFreq = currentFreq;
   let mediaRecorder;
   let audioChunks = [];
   let micStream = null;
@@ -524,6 +513,24 @@
 
   const themes = ['default', 'theme-green', 'theme-pink'];
   let currentThemeIndex = 0;
+
+  function kirimTokenKeWorker(freq) {
+    if (window.myFcmToken) {
+      fetch(`${HTTP_WORKER_URL}/register-fcm`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          freq: freq,
+          token: window.myFcmToken,
+          callsign: localStorage.getItem('ht_nick') || "Anonim"
+        })
+      })
+      .then(res => res.json())
+      .then(data => console.log("Registrasi FCM ke Cloudflare Sukses:", data))
+      .catch(err => console.error("Gagal kirim FCM token ke Cloudflare:", err));
+    }
+  }
+  window.kirimTokenKeWorker = kirimTokenKeWorker;
 
   function toggleTheme() {
     const container = document.getElementById('htContainer');
@@ -576,6 +583,7 @@
       } catch(e) {}
     }
   }
+  window.showBannerNotification = showBannerNotification;
 
   function playSquelchNoise(duration = 0.15) {
     try {
@@ -625,6 +633,7 @@
       let idx = 0;
       scanInterval = setInterval(() => {
         currentFreq = SCAN_FREQS[idx];
+        window.currentFreq = currentFreq;
         document.getElementById('freqDisplay').innerText = currentFreq;
         document.getElementById('freqInput').value = currentFreq;
         idx = (idx + 1) % SCAN_FREQS.length;
@@ -674,11 +683,13 @@
     if (savedFreq) {
       document.getElementById('freqInput').value = savedFreq;
       currentFreq = savedFreq;
+      window.currentFreq = currentFreq;
     }
     if (savedPass) document.getElementById('passInput').value = savedPass;
 
     document.getElementById('nickInput').addEventListener('change', (e) => {
       localStorage.setItem('ht_nick', e.target.value.trim());
+      kirimTokenKeWorker(currentFreq);
     });
 
     loadSavedGroupsUI();
@@ -758,6 +769,7 @@
       const savedNick = localStorage.getItem('ht_nick') || 'Anonim';
       if (ws && ws.readyState === WebSocket.OPEN) {
         ws.send(JSON.stringify({ type: 'join', freq: currentFreq, sender: savedNick, password: savedPass }));
+        kirimTokenKeWorker(currentFreq);
       }
     };
 
@@ -890,11 +902,15 @@
       }
     }
     currentFreq = freq;
+    window.currentFreq = currentFreq;
     const nick = document.getElementById('nickInput').value.trim() || 'Anonim';
     localStorage.setItem('ht_nick', nick);
     localStorage.setItem('ht_freq', freq);
     localStorage.setItem('ht_pass', password);
     loadLocalHistory(freq);
+    
+    kirimTokenKeWorker(freq);
+
     if (ws && ws.readyState === WebSocket.OPEN) {
       ws.send(JSON.stringify({ type: 'join', freq: freq, sender: nick, password: password }));
     }
@@ -906,25 +922,6 @@
     const newFreq = document.getElementById('freqInput').value.trim();
     const pass = document.getElementById('passInput').value.trim();
     if (newFreq) joinFrequency(newFreq, pass);
-  }
-
-  async function kirimNotifikasiKeWorker(targetToken, pesanTeks) {
-    if (!targetToken) return;
-    const senderName = document.getElementById('nickInput').value.trim() || 'Anonim';
-
-    try {
-      await fetch(`${HTTP_WORKER_URL}/send-notification`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          token: targetToken,
-          title: `Panggilan HT [${currentFreq}] dari ${senderName}`,
-          body: pesanTeks.includes("audio-vn-data") ? "🎙️ Pesan Suara (VN)" : pesanTeks
-        })
-      });
-    } catch (error) {
-      console.error("Gagal mengirim notifikasi via Worker:", error);
-    }
   }
 
   function sendText() {
@@ -943,10 +940,6 @@
         message: msgText,
         msgId: msgId
       }));
-
-      if (window.targetFcmToken) {
-        kirimNotifikasiKeWorker(window.targetFcmToken, msgText);
-      }
 
       input.value = '';
     }
@@ -1056,6 +1049,7 @@
   function playVNFromData(base64Data) {
     playAudio(base64Data);
   }
+  window.playVNFromData = playVNFromData;
 
   function appendChatToBox(msg) {
     const box = document.getElementById('chatBox');
@@ -1126,10 +1120,6 @@
         msgId: msgId
       }));
 
-      if (window.targetFcmToken) {
-        kirimNotifikasiKeWorker(window.targetFcmToken, msgText);
-      }
-
       input.value = '';
     }
   }
@@ -1172,10 +1162,6 @@
                 message: vnPayload,
                 msgId: msgId
               }));
-
-              if (window.targetFcmToken) {
-                kirimNotifikasiKeWorker(window.targetFcmToken, "🎙️ Pesan Suara (VN)");
-              }
             } else {
               ws.send(JSON.stringify({ type: 'audio', freq: currentFreq, audio: base64Audio }));
             }
