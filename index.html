@@ -121,7 +121,6 @@
     .compass-mark-b { position: absolute; left: 6px; top: 50%; transform: translateY(-50%); color: #fff; font-size: 10px; }
     .compass-pointer { width: 4px; height: 50px; background: linear-gradient(to bottom, #ef4444 50%, #ffffff 50%); position: absolute; border-radius: 2px; }
 
-    /* --- MODE CHAT FULLSCREEN ALA WHATSAPP --- */
     .fullscreen-chat-overlay {
       display: none;
       position: fixed;
@@ -135,129 +134,18 @@
       flex-direction: column;
     }
     
-    .fullscreen-chat-overlay.active {
-      display: flex;
-    }
-
-    .fs-header {
-      background: #1f2c34;
-      padding: 12px 15px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: 1px solid #2a3942;
-      color: #e9edef;
-    }
-
-    .fs-header-title {
-      font-weight: bold;
-      font-size: 15px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .fs-chat-body {
-      flex: 1;
-      padding: 15px;
-      overflow-y: auto;
-      background-color: #0b141a;
-      background-image: radial-gradient(#182229 1px, transparent 1px);
-      background-size: 16px 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      position: relative;
-    }
-
-    .fs-chat-footer {
-      background: #1f2c34;
-      padding: 10px 12px;
-      display: flex;
-      gap: 8px;
-      align-items: center;
-    }
-
-    .fs-chat-footer input {
-      background: #2a3942;
-      border: none;
-      color: #e9edef;
-      padding: 12px;
-      border-radius: 20px;
-      font-size: 14px;
-      outline: none;
-    }
-
-    .fs-chat-footer button {
-      background: #00a884;
-      color: #fff;
-      border: none;
-      border-radius: 50%;
-      width: 42px;
-      height: 42px;
-      padding: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 16px;
-      flex-shrink: 0;
-    }
-
-    .fs-ptt-btn {
-      background: #b91c1c;
-      color: #fff;
-      border: 2px solid #ef4444;
-      border-radius: 50%;
-      width: 42px;
-      height: 42px;
-      font-size: 18px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      user-select: none;
-      touch-action: manipulation;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-      transition: all 0.2s;
-    }
-
-    .fs-ptt-btn:active {
-      background: #ef4444;
-      transform: scale(1.1);
-    }
-
-    .vn-player-bubble {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: #1f2c34;
-      border: 1px solid #00a884;
-      padding: 4px 10px;
-      border-radius: 12px;
-      margin-top: 4px;
-      margin-bottom: 2px;
-    }
-
-    .vn-play-btn {
-      background: #00a884;
-      color: #fff;
-      border: none;
-      border-radius: 50%;
-      width: 26px;
-      height: 26px;
-      font-size: 10px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 0;
-    }
-
-    .vn-label {
-      font-size: 10px;
-      color: #00a884;
-      font-weight: bold;
-    }
+    .fullscreen-chat-overlay.active { display: flex; }
+    .fs-header { background: #1f2c34; padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #2a3942; color: #e9edef; }
+    .fs-header-title { font-weight: bold; font-size: 15px; display: flex; align-items: center; gap: 8px; }
+    .fs-chat-body { flex: 1; padding: 15px; overflow-y: auto; background-color: #0b141a; background-image: radial-gradient(#182229 1px, transparent 1px); background-size: 16px 16px; display: flex; flex-direction: column; gap: 8px; position: relative; }
+    .fs-chat-footer { background: #1f2c34; padding: 10px 12px; display: flex; gap: 8px; align-items: center; }
+    .fs-chat-footer input { background: #2a3942; border: none; color: #e9edef; padding: 12px; border-radius: 20px; font-size: 14px; outline: none; }
+    .fs-chat-footer button { background: #00a884; color: #fff; border: none; border-radius: 50%; width: 42px; height: 42px; padding: 0; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+    .fs-ptt-btn { background: #b91c1c; color: #fff; border: 2px solid #ef4444; border-radius: 50%; width: 42px; height: 42px; font-size: 18px; display: flex; align-items: center; justify-content: center; cursor: pointer; user-select: none; touch-action: manipulation; box-shadow: 0 4px 10px rgba(0,0,0,0.5); transition: all 0.2s; }
+    .fs-ptt-btn:active { background: #ef4444; transform: scale(1.1); }
+    .vn-player-bubble { display: inline-flex; align-items: center; gap: 8px; background: #1f2c34; border: 1px solid #00a884; padding: 4px 10px; border-radius: 12px; margin-top: 4px; margin-bottom: 2px; }
+    .vn-play-btn { background: #00a884; color: #fff; border: none; border-radius: 50%; width: 26px; height: 26px; font-size: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; }
+    .vn-label { font-size: 10px; color: #00a884; font-weight: bold; }
   </style>
 </head>
 <body>
@@ -431,57 +319,6 @@
   </div>
 </div>
 
-<!-- INTEGRASI FIREBASE FCM (V1 SDK) & SERVICE WORKER REGISTER -->
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-  import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-messaging.js";
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyA3tTtYP4_Mf01TE7lGHSRayCkxqlCmvW8",
-    authDomain: "mrzyb-ht.firebaseapp.com",
-    projectId: "mrzyb-ht",
-    messagingSenderId: "86202931423",
-    appId: "1:86202931423:web:c5aeef07c46cf9bf52316a"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const messaging = getMessaging(app);
-
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/firebase-messaging-sw.js')
-      .then((registration) => {
-        console.log('Service Worker FCM Berhasil Didaftarkan:', registration);
-      })
-      .catch((err) => {
-        console.error('Gagal Mendaftarkan Service Worker FCM:', err);
-      });
-  }
-
-  Notification.requestPermission().then((permission) => {
-    if (permission === 'granted') {
-      getToken(messaging, { vapidKey: 'BAfJA1rsdLKg7edUjiuKnOjogJpp9pOJ72xJy62oMs9HAJc1bAGuSakesAkYUNLclGpum40OJY9fE5mxewH2dzo' })
-        .then((currentToken) => {
-          if (currentToken) {
-            window.myFcmToken = currentToken;
-            console.log("Token FCM Web Saya:", currentToken);
-            if (typeof window.kirimTokenKeWorker === 'function') {
-              window.kirimTokenKeWorker(window.currentFreq || "145.820");
-            }
-          }
-        })
-        .catch(err => console.error("Gagal dapatkan Token FCM:", err));
-    }
-  });
-
-  onMessage(messaging, (payload) => {
-    if (payload.notification) {
-      if (typeof window.showBannerNotification === 'function') {
-        window.showBannerNotification(payload.notification.title, payload.notification.body);
-      }
-    }
-  });
-</script>
-
 <script>
   const WORKER_URL = "wss://my-ht-project.ukielaki8387.workers.dev";
   const HTTP_WORKER_URL = "https://my-ht-project.ukielaki8387.workers.dev";
@@ -528,6 +365,8 @@
       .then(res => res.json())
       .then(data => console.log("Registrasi FCM ke Cloudflare Sukses:", data))
       .catch(err => console.error("Gagal kirim FCM token ke Cloudflare:", err));
+    } else {
+      console.log("Token FCM belum ada di window.myFcmToken");
     }
   }
   window.kirimTokenKeWorker = kirimTokenKeWorker;
@@ -1315,5 +1154,59 @@
     }
   }
 </script>
+
+<!-- INTEGRASI FIREBASE FCM (V1 SDK) DIPINDAHKAN KE BAWAH AGAR URUTAN KODE PASSING BENAR -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-messaging.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyA3tTtYP4_Mf01TE7lGHSRayCkxqlCmvW8",
+    authDomain: "mrzyb-ht.firebaseapp.com",
+    projectId: "mrzyb-ht",
+    messagingSenderId: "86202931423",
+    appId: "1:86202931423:web:c5aeef07c46cf9bf52316a"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const messaging = getMessaging(app);
+
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/firebase-messaging-sw.js')
+      .then((registration) => {
+        console.log('Service Worker FCM Berhasil Didaftarkan:', registration);
+      })
+      .catch((err) => {
+        console.error('Gagal Mendaftarkan Service Worker FCM:', err);
+      });
+  }
+
+  Notification.requestPermission().then((permission) => {
+    if (permission === 'granted') {
+      getToken(messaging, { vapidKey: 'BAfJA1rsdLKg7edUjiuKnOjogJpp9pOJ72xJy62oMs9HAJc1bAGuSakesAkYUNLclGpum40OJY9fE5mxewH2dzo' })
+        .then((currentToken) => {
+          if (currentToken) {
+            window.myFcmToken = currentToken;
+            console.log("Token FCM Berhasil Diperoleh:", currentToken);
+            
+            // Panggil pendaftaran token ke Cloudflare
+            if (typeof window.kirimTokenKeWorker === 'function') {
+              window.kirimTokenKeWorker(window.currentFreq || "145.820");
+            }
+          }
+        })
+        .catch(err => console.error("Gagal mendapatkan Token FCM:", err));
+    }
+  });
+
+  onMessage(messaging, (payload) => {
+    if (payload.notification) {
+      if (typeof window.showBannerNotification === 'function') {
+        window.showBannerNotification(payload.notification.title, payload.notification.body);
+      }
+    }
+  });
+</script>
+
 </body>
 </html>
