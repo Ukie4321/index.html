@@ -273,29 +273,29 @@
 
   <div class="screen">
     <div class="status-bar">
-      <span class="signal-meter" id="rssiMeter">SIG: 鈻傗杽鈻嗏枅</span>
+      <span class="signal-meter" id="rssiMeter">SIG: ▂▄▆█</span>
       <span id="scanStatus">SCAN: OFF</span>
-      <span id="batDisplay">BAT: --% 馃攱</span>
+      <span id="batDisplay">BAT: --% 🔋</span>
     </div>
     <div class="freq" id="freqDisplay">145.820</div>
     <div id="privateBadge" class="private-badge"></div>
   </div>
 
   <div class="extra-tools">
-    <button onclick="openCompassModal()" style="font-size: 9px; padding: 3px 5px;">馃Л KOMPAS</button>
-    <button onclick="sendGPSLocation()" style="font-size: 9px; padding: 3px 5px;">馃搷 GPS</button>
+    <button onclick="openCompassModal()" style="font-size: 9px; padding: 3px 5px;">🧭 KOMPAS</button>
+    <button onclick="sendGPSLocation()" style="font-size: 9px; padding: 3px 5px;">📍 GPS</button>
     <button onclick="toggleScan()" style="font-size: 9px; padding: 3px 5px;" id="scanBtn">
-      <span class="white-icon">馃攳</span> SCAN
+      <span class="white-icon">🔍</span> SCAN
     </button>
-    <button onclick="toggleTheme()" style="font-size: 9px; padding: 3px 5px;">馃帹 TEMA</button>
+    <button onclick="toggleTheme()" style="font-size: 9px; padding: 3px 5px;">🎨 TEMA</button>
     <label>
       <input type="checkbox" id="ttsToggle" style="flex:none;"> 
-      <span class="white-icon">馃攰</span> TTS
+      <span class="white-icon">🔊</span> TTS
     </label>
   </div>
 
   <div class="radio-panel">
-    <div style="font-size: 10px; color: #888; margin-bottom: 5px; text-align: center;">馃摶 MONITORING RADIO FM</div>
+    <div style="font-size: 10px; color: #888; margin-bottom: 5px; text-align: center;">📻 MONITORING RADIO FM</div>
     <div class="input-group" style="margin-bottom: 4px;">
       <select id="radioSelect" onchange="changeRadioChannel()">
         <option value="https://n08.radiojar.com/7csmg90fuqruv.mp3?1673348819=&rj-tok=AAABhZtmUCUAwkYyBBgriH-X9g&rj-ttl=5">HardRock</option>
@@ -325,9 +325,9 @@
 
   <div class="input-group">
     <select id="groupSelect" onchange="switchGroupFromDropdown()">
-      <option value="145.820||">馃寪 General (145.820)</option>
+      <option value="145.820||">🌐 General (145.820)</option>
     </select>
-    <button onclick="openCreateGroupModal()" style="font-size: 11px; background: #065f46; border-color: #10b981; color: #fff;">鉃� GRUP</button>
+    <button onclick="openCreateGroupModal()" style="font-size: 11px; background: #065f46; border-color: #10b981; color: #fff;">➕ GRUP</button>
   </div>
 
   <div class="input-group">
@@ -342,7 +342,7 @@
   <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
     <span style="font-size: 10px; color: #888;">RIWAYAT CHAT:</span>
     <div style="display: flex; gap: 4px;">
-      <button onclick="openFullscreenChat()" style="font-size: 9px; padding: 2px 6px; background: #181818; color: #60a5fa; border: 1px solid #333;">鉀� FULLSCREEN</button>
+      <button onclick="openFullscreenChat()" style="font-size: 9px; padding: 2px 6px; background: #181818; color: #60a5fa; border: 1px solid #333;">⛶ FULLSCREEN</button>
       <button onclick="openClearModal()" style="font-size: 9px; padding: 2px 6px; background: #181818; color: #ef4444; border: 1px solid #333;">HAPUS CHAT</button>
     </div>
   </div>
@@ -362,12 +362,12 @@
   </div>
 
   <button onclick="replayLastAudio()" id="replayBtn" style="width: 100%; margin-bottom: 10px; background: #181818; border: 1px solid #333; padding: 6px 12px; display: flex; align-items: center; justify-content: center; font-size: 10px; cursor: pointer;">
-    <span class="white-icon">鈻�</span> REPLAY LAST AUDIO
+    <span class="white-icon">▶</span> REPLAY LAST AUDIO
   </button>
 
   <div class="ptt-container">
     <button class="ptt-btn" id="pttBtn">TEKAN &<br>TAHAN UTK<br>BICARA</button>
-    <button class="lock-btn" id="lockPttBtn" onclick="togglePttLock()">馃敁 KUNCI PTT (HANDS-FREE)</button>
+    <button class="lock-btn" id="lockPttBtn" onclick="togglePttLock()">🔓 KUNCI PTT (HANDS-FREE)</button>
   </div>
   <div class="status" id="micStatus">Mikrofon Siap</div>
 </div>
@@ -376,8 +376,8 @@
 <div class="fullscreen-chat-overlay" id="fullscreenChat">
   <div class="fs-header">
     <div class="fs-header-title">
-      <button onclick="closeFullscreenChat()" style="background:transparent; border:none; color:#00a884; font-size:18px; padding:0; cursor:pointer;">鈫�</button>
-      <span>馃挰 Chat Frekuensi <span id="fsFreqTitle" style="color:#00a884;">145.820</span></span>
+      <button onclick="closeFullscreenChat()" style="background:transparent; border:none; color:#00a884; font-size:18px; padding:0; cursor:pointer;">←</button>
+      <span>💬 Chat Frekuensi <span id="fsFreqTitle" style="color:#00a884;">145.820</span></span>
     </div>
     <button onclick="closeFullscreenChat()" style="background:#2a3942; border:none; color:#e9edef; font-size:11px; padding:5px 10px; border-radius:4px;">TUTUP</button>
   </div>
@@ -386,9 +386,9 @@
 
   <div class="fs-chat-footer">
     <input type="text" id="fsMsgInput" placeholder="Ketik pesan..." onkeypress="handleFsKeyPress(event)">
-    <button onclick="sendFsText()">鉃�</button>
+    <button onclick="sendFsText()">➤</button>
     <!-- TOMBOL REKAM SUARA (HOLD TO RECORD) -->
-    <button class="fs-ptt-btn" id="fsPttBtn" title="Tahan untuk Rekam Suara">馃帣锔�</button>
+    <button class="fs-ptt-btn" id="fsPttBtn" title="Tahan untuk Rekam Suara">🎙️</button>
   </div>
 </div>
 
@@ -405,7 +405,7 @@
 <!-- MODAL POPUP BUAT GRUP BARU -->
 <div id="createGroupModal" class="modal-overlay">
   <div class="modal-box" style="border-color: #10b981;">
-    <div style="color: #10b981; font-weight: bold; font-size: 14px; margin-bottom: 10px;">馃懃 BUAT / GABUNG GRUP</div>
+    <div style="color: #10b981; font-weight: bold; font-size: 14px; margin-bottom: 10px;">👥 BUAT / GABUNG GRUP</div>
     <input type="text" id="newGroupName" placeholder="Nama Grup (misal: SQUAD-ALPHA)" style="width: 90%; margin-bottom: 8px;">
     <input type="text" id="newGroupFreq" placeholder="ID/Frekuensi Grup (misal: 888.500)" style="width: 90%; margin-bottom: 8px;">
     <input type="password" id="newGroupPass" placeholder="PIN/Password (Kosongkan jika Publik)" style="width: 90%; margin-bottom: 12px;">
@@ -419,8 +419,8 @@
 <!-- MODAL POPUP KOMPAS DIGIT & ANALOG -->
 <div id="compassModal" class="modal-overlay">
   <div class="modal-box" style="border-color: #f59e0b;">
-    <button class="close-x-btn" onclick="closeCompassModal()">鉁�</button>
-    <div style="color: #f59e0b; font-weight: bold; font-size: 14px; margin-bottom: 5px;">馃Л KOMPAS HARDWARE</div>
+    <button class="close-x-btn" onclick="closeCompassModal()">✕</button>
+    <div style="color: #f59e0b; font-weight: bold; font-size: 14px; margin-bottom: 5px;">🧭 KOMPAS HARDWARE</div>
     
     <div class="compass-circle-outer">
       <div class="compass-dial" id="compassDial">
@@ -432,7 +432,7 @@
       <div class="compass-pointer"></div>
     </div>
 
-    <div style="font-size: 20px; font-weight: bold; color: #fff; margin-top: 5px;" id="popupCompassDeg">0掳</div>
+    <div style="font-size: 20px; font-weight: bold; color: #fff; margin-top: 5px;" id="popupCompassDeg">0°</div>
     <div style="font-size: 13px; color: #f59e0b; font-weight: bold; margin-bottom: 12px;" id="popupCompassDir">UTARA</div>
     
     <button class="modal-btn-cancel" onclick="closeCompassModal()" style="width: 100%; border-color: #f59e0b; color: #f59e0b;">TUTUP</button>
@@ -494,7 +494,7 @@
     if ("Notification" in window && Notification.permission === "granted") {
       try {
         new Notification(`Pesan HT [${currentFreq}] dari ${sender}`, {
-          body: message.includes("audio-vn-data") ? "馃帣锔� Pesan Suara (VN)" : message,
+          body: message.includes("audio-vn-data") ? "🎙️ Pesan Suara (VN)" : message,
           icon: 'logo.png',
           vibrate: [200, 100, 200]
         });
@@ -544,7 +544,7 @@
     const scanStatus = document.getElementById('scanStatus');
 
     if (isScanning) {
-      scanBtn.innerHTML = '<span class="white-icon">鈴�</span> STOP';
+      scanBtn.innerHTML = '<span class="white-icon">⏹</span> STOP';
       scanStatus.innerText = "SCAN: ON";
       let idx = 0;
       scanInterval = setInterval(() => {
@@ -555,7 +555,7 @@
       }, 1500);
     } else {
       clearInterval(scanInterval);
-      scanBtn.innerHTML = '<span class="white-icon">馃攳</span> SCAN';
+      scanBtn.innerHTML = '<span class="white-icon">🔍</span> SCAN';
       scanStatus.innerText = "SCAN: OFF";
     }
   }
@@ -574,7 +574,7 @@
     }
 
     setInterval(() => {
-      const bars = ["SIG: 鈻�", "SIG: 鈻傗杽", "SIG: 鈻傗杽鈻�", "SIG: 鈻傗杽鈻嗏枅"];
+      const bars = ["SIG: ▂", "SIG: ▂▄", "SIG: ▂▄▆", "SIG: ▂▄▆█"];
       document.getElementById('rssiMeter').innerText = bars[Math.floor(Math.random() * bars.length)];
     }, 3000);
 
@@ -582,7 +582,7 @@
       navigator.getBattery().then(battery => {
         const updateBatteryUI = () => {
           const level = Math.round(battery.level * 100);
-          const charging = battery.charging ? "鈿�" : "馃攱";
+          const charging = battery.charging ? "⚡" : "🔋";
           document.getElementById('batDisplay').innerText = `BAT: ${level}% ${charging}`;
         };
         
@@ -591,7 +591,7 @@
         battery.addEventListener('chargingchange', updateBatteryUI);
       });
     } else {
-      document.getElementById('batDisplay').innerText = "BAT: 100% 馃攱";
+      document.getElementById('batDisplay').innerText = "BAT: 100% 🔋";
     }
 
     const savedNick = localStorage.getItem('ht_nick');
@@ -617,13 +617,13 @@
 
   function loadSavedGroupsUI() {
     const groupSelect = document.getElementById('groupSelect');
-    groupSelect.innerHTML = `<option value="145.820||">馃寪 General (145.820)</option>`;
+    groupSelect.innerHTML = `<option value="145.820||">🌐 General (145.820)</option>`;
     
     const savedGroups = JSON.parse(localStorage.getItem('ht_my_groups')) || [];
     savedGroups.forEach(g => {
       const option = document.createElement('option');
       option.value = `${g.freq}||${g.pass || ''}`;
-      option.innerText = `馃懃 ${g.name} (${g.freq})`;
+      option.innerText = `👥 ${g.name} (${g.freq})`;
       groupSelect.appendChild(option);
     });
   }
@@ -720,7 +720,7 @@
           hideError();
           document.getElementById('freqDisplay').innerText = data.freq;
           document.getElementById('fsFreqTitle').innerText = data.freq;
-          document.getElementById('privateBadge').innerText = (PRIVATE_CHANNELS[data.freq] || (localStorage.getItem('ht_pass') !== '')) ? "馃敀 PRIVATE CHANNEL / GRUP" : "";
+          document.getElementById('privateBadge').innerText = (PRIVATE_CHANNELS[data.freq] || (localStorage.getItem('ht_pass') !== '')) ? "🔒 PRIVATE CHANNEL / GRUP" : "";
         }
         else if (data.type === 'presence') {
           const uniqueUsers = [...new Set((data.users || []).filter(u => u && u.trim() !== ''))];
@@ -811,7 +811,7 @@
     if (PRIVATE_CHANNELS[freq]) {
       const correctPass = PRIVATE_CHANNELS[freq];
       if (password !== correctPass) {
-        showError("馃敀 Frekuensi Private! Password Salah.");
+        showError("🔒 Frekuensi Private! Password Salah.");
         return;
       }
     }
@@ -870,7 +870,7 @@
         const lat = position.coords.latitude.toFixed(5);
         const lon = position.coords.longitude.toFixed(5);
         const mapUrl = `https://maps.google.com/?q=${lat},${lon}`;
-        const gpsMsg = `馃搷 POSISI GPS: ${mapUrl}`;
+        const gpsMsg = `📍 POSISI GPS: ${mapUrl}`;
 
         const nick = document.getElementById('nickInput').value.trim() || 'Anonim';
         if (ws && ws.readyState === WebSocket.OPEN) {
@@ -967,8 +967,8 @@
       
       formattedMsg = `${senderInfo}<br>
         <div class="vn-player-bubble">
-          <button class="vn-play-btn" onclick="playVNFromData('${audioBase64}')">鈻�</button>
-          <span class="vn-label">馃帣锔� Voice Note</span>
+          <button class="vn-play-btn" onclick="playVNFromData('${audioBase64}')">▶</button>
+          <span class="vn-label">🎙️ Voice Note</span>
         </div>`;
     } else {
       const urlRegex = /(https?:\/\/[^\s]+)/g;
@@ -1079,7 +1079,7 @@
       playSquelchNoise(0.1);
       duckRadioVolume();
       mediaRecorder.start();
-      document.getElementById('micStatus').innerText = "馃帣锔� MEREKAM (TRANSMIT)...";
+      document.getElementById('micStatus').innerText = "🎙️ MEREKAM (TRANSMIT)...";
     } catch (err) {
       document.getElementById('micStatus').innerText = "Akses mikrofon ditolak/gagal";
       if (isPttLocked) togglePttLock(); 
@@ -1122,15 +1122,15 @@
 
     if (isPttLocked) {
       pttBtn.classList.add('locked');
-      pttBtn.innerHTML = "馃帣锔� MEMANCAR<br>(LOCK ON)";
-      lockBtn.innerText = "馃敀 BUKA KUNCI PTT";
+      pttBtn.innerHTML = "🎙️ MEMANCAR<br>(LOCK ON)";
+      lockBtn.innerText = "🔒 BUKA KUNCI PTT";
       lockBtn.style.background = "#22c55e";
       lockBtn.style.color = "#000";
       startRecordingAudio('main');
     } else {
       pttBtn.classList.remove('locked');
       pttBtn.innerHTML = "TEKAN &<br>TAHAN UTK<br>BICARA";
-      lockBtn.innerText = "馃敁 KUNCI PTT (HANDS-FREE)";
+      lockBtn.innerText = "🔓 KUNCI PTT (HANDS-FREE)";
       lockBtn.style.background = "#181818";
       lockBtn.style.color = "#f59e0b";
       stopRecordingAudio();
@@ -1205,7 +1205,7 @@
     const directions = ['UTARA', 'TIMUR LAUT', 'TIMUR', 'TENGGARA', 'SELATAN', 'BARAT DAYA', 'BARAT', 'BARAT LAUT'];
     const index = Math.round(degrees / 45) % 8;
 
-    document.getElementById('popupCompassDeg').innerText = degrees + '掳';
+    document.getElementById('popupCompassDeg').innerText = degrees + '°';
     document.getElementById('popupCompassDir').innerText = directions[index];
 
     const dial = document.getElementById('compassDial');
