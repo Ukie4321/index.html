@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MRZYB-HT BLACK EDITION</title>
@@ -470,14 +469,21 @@
   Notification.requestPermission().then((permission) => {
     if (permission === 'granted') {
       getToken(messaging, { vapidKey: 'BAfJA1rsdLKg7edUjiuKnOjogJpp9pOJ72xJy62oMs9HAJc1bAGuSakesAkYUNLclGpum40OJY9fE5mxewH2dzo' })
-        .then((currentToken) => {
-          if (currentToken) {
-            window.myFcmToken = currentToken;
-            console.log("Token FCM Web Saya:", currentToken);
-          }
-        }).catch((err) => {
-          console.error('Gagal mengambil token FCM:', err);
-        });
+  .then((currentToken) => {
+    if (currentToken) {
+      window.myFcmToken = currentToken;
+      console.log("Token FCM Web Saya:", currentToken);
+
+      // KIRIM TOKEN KITA KE WORKER UNTUK FREKUENSI SAAT INI
+      fetch("https://my-ht-project.ukielaki8387.workers.dev/register-fcm", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          freq: window.currentFreq || "145.820",
+          token: currentToken,
+          callsign: localStorage.getItem('ht_nick') || "Anonim"
+        })
+      });
     }
   });
 
