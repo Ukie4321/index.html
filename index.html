@@ -439,6 +439,45 @@
   </div>
 </div>
 
+<!-- INTEGRASI FIREBASE FCM (V1 SDK) -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-messaging.js";
+
+  // Salin Firebase Config dari Console Firebase Anda
+  const firebaseConfig = {
+    apiKey: "AIzaSyA3tTtYP4_Mf01TE7lGHSRayCkxqlCmvW8",
+    authDomain: "mrzyb-ht.firebaseapp.com",
+    projectId: "mrzyb-ht",
+    messagingSenderId: "86202931423",
+    appId: "1:86202931423:web:c5aeef07c46cf9bf52316a"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const messaging = getMessaging(app);
+
+  // Minta Izin Notifikasi & Ambil VAPID Token
+  Notification.requestPermission().then((permission) => {
+    if (permission === 'granted') {
+      getToken(messaging, { vapidKey: 'BAfJA1rsdLKg7edUjiuKnOjogJpp9pOJ72xJy62oMs9HAJc1bAGuSakesAkYUNLclGpum40OJY9fE5mxewH2dzo' })
+        .then((currentToken) => {
+          if (currentToken) {
+            console.log("Token FCM Web:", currentToken);
+          }
+        }).catch((err) => {
+          console.error('Gagal mengambil token FCM:', err);
+        });
+    }
+  });
+
+  // Listener saat web sedang dibuka (Foreground)
+  onMessage(messaging, (payload) => {
+    if (payload.notification) {
+      showBannerNotification(payload.notification.title, payload.notification.body);
+    }
+  });
+</script>
+
 <script>
   const WORKER_URL = "wss://my-ht-project.ukielaki8387.workers.dev";
   let ws;
@@ -485,7 +524,6 @@
     if (audioCtx.state === 'suspended') audioCtx.resume();
   }
 
-  // FUNGSI PERBAIKAN: NOTIFIKASI SUARA LOKAL (PASTI BUNYI SINTESIS AUDIO)
   function playNotificationSound() {
     try {
       initAudioContext();
@@ -493,7 +531,7 @@
       const gain = audioCtx.createGain();
 
       osc.type = 'sine';
-      osc.frequency.setValueAtTime(880, audioCtx.currentTime); // High pitch notification tone
+      osc.frequency.setValueAtTime(880, audioCtx.currentTime);
       gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
       gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.35);
 
@@ -508,7 +546,6 @@
   }
 
   function showBannerNotification(sender, message) {
-    // Memutar notifikasi audio sintetis
     playNotificationSound();
 
     if ("Notification" in window && Notification.permission === "granted") {
@@ -590,10 +627,6 @@
   }
 
   window.addEventListener('DOMContentLoaded', () => {
-    if ("Notification" in window && Notification.permission !== "granted") {
-      Notification.requestPermission();
-    }
-
     setInterval(() => {
       const bars = ["SIG: ▂", "SIG: ▂▄", "SIG: ▂▄▆", "SIG: ▂▄▆█"];
       document.getElementById('rssiMeter').innerText = bars[Math.floor(Math.random() * bars.length)];
@@ -988,7 +1021,6 @@
     
     let formattedMsg = msg;
     
-    // FORMAT TAMPILAN JIKA BERUPA VOICE NOTE (VN)
     if (msg.includes("audio-vn-data:")) {
       const parts = msg.split("audio-vn-data:");
       const senderInfo = parts[0]; 
