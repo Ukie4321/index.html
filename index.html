@@ -455,9 +455,9 @@
   const app = initializeApp(firebaseConfig);
   const messaging = getMessaging(app);
 
-  // Mendaftarkan Service Worker untuk Notifikasi Background (Aplikasi Ditutup)
+  // Mendaftarkan Service Worker untuk Notifikasi Background
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/firebase-messaging-sw.js')
+    navigator.serviceWorker.register('./firebase-messaging-sw.js')
       .then((registration) => {
         console.log('Service Worker FCM Berhasil Didaftarkan:', registration);
       })
@@ -937,11 +937,16 @@
         msgId: msgId
       }));
 
-      if (window.targetFcmToken) {
-        kirimNotifikasiKeWorker(window.targetFcmToken, msgText);
-      }
+      try {
+        if (typeof window.targetFcmToken !== 'undefined' && window.targetFcmToken) {
+          kirimNotifikasiKeWorker(window.targetFcmToken, msgText);
+        }
+      } catch(e) {}
 
       input.value = '';
+    } else if (!ws || ws.readyState !== WebSocket.OPEN) {
+      showAlert("Koneksi terputus. Menghubungkan ulang ke server...");
+      connect();
     }
   }
 
@@ -1119,11 +1124,16 @@
         msgId: msgId
       }));
 
-      if (window.targetFcmToken) {
-        kirimNotifikasiKeWorker(window.targetFcmToken, msgText);
-      }
+      try {
+        if (typeof window.targetFcmToken !== 'undefined' && window.targetFcmToken) {
+          kirimNotifikasiKeWorker(window.targetFcmToken, msgText);
+        }
+      } catch(e) {}
 
       input.value = '';
+    } else if (!ws || ws.readyState !== WebSocket.OPEN) {
+      showAlert("Koneksi terputus. Menghubungkan ulang ke server...");
+      connect();
     }
   }
 
@@ -1166,9 +1176,11 @@
                 msgId: msgId
               }));
 
-              if (window.targetFcmToken) {
-                kirimNotifikasiKeWorker(window.targetFcmToken, "🎙️ Pesan Suara (VN)");
-              }
+              try {
+                if (typeof window.targetFcmToken !== 'undefined' && window.targetFcmToken) {
+                  kirimNotifikasiKeWorker(window.targetFcmToken, "🎙️ Pesan Suara (VN)");
+                }
+              } catch(e) {}
             } else {
               ws.send(JSON.stringify({ type: 'audio', freq: currentFreq, audio: base64Audio }));
             }
