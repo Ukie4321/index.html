@@ -439,14 +439,64 @@
   </div>
 </div>
 
+<!-- INTEGRASI FIREBASE FCM (V1 SDK) & SERVICE WORKER REGISTER -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-messaging.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyA3tTtYP4_Mf01TE7lGHSRayCkxqlCmvW8",
+    authDomain: "mrzyb-ht.firebaseapp.com",
+    projectId: "mrzyb-ht",
+    messagingSenderId: "86202931423",
+    appId: "1:86202931423:web:c5aeef07c46cf9bf52316a"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const messaging = getMessaging(app);
+
+  // Mendaftarkan Service Worker untuk Notifikasi Background (Aplikasi Ditutup)
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/firebase-messaging-sw.js')
+      .then((registration) => {
+        console.log('Service Worker FCM Berhasil Didaftarkan:', registration);
+      })
+      .catch((err) => {
+        console.error('Gagal Mendaftarkan Service Worker FCM:', err);
+      });
+  }
+
+  Notification.requestPermission().then((permission) => {
+    if (permission === 'granted') {
+      getToken(messaging, { vapidKey: 'BAfJA1rsdLKg7edUjiuKnOjogJpp9pOJ72xJy62oMs9HAJc1bAGuSakesAkYUNLclGpum40OJY9fE5mxewH2dzo' })
+        .then((currentToken) => {
+          if (currentToken) {
+            window.myFcmToken = currentToken;
+            console.log("Token FCM Web Saya:", currentToken);
+          }
+        }).catch((err) => {
+          console.error('Gagal mengambil token FCM:', err);
+        });
+    }
+  });
+
+  onMessage(messaging, (payload) => {
+    if (payload.notification) {
+      showBannerNotification(payload.notification.title, payload.notification.body);
+    }
+  });
+</script>
+
 <script>
   const WORKER_URL = "wss://my-ht-project.ukielaki8387.workers.dev";
+  const HTTP_WORKER_URL = "https://my-ht-project.ukielaki8387.workers.dev";
+  
   let ws;
   let currentFreq = "145.820";
   let mediaRecorder;
   let audioChunks = [];
   let micStream = null;
-  let activePttSource = 'main'; // 'main' atau 'fullscreen'
+  let activePttSource = 'main';
   let isRadioPlaying = false;
   let customRadioVolume = 0.8;
   let lastAudioData = null;
@@ -482,14 +532,32 @@
 
   function initAudioContext() {
     if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+  }
+
+  function playNotificationSound() {
+    try {
+      initAudioContext();
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(880, audioCtx.currentTime);
+      gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.35);
+
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+
+      osc.start();
+      osc.stop(audioCtx.currentTime + 0.35);
+    } catch(e) {
+      console.log("Audio Notification Error:", e);
+    }
   }
 
   function showBannerNotification(sender, message) {
-    try {
-      const notifAudio = new Audio('https://cdn.freesound.org/previews/536/536108_11861866-lq.mp3');
-      notifAudio.volume = 0.8;
-      notifAudio.play().catch(() => {});
-    } catch(e) {}
+    playNotificationSound();
 
     if ("Notification" in window && Notification.permission === "granted") {
       try {
@@ -539,6 +607,7 @@
   }
 
   function toggleScan() {
+    initAudioContext();
     isScanning = !isScanning;
     const scanBtn = document.getElementById('scanBtn');
     const scanStatus = document.getElementById('scanStatus');
@@ -569,10 +638,6 @@
   }
 
   window.addEventListener('DOMContentLoaded', () => {
-    if ("Notification" in window && Notification.permission !== "granted") {
-      Notification.requestPermission();
-    }
-
     setInterval(() => {
       const bars = ["SIG: ▂", "SIG: ▂▄", "SIG: ▂▄▆", "SIG: ▂▄▆█"];
       document.getElementById('rssiMeter').innerText = bars[Math.floor(Math.random() * bars.length)];
@@ -629,6 +694,7 @@
   }
 
   function openCreateGroupModal() {
+    initAudioContext();
     document.getElementById('createGroupModal').style.display = 'flex';
   }
 
@@ -637,6 +703,7 @@
   }
 
   function confirmCreateGroup() {
+    initAudioContext();
     const name = document.getElementById('newGroupName').value.trim();
     const freq = document.getElementById('newGroupFreq').value.trim();
     const pass = document.getElementById('newGroupPass').value.trim();
@@ -666,6 +733,7 @@
   }
 
   function switchGroupFromDropdown() {
+    initAudioContext();
     const val = document.getElementById('groupSelect').value;
     const parts = val.split('||');
     const freq = parts[0];
@@ -678,8 +746,6 @@
 
   function connect() {
     ws = new WebSocket(WORKER_URL);
-    ws.binaryType = "arraybuffer"; // Diterima sebagai raw binary untuk Audio PTT
-
     ws.onopen = () => {
       const savedPass = localStorage.getItem('ht_pass') || '';
       const savedNick = localStorage.getItem('ht_nick') || 'Anonim';
@@ -689,16 +755,6 @@
     };
 
     ws.onmessage = async (event) => {
-      // 1. TERIMA AUDIO BINER PTT
-      if (event.data instanceof ArrayBuffer) {
-        const blob = new Blob([event.data], { type: 'audio/webm' });
-        const audioUrl = URL.createObjectURL(blob);
-        lastAudioData = audioUrl;
-        playAudio(audioUrl);
-        return;
-      }
-
-      // 2. TERIMA TEKS / JSON
       try {
         const data = JSON.parse(event.data);
         
@@ -728,8 +784,13 @@
           document.getElementById('namesList').innerText = uniqueUsers.length > 0 ? uniqueUsers.join(', ') : '-';
         } 
         else if (data.type === 'text') {
-          if (data.msgId && renderedMsgIds.has(data.msgId)) return;
-          if (data.msgId) renderedMsgIds.add(data.msgId);
+          if (data.msgId && renderedMsgIds.has(data.msgId)) {
+            return;
+          }
+
+          if (data.msgId) {
+            renderedMsgIds.add(data.msgId);
+          }
 
           const myNick = document.getElementById('nickInput').value.trim() || 'Anonim';
           
@@ -743,12 +804,17 @@
 
           saveAndAddSingleChat(data.msgId, data.sender, data.message);
         } 
+        else if (data.type === 'audio') {
+          lastAudioData = data.audio;
+          playAudio(data.audio);
+        }
       } catch (e) {}
     };
     ws.onclose = () => setTimeout(connect, 2000);
   }
 
   function replayLastAudio() {
+    initAudioContext();
     if (lastAudioData) {
       playAudio(lastAudioData);
     } else {
@@ -757,6 +823,7 @@
   }
 
   function toggleRadio() {
+    initAudioContext();
     const player = document.getElementById('radioPlayer');
     const btn = document.getElementById('radioBtn');
     const select = document.getElementById('radioSelect');
@@ -827,13 +894,34 @@
   }
 
   function changeFreq() {
+    initAudioContext();
     if (isScanning) toggleScan();
     const newFreq = document.getElementById('freqInput').value.trim();
     const pass = document.getElementById('passInput').value.trim();
     if (newFreq) joinFrequency(newFreq, pass);
   }
 
+  async function kirimNotifikasiKeWorker(targetToken, pesanTeks) {
+    if (!targetToken) return;
+    const senderName = document.getElementById('nickInput').value.trim() || 'Anonim';
+
+    try {
+      await fetch(`${HTTP_WORKER_URL}/send-notification`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          token: targetToken,
+          title: `Panggilan HT [${currentFreq}] dari ${senderName}`,
+          body: pesanTeks.includes("audio-vn-data") ? "🎙️ Pesan Suara (VN)" : pesanTeks
+        })
+      });
+    } catch (error) {
+      console.error("Gagal mengirim notifikasi via Worker:", error);
+    }
+  }
+
   function sendText() {
+    initAudioContext();
     const input = document.getElementById('msgInput');
     const nick = document.getElementById('nickInput').value.trim() || 'Anonim';
     const msgText = input.value.trim();
@@ -848,16 +936,23 @@
         message: msgText,
         msgId: msgId
       }));
+
+      if (window.targetFcmToken) {
+        kirimNotifikasiKeWorker(window.targetFcmToken, msgText);
+      }
+
       input.value = '';
     }
   }
 
   function sendQuickText(text) {
+    initAudioContext();
     document.getElementById('msgInput').value = text;
     sendText();
   }
 
   function sendGPSLocation() {
+    initAudioContext();
     if (!navigator.geolocation) {
       showAlert("Fitur GPS tidak didukung pada browser/perangkat ini.");
       return;
@@ -931,6 +1026,7 @@
   }
 
   function openClearModal() {
+    initAudioContext();
     document.getElementById('modalText').innerText = `Yakin ingin menghapus riwayat chat di frekuensi ${currentFreq}?`;
     document.getElementById('modalBtns').innerHTML = `
       <button class="modal-btn-cancel" onclick="closeModal()">BATAL</button>
@@ -992,6 +1088,7 @@
 
   /* --- FULLSCREEN CHAT MODE --- */
   function openFullscreenChat() {
+    initAudioContext();
     document.getElementById('fsFreqTitle').innerText = currentFreq;
     const fsBox = document.getElementById('fsChatBox');
     const chatBox = document.getElementById('chatBox');
@@ -1006,6 +1103,7 @@
   }
 
   function sendFsText() {
+    initAudioContext();
     const input = document.getElementById('fsMsgInput');
     const nick = document.getElementById('nickInput').value.trim() || 'Anonim';
     const msgText = input.value.trim();
@@ -1020,6 +1118,11 @@
         message: msgText,
         msgId: msgId
       }));
+
+      if (window.targetFcmToken) {
+        kirimNotifikasiKeWorker(window.targetFcmToken, msgText);
+      }
+
       input.value = '';
     }
   }
@@ -1029,6 +1132,7 @@
   }
 
   async function startRecordingAudio(source = 'main') {
+    initAudioContext();
     activePttSource = source;
     if (mediaRecorder && mediaRecorder.state === "recording") return;
 
@@ -1044,15 +1148,14 @@
       mediaRecorder.onstop = async () => {
         const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
         audioChunks = [];
-
-        if (ws && ws.readyState === WebSocket.OPEN) {
-          if (activePttSource === 'fullscreen') {
-            // MODE CHAT FULLSCREEN: Send Voice Note (Base64)
-            const reader = new FileReader();
-            reader.readAsDataURL(audioBlob);
-            reader.onloadend = () => {
-              const base64Audio = reader.result;
-              const nick = document.getElementById('nickInput').value.trim() || 'Anonim';
+        const reader = new FileReader();
+        reader.readAsDataURL(audioBlob);
+        reader.onloadend = () => {
+          const base64Audio = reader.result;
+          const nick = document.getElementById('nickInput').value.trim() || 'Anonim';
+          
+          if (ws && ws.readyState === WebSocket.OPEN) {
+            if (activePttSource === 'fullscreen') {
               const msgId = Date.now() + '_' + Math.random().toString(36).substr(2, 5);
               const vnPayload = `audio-vn-data:${base64Audio}`;
               ws.send(JSON.stringify({
@@ -1062,13 +1165,15 @@
                 message: vnPayload,
                 msgId: msgId
               }));
-            };
-          } else {
-            // MODE PTT UTAMA: Send Raw Binary ArrayBuffer (Ultra Low-Latency)
-            const arrayBuffer = await audioBlob.arrayBuffer();
-            ws.send(arrayBuffer);
+
+              if (window.targetFcmToken) {
+                kirimNotifikasiKeWorker(window.targetFcmToken, "🎙️ Pesan Suara (VN)");
+              }
+            } else {
+              ws.send(JSON.stringify({ type: 'audio', freq: currentFreq, audio: base64Audio }));
+            }
           }
-        }
+        };
 
         if (micStream) {
           micStream.getTracks().forEach(track => track.stop());
@@ -1115,6 +1220,7 @@
   }
 
   function togglePttLock() {
+    initAudioContext();
     const pttBtn = document.getElementById('pttBtn');
     const lockBtn = document.getElementById('lockPttBtn');
 
@@ -1137,12 +1243,13 @@
     }
   }
 
-  function playAudio(audioSrc) {
+  function playAudio(base64Data) {
+    initAudioContext();
     playSquelchNoise(0.1);
     duckRadioVolume();
 
-    const audio = new Audio(audioSrc);
-    audio.play().catch(() => {});
+    const audio = new Audio(base64Data);
+    audio.play();
 
     audio.onended = () => {
       playRogerBeep();
@@ -1166,6 +1273,7 @@
   }
 
   function openCompassModal() {
+    initAudioContext();
     if (typeof DeviceOrientationEvent === 'undefined') {
       alert("Sensor tidak didukung pada browser/perangkat ini.");
       return;
