@@ -84,6 +84,7 @@
     .chat-box { background: #050505; height: 110px; overflow-y: auto; border: 1px solid #222; padding: 8px; font-size: 11px; margin-bottom: 8px; border-radius: 5px; color: #ccc; word-wrap: break-word; }
     .chat-box a { color: #60a5fa; text-decoration: underline; font-weight: bold; word-break: break-all; }
     .chat-img-thumb { max-width: 100%; max-height: 120px; border-radius: 5px; border: 1px solid #444; margin-top: 4px; cursor: pointer; display: block; }
+    .sticker-msg { font-size: 32px; display: block; margin: 2px 0; }
     
     .input-group { display: flex; gap: 5px; margin-bottom: 8px; }
     input, select { flex: 1; background: #0a0a0a; border: 1px solid #333; color: #a3e635; padding: 8px; border-radius: 3px; font-family: inherit; }
@@ -106,6 +107,22 @@
     .modern-slider { -webkit-appearance: none; width: 100%; background: transparent; cursor: pointer; }
     .modern-slider::-webkit-slider-runnable-track { width: 100%; height: 6px; background: #222; border-radius: 5px; }
     .modern-slider::-webkit-slider-thumb { -webkit-appearance: none; height: 16px; width: 16px; border-radius: 50%; background: #a3e635; margin-top: -5px; box-shadow: 0 0 5px #a3e635; }
+
+    /* --- PANEL STIKER --- */
+    .sticker-panel {
+      display: none;
+      background: #080808;
+      border: 1px solid #333;
+      border-radius: 5px;
+      padding: 6px;
+      margin-bottom: 8px;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 6px;
+      text-align: center;
+    }
+    .sticker-panel.active { display: grid; }
+    .sticker-item { font-size: 20px; cursor: pointer; border-radius: 4px; padding: 2px; transition: background 0.2s; }
+    .sticker-item:hover { background: #222; }
 
     .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); justify-content: center; align-items: center; z-index: 1000; }
     .modal-box { background: #121212; border: 2px solid #333; padding: 20px; border-radius: 10px; width: 80%; max-width: 280px; text-align: center; box-shadow: 0 0 15px rgba(0,0,0,0.9); position: relative; }
@@ -152,7 +169,6 @@
 </head>
 <body>
 
-<!-- Hidden File Input Kamera -->
 <input type="file" id="cameraInput" accept="image/*" capture="environment" style="display:none" onchange="processCapturedImage(event)">
 
 <div class="ht-body" id="htContainer">
@@ -174,6 +190,7 @@
 
   <div class="extra-tools">
     <button onclick="triggerCamera()" style="font-size: 9px; padding: 3px 5px; background: #0284c7; border-color: #38bdf8; color: #fff;">📷 FOTO</button>
+    <button onclick="toggleStickerPanel()" style="font-size: 9px; padding: 3px 5px; background: #a855f7; border-color: #c084fc; color: #fff;">😀 STIKER</button>
     <button onclick="openCompassModal()" style="font-size: 9px; padding: 3px 5px;">🧭 KOMPAS</button>
     <button onclick="sendGPSLocation()" style="font-size: 9px; padding: 3px 5px;">📍 GPS</button>
     <button onclick="toggleScan()" style="font-size: 9px; padding: 3px 5px;" id="scanBtn">
@@ -239,6 +256,21 @@
   </div>
 
   <div class="chat-box" id="chatBox"></div>
+
+  <div class="sticker-panel" id="stickerPanel">
+    <span class="sticker-item" onclick="sendSticker('📻')">📻</span>
+    <span class="sticker-item" onclick="sendSticker('🎙️')">🎙️</span>
+    <span class="sticker-item" onclick="sendSticker('🫡')">🫡</span>
+    <span class="sticker-item" onclick="sendSticker('👍')">👍</span>
+    <span class="sticker-item" onclick="sendSticker('🚨')">🚨</span>
+    <span class="sticker-item" onclick="sendSticker('📢')">📢</span>
+    <span class="sticker-item" onclick="sendSticker('🔥')">🔥</span>
+    <span class="sticker-item" onclick="sendSticker('✅')">✅</span>
+    <span class="sticker-item" onclick="sendSticker('❌')">❌</span>
+    <span class="sticker-item" onclick="sendSticker('🚗')">🚗</span>
+    <span class="sticker-item" onclick="sendSticker('⚡')">⚡</span>
+    <span class="sticker-item" onclick="sendSticker('☕')">☕</span>
+  </div>
   
   <div class="quick-btns">
     <button class="quick-btn" onclick="sendQuickText('Situasi')">8-1-9</button>
@@ -359,7 +391,28 @@
   const themes = ['default', 'theme-green', 'theme-pink'];
   let currentThemeIndex = 0;
 
-  // --- FUNGSI KAMERA & FOTO ---
+  function toggleStickerPanel() {
+    initAudioContext();
+    const panel = document.getElementById('stickerPanel');
+    panel.classList.toggle('active');
+  }
+
+  function sendSticker(emoji) {
+    const nick = document.getElementById('nickInput').value.trim() || 'Anonim';
+    if (ws && ws.readyState === WebSocket.OPEN) {
+      const msgId = Date.now() + '_' + Math.random().toString(36).substr(2, 5);
+      const stickerPayload = `sticker-data:${emoji}`;
+      ws.send(JSON.stringify({
+        type: 'text',
+        freq: currentFreq,
+        sender: nick,
+        message: stickerPayload,
+        msgId: msgId
+      }));
+    }
+    toggleStickerPanel();
+  }
+
   function triggerCamera() {
     initAudioContext();
     document.getElementById('cameraInput').click();
@@ -374,7 +427,6 @@
       const img = new Image();
       img.src = e.target.result;
       img.onload = function() {
-        // Kompres Gambar agar Ringan dikirim via WebSocket (Max Width 800px)
         const canvas = document.createElement('canvas');
         const MAX_WIDTH = 800;
         let scale = 1;
@@ -387,12 +439,12 @@
         const ctx = canvas.getContext('2d');
         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
-        const compressedBase64 = canvas.toDataURL('image/jpeg', 0.6); // Kompres Kualitas 60%
+        const compressedBase64 = canvas.toDataURL('image/jpeg', 0.6);
         sendPhotoMessage(compressedBase64);
       };
     };
     reader.readAsDataURL(file);
-    event.target.value = ''; // Reset input
+    event.target.value = '';
   }
 
   function sendPhotoMessage(base64Image) {
@@ -480,6 +532,7 @@
         let msgBody = message;
         if (message.includes("audio-vn-data")) msgBody = "🎙️ Pesan Suara (VN)";
         else if (message.includes("img-data:")) msgBody = "📷 Mengirimkan Foto";
+        else if (message.includes("sticker-data:")) msgBody = `😀 Mengirimkan Stiker ${message.split('sticker-data:')[1]}`;
 
         new Notification(`Pesan HT [${currentFreq}] dari ${sender}`, {
           body: msgBody,
@@ -722,7 +775,7 @@
           if (data.sender !== myNick) {
             showBannerNotification(data.sender, data.message);
             playRogerBeep();
-            if(!data.message.includes("audio-vn-data") && !data.message.includes("img-data:")) {
+            if(!data.message.includes("audio-vn-data") && !data.message.includes("img-data:") && !data.message.includes("sticker-data:")) {
               speakText(`${data.sender} berkata ${data.message}`);
             }
           }
@@ -984,6 +1037,13 @@
           <img src="${imgBase64}" class="chat-img-thumb" alt="Foto Kiriman">
         </a>`;
     } 
+    else if (msg.includes("sticker-data:")) {
+      const parts = msg.split("sticker-data:");
+      const senderInfo = parts[0];
+      const stickerEmoji = parts[1];
+
+      formattedMsg = `${senderInfo}<br><span class="sticker-msg">${stickerEmoji}</span>`;
+    }
     else {
       const urlRegex = /(https?:\/\/[^\s]+)/g;
       formattedMsg = msg.replace(urlRegex, (url) => {
