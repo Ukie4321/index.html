@@ -439,7 +439,7 @@
   </div>
 </div>
 
-<!-- INTEGRASI FIREBASE FCM (V1 SDK) -->
+<!-- INTEGRASI FIREBASE FCM (V1 SDK) & SERVICE WORKER REGISTER -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
   import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-messaging.js";
@@ -454,6 +454,17 @@
 
   const app = initializeApp(firebaseConfig);
   const messaging = getMessaging(app);
+
+  // Mendaftarkan Service Worker untuk Notifikasi Background (Aplikasi Ditutup)
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/firebase-messaging-sw.js')
+      .then((registration) => {
+        console.log('Service Worker FCM Berhasil Didaftarkan:', registration);
+      })
+      .catch((err) => {
+        console.error('Gagal Mendaftarkan Service Worker FCM:', err);
+      });
+  }
 
   Notification.requestPermission().then((permission) => {
     if (permission === 'granted') {
