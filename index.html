@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MRZYB-HT BLACK EDITION</title>
@@ -679,8 +678,6 @@
 
   function connect() {
     ws = new WebSocket(WORKER_URL);
-    ws.binaryType = "arraybuffer"; // Diterima sebagai raw binary untuk Audio PTT
-
     ws.onopen = () => {
       const savedPass = localStorage.getItem('ht_pass') || '';
       const savedNick = localStorage.getItem('ht_nick') || 'Anonim';
@@ -690,16 +687,6 @@
     };
 
     ws.onmessage = async (event) => {
-      // 1. TERIMA AUDIO BINER PTT
-      if (event.data instanceof ArrayBuffer) {
-        const blob = new Blob([event.data], { type: 'audio/webm' });
-        const audioUrl = URL.createObjectURL(blob);
-        lastAudioData = audioUrl;
-        playAudio(audioUrl);
-        return;
-      }
-
-      // 2. TERIMA TEKS / JSON
       try {
         const data = JSON.parse(event.data);
         
@@ -729,8 +716,13 @@
           document.getElementById('namesList').innerText = uniqueUsers.length > 0 ? uniqueUsers.join(', ') : '-';
         } 
         else if (data.type === 'text') {
-          if (data.msgId && renderedMsgIds.has(data.msgId)) return;
-          if (data.msgId) renderedMsgIds.add(data.msgId);
+          if (data.msgId && renderedMsgIds.has(data.msgId)) {
+            return;
+          }
+
+          if (data.msgId) {
+            renderedMsgIds.add(data.msgId);
+          }
 
           const myNick = document.getElementById('nickInput').value.trim() || 'Anonim';
           
@@ -744,6 +736,10 @@
 
           saveAndAddSingleChat(data.msgId, data.sender, data.message);
         } 
+        else if (data.type === 'audio') {
+          lastAudioData = data.audio;
+          playAudio(data.audio);
+        }
       } catch (e) {}
     };
     ws.onclose = () => setTimeout(connect, 2000);
@@ -961,6 +957,7 @@
     
     let formattedMsg = msg;
     
+    // FORMAT TAMPILAN JIKA BERUPA VOICE NOTE (VN)
     if (msg.includes("audio-vn-data:")) {
       const parts = msg.split("audio-vn-data:");
       const senderInfo = parts[0]; 
@@ -1045,15 +1042,15 @@
       mediaRecorder.onstop = async () => {
         const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
         audioChunks = [];
-
-        if (ws && ws.readyState === WebSocket.OPEN) {
-          if (activePttSource === 'fullscreen') {
-            // MODE CHAT FULLSCREEN: Send Voice Note (Base64)
-            const reader = new FileReader();
-            reader.readAsDataURL(audioBlob);
-            reader.onloadend = () => {
-              const base64Audio = reader.result;
-              const nick = document.getElementById('nickInput').value.trim() || 'Anonim';
+        const reader = new FileReader();
+        reader.readAsDataURL(audioBlob);
+        reader.onloadend = () => {
+          const base64Audio = reader.result;
+          const nick = document.getElementById('nickInput').value.trim() || 'Anonim';
+          
+          if (ws && ws.readyState === WebSocket.OPEN) {
+            if (activePttSource === 'fullscreen') {
+              // Kirim sebagai Voice Note (Tersimpan di Chat & Bisa di-Play)
               const msgId = Date.now() + '_' + Math.random().toString(36).substr(2, 5);
               const vnPayload = `audio-vn-data:${base64Audio}`;
               ws.send(JSON.stringify({
@@ -1063,13 +1060,12 @@
                 message: vnPayload,
                 msgId: msgId
               }));
-            };
-          } else {
-            // MODE PTT UTAMA: Send Raw Binary ArrayBuffer (Ultra Low-Latency)
-            const arrayBuffer = await audioBlob.arrayBuffer();
-            ws.send(arrayBuffer);
+            } else {
+              // Memancar PTT Langsung Suara Saja (HT Mode Standard)
+              ws.send(JSON.stringify({ type: 'audio', freq: currentFreq, audio: base64Audio }));
+            }
           }
-        }
+        };
 
         if (micStream) {
           micStream.getTracks().forEach(track => track.stop());
@@ -1100,12 +1096,14 @@
     const pttBtn = document.getElementById('pttBtn');
     const fsPttBtn = document.getElementById('fsPttBtn');
 
+    // Handle PTT Utama
     pttBtn.addEventListener('mousedown', (e) => { e.preventDefault(); if (!isPttLocked) startRecordingAudio('main'); });
     pttBtn.addEventListener('mouseup', (e) => { e.preventDefault(); if (!isPttLocked) stopRecordingAudio(); });
     pttBtn.addEventListener('mouseleave', (e) => { e.preventDefault(); if (!isPttLocked) stopRecordingAudio(); });
     pttBtn.addEventListener('touchstart', (e) => { e.preventDefault(); if (!isPttLocked) startRecordingAudio('main'); });
     pttBtn.addEventListener('touchend', (e) => { e.preventDefault(); if (!isPttLocked) stopRecordingAudio(); });
 
+    // Handle PTT Fullscreen Chat (Tahan -> Kirim Voice Note ala WA)
     if (fsPttBtn) {
       fsPttBtn.addEventListener('mousedown', (e) => { e.preventDefault(); startRecordingAudio('fullscreen'); });
       fsPttBtn.addEventListener('mouseup', (e) => { e.preventDefault(); stopRecordingAudio(); });
@@ -1138,12 +1136,12 @@
     }
   }
 
-  function playAudio(audioSrc) {
+  function playAudio(base64Data) {
     playSquelchNoise(0.1);
     duckRadioVolume();
 
-    const audio = new Audio(audioSrc);
-    audio.play().catch(() => {});
+    const audio = new Audio(base64Data);
+    audio.play();
 
     audio.onended = () => {
       playRogerBeep();
