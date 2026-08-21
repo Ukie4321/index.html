@@ -890,6 +890,31 @@
     if (newFreq) joinFrequency(newFreq, pass);
   }
 
+  // --- INTEGRASI PENGIRIMAN NOTIFIKASI VIA CLOUD FUNCTION ---
+  async function kirimNotifikasiKeAndroid(tokenPenerima, pesanTeks) {
+    const cloudFunctionUrl = "https://us-central1-mrzyb-ht.cloudfunctions.net/kirimNotifikasiHT";
+    const namaPengirim = document.getElementById('nickInput').value.trim() || 'Anonim';
+
+    try {
+      const response = await fetch(cloudFunctionUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          token: tokenPenerima,
+          title: `Panggilan HT [${currentFreq}] dari ${namaPengirim}`,
+          body: pesanTeks.includes("audio-vn-data") ? "🎙️ Pesan Suara (VN)" : pesanTeks
+        })
+      });
+
+      const data = await response.json();
+      console.log("Status kirim notifikasi ke Android:", data);
+    } catch (error) {
+      console.error("Gagal memanggil Cloud Function:", error);
+    }
+  }
+
   function sendText() {
     initAudioContext();
     const input = document.getElementById('msgInput');
@@ -899,6 +924,7 @@
     if (msgText && ws && ws.readyState === WebSocket.OPEN) {
       const msgId = Date.now() + '_' + Math.random().toString(36).substr(2, 5);
       
+      // 1. Kirim pesan ke WebSocket server HT
       ws.send(JSON.stringify({ 
         type: 'text', 
         freq: currentFreq, 
@@ -906,6 +932,13 @@
         message: msgText,
         msgId: msgId
       }));
+
+      // 2. Kirim notifikasi FCM ke HP Penerima
+      const tokenTargetPenerima = "PASTE_TOKEN_FCM_PENERIMA_DI_SINI";
+      if (tokenTargetPenerima && tokenTargetPenerima !== "PASTE_TOKEN_FCM_PENERIMA_DI_SINI") {
+        kirimNotifikasiKeAndroid(tokenTargetPenerima, msgText);
+      }
+
       input.value = '';
     }
   }
@@ -1083,6 +1116,12 @@
         message: msgText,
         msgId: msgId
       }));
+
+      const tokenTargetPenerima = "PASTE_TOKEN_FCM_PENERIMA_DI_SINI";
+      if (tokenTargetPenerima && tokenTargetPenerima !== "PASTE_TOKEN_FCM_PENERIMA_DI_SINI") {
+        kirimNotifikasiKeAndroid(tokenTargetPenerima, msgText);
+      }
+
       input.value = '';
     }
   }
@@ -1125,6 +1164,11 @@
                 message: vnPayload,
                 msgId: msgId
               }));
+
+              const tokenTargetPenerima = "PASTE_TOKEN_FCM_PENERIMA_DI_SINI";
+              if (tokenTargetPenerima && tokenTargetPenerima !== "PASTE_TOKEN_FCM_PENERIMA_DI_SINI") {
+                kirimNotifikasiKeAndroid(tokenTargetPenerima, "🎙️ Pesan Suara (VN)");
+              }
             } else {
               ws.send(JSON.stringify({ type: 'audio', freq: currentFreq, audio: base64Audio }));
             }
