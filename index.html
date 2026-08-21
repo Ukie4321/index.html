@@ -444,7 +444,6 @@
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
   import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-messaging.js";
 
-  // Salin Firebase Config dari Console Firebase Anda
   const firebaseConfig = {
     apiKey: "AIzaSyA3tTtYP4_Mf01TE7lGHSRayCkxqlCmvW8",
     authDomain: "mrzyb-ht.firebaseapp.com",
@@ -456,13 +455,13 @@
   const app = initializeApp(firebaseConfig);
   const messaging = getMessaging(app);
 
-  // Minta Izin Notifikasi & Ambil VAPID Token
   Notification.requestPermission().then((permission) => {
     if (permission === 'granted') {
       getToken(messaging, { vapidKey: 'BAfJA1rsdLKg7edUjiuKnOjogJpp9pOJ72xJy62oMs9HAJc1bAGuSakesAkYUNLclGpum40OJY9fE5mxewH2dzo' })
         .then((currentToken) => {
           if (currentToken) {
-            console.log("Token FCM Web:", currentToken);
+            window.myFcmToken = currentToken;
+            console.log("Token FCM Web Saya:", currentToken);
           }
         }).catch((err) => {
           console.error('Gagal mengambil token FCM:', err);
@@ -470,7 +469,6 @@
     }
   });
 
-  // Listener saat web sedang dibuka (Foreground)
   onMessage(messaging, (payload) => {
     if (payload.notification) {
       showBannerNotification(payload.notification.title, payload.notification.body);
@@ -480,12 +478,14 @@
 
 <script>
   const WORKER_URL = "wss://my-ht-project.ukielaki8387.workers.dev";
+  const HTTP_WORKER_URL = "https://my-ht-project.ukielaki8387.workers.dev";
+  
   let ws;
   let currentFreq = "145.820";
   let mediaRecorder;
   let audioChunks = [];
   let micStream = null;
-  let activePttSource = 'main'; // 'main' atau 'fullscreen'
+  let activePttSource = 'main';
   let isRadioPlaying = false;
   let customRadioVolume = 0.8;
   let lastAudioData = null;
@@ -890,28 +890,22 @@
     if (newFreq) joinFrequency(newFreq, pass);
   }
 
-  // --- INTEGRASI PENGIRIMAN NOTIFIKASI VIA CLOUD FUNCTION ---
-  async function kirimNotifikasiKeAndroid(tokenPenerima, pesanTeks) {
-    const cloudFunctionUrl = "https://us-central1-mrzyb-ht.cloudfunctions.net/kirimNotifikasiHT";
-    const namaPengirim = document.getElementById('nickInput').value.trim() || 'Anonim';
+  async function kirimNotifikasiKeWorker(targetToken, pesanTeks) {
+    if (!targetToken) return;
+    const senderName = document.getElementById('nickInput').value.trim() || 'Anonim';
 
     try {
-      const response = await fetch(cloudFunctionUrl, {
+      await fetch(`${HTTP_WORKER_URL}/send-notification`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          token: tokenPenerima,
-          title: `Panggilan HT [${currentFreq}] dari ${namaPengirim}`,
+          token: targetToken,
+          title: `Panggilan HT [${currentFreq}] dari ${senderName}`,
           body: pesanTeks.includes("audio-vn-data") ? "🎙️ Pesan Suara (VN)" : pesanTeks
         })
       });
-
-      const data = await response.json();
-      console.log("Status kirim notifikasi ke Android:", data);
     } catch (error) {
-      console.error("Gagal memanggil Cloud Function:", error);
+      console.error("Gagal mengirim notifikasi via Worker:", error);
     }
   }
 
@@ -924,7 +918,6 @@
     if (msgText && ws && ws.readyState === WebSocket.OPEN) {
       const msgId = Date.now() + '_' + Math.random().toString(36).substr(2, 5);
       
-      // 1. Kirim pesan ke WebSocket server HT
       ws.send(JSON.stringify({ 
         type: 'text', 
         freq: currentFreq, 
@@ -933,10 +926,8 @@
         msgId: msgId
       }));
 
-      // 2. Kirim notifikasi FCM ke HP Penerima
-      const tokenTargetPenerima = "PASTE_TOKEN_FCM_PENERIMA_DI_SINI";
-      if (tokenTargetPenerima && tokenTargetPenerima !== "PASTE_TOKEN_FCM_PENERIMA_DI_SINI") {
-        kirimNotifikasiKeAndroid(tokenTargetPenerima, msgText);
+      if (window.targetFcmToken) {
+        kirimNotifikasiKeWorker(window.targetFcmToken, msgText);
       }
 
       input.value = '';
@@ -1117,9 +1108,8 @@
         msgId: msgId
       }));
 
-      const tokenTargetPenerima = "PASTE_TOKEN_FCM_PENERIMA_DI_SINI";
-      if (tokenTargetPenerima && tokenTargetPenerima !== "PASTE_TOKEN_FCM_PENERIMA_DI_SINI") {
-        kirimNotifikasiKeAndroid(tokenTargetPenerima, msgText);
+      if (window.targetFcmToken) {
+        kirimNotifikasiKeWorker(window.targetFcmToken, msgText);
       }
 
       input.value = '';
@@ -1165,9 +1155,8 @@
                 msgId: msgId
               }));
 
-              const tokenTargetPenerima = "PASTE_TOKEN_FCM_PENERIMA_DI_SINI";
-              if (tokenTargetPenerima && tokenTargetPenerima !== "PASTE_TOKEN_FCM_PENERIMA_DI_SINI") {
-                kirimNotifikasiKeAndroid(tokenTargetPenerima, "🎙️ Pesan Suara (VN)");
+              if (window.targetFcmToken) {
+                kirimNotifikasiKeWorker(window.targetFcmToken, "🎙️ Pesan Suara (VN)");
               }
             } else {
               ws.send(JSON.stringify({ type: 'audio', freq: currentFreq, audio: base64Audio }));
