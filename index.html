@@ -112,7 +112,6 @@
       transition: all 0.3s; 
     }
 
-    /* Custom scrollbar halus untuk container utama */
     .ht-body::-webkit-scrollbar {
       width: 4px;
     }
@@ -191,7 +190,6 @@
     .user-count { font-weight: bold; }
     .user-names { color: #888; font-size: 10px; margin-top: 4px; word-break: break-all; }
 
-    /* Chatbox Adaptif */
     .chat-box { 
       background: var(--screen-bg); 
       height: 16vh;
@@ -297,7 +295,6 @@
     .vn-play-btn { background: var(--fs-accent) !important; color: #000 !important; border: none; border-radius: 50%; width: 26px; height: 26px; font-size: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; font-weight: bold; }
     .vn-label { font-size: 10px; color: var(--fs-accent) !important; font-weight: bold; }
 
-    /* PERBAIKAN Z-INDEX PREVIEW MODAL DITINGKATKAN LEBIH TINGGI DARI FULLSCREEN (9999) */
     #imagePreviewModal {
       display: none;
       position: fixed;
@@ -337,6 +334,7 @@
     <button onclick="triggerCamera()" style="background: #0284c7; border-color: #38bdf8; color: #fff !important;">📷 FOTO</button>
     <button onclick="triggerGallery()" style="background: #059669; border-color: #34d399; color: #fff !important;">🖼️ GALERI</button>
     <button onclick="openCompassModal()">🧭 KOMPAS</button>
+    <button onclick="openMoviePlayer()" style="background: #7c3aed; border-color: #a78bfa; color: #fff !important;">🎬 NONTON</button>
     <button onclick="sendGPSLocation()">📍 GPS</button>
     <button onclick="toggleScan()" id="scanBtn"><span class="white-icon">🔍</span> SCAN</button>
     <button onclick="toggleTheme()">🎨 TEMA</button>
@@ -429,6 +427,7 @@
   <div class="status" id="micStatus">Mikrofon Siap</div>
 </div>
 
+<!-- FULLSCREEN CHAT OVERLAY -->
 <div class="fullscreen-chat-overlay" id="fullscreenChat">
   <div class="fs-header">
     <div class="fs-header-title">
@@ -452,6 +451,34 @@
         <path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/>
       </svg>
     </button>
+  </div>
+</div>
+
+<!-- MODAL POPUP MOVIE PLAYER (DIRECT AUTO-LOAD PLAYLIST) -->
+<div id="movieModal" class="modal-overlay">
+  <div class="modal-box" style="max-width: 380px; width: 92%; padding: 12px; border-color: #7c3aed; background: #0c0a09; text-align: left;">
+    <button class="close-x-btn" onclick="closeMoviePlayer()">✕</button>
+    <div style="color: #a78bfa !important; font-weight: bold; font-size: 13px; margin-bottom: 8px; text-align: center;">🎬 MOVIE & TV PLAYER</div>
+    
+    <div style="width: 100%; height: 200px; background: #000; border-radius: 6px; overflow: hidden; margin-bottom: 8px; border: 1px solid #333;">
+      <video id="movieVideoPlayer" controls autoplay controlsList="nodownload" oncontextmenu="return false;" style="width: 100%; height: 100%; background: #000; object-fit: contain;"></video>
+
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px;">
+      <select id="movieCategorySelect" onchange="filterMoviesByCategory()" style="background: #1c1917; border-color: #7c3aed; color: #fff; font-size: 11px; padding: 6px;">
+        <option value="all">📁 Mengunduh Kategori...</option>
+      </select>
+      <select id="moviePlaylistSelect" onchange="playSelectedMovie()" style="background: #1c1917; border-color: #7c3aed; color: #fff; font-size: 11px; padding: 6px;">
+        <option value="">-- Memuat Playlist... --</option>
+      </select>
+    </div>
+
+    <div style="font-size: 9px; color: #888; text-align: center; margin-bottom: 8px;" id="playlistStatus">Memuat playlist otomatis...</div>
+
+    <div class="modal-btns">
+      <button class="modal-btn-cancel" onclick="closeMoviePlayer()" style="width: 100%; border-color: #7c3aed; color: #a78bfa !important;">TUTUP</button>
+    </div>
   </div>
 </div>
 
@@ -520,6 +547,10 @@
   const WORKER_URL = "wss://my-ht-project.ukielaki8387.workers.dev";
   const HTTP_WORKER_URL = "https://my-ht-project.ukielaki8387.workers.dev";
   
+  // URL PLAYLIST M3U UTAMA (Ganti URL ini sesuai kebutuhan playlist M3U/M3U8 Anda)
+  const PLAYLIST_URL = "https://raw.githubusercontent.com/Ukie4321/mrzyb-playlist/refs/heads/main/playlist_film.m3u"; 
+  let parsedPlaylistData = [];
+
   let ws;
   let currentFreq = "145.820";
   window.currentFreq = currentFreq;
@@ -548,6 +579,128 @@
 
   const themes = ['default', 'theme-green', 'theme-pink'];
   let currentThemeIndex = 0;
+
+  /* --- LOGIKA NONTON / MOVIE PLAYER --- */
+  async function openMoviePlayer() {
+    initAudioContext();
+    document.getElementById('movieModal').style.display = 'flex';
+    if (parsedPlaylistData.length === 0) {
+      await autoLoadDirectPlaylist();
+    }
+  }
+
+  function closeMoviePlayer() {
+    const video = document.getElementById('movieVideoPlayer');
+    video.pause();
+    video.src = "";
+    document.getElementById('movieModal').style.display = 'none';
+  }
+
+  async function autoLoadDirectPlaylist() {
+    const statusEl = document.getElementById('playlistStatus');
+    statusEl.innerText = "⏳ Memuat playlist dari server...";
+
+    try {
+      const response = await fetch(PLAYLIST_URL);
+      if (!response.ok) throw new Error("Gagal mengambil data playlist.");
+      
+      const m3uText = await response.text();
+      parsedPlaylistData = parseM3U(m3uText);
+
+      if (parsedPlaylistData.length === 0) {
+        statusEl.innerText = "❌ Playlist kosong atau format salah.";
+        return;
+      }
+
+      statusEl.innerText = `✅ Siap! Total ${parsedPlaylistData.length} media.`;
+      populateCategoriesUI();
+      filterMoviesByCategory();
+    } catch (err) {
+      console.error(err);
+      statusEl.innerText = "❌ Gagal memuat playlist otomatis.";
+    }
+  }
+
+  function parseM3U(content) {
+    const lines = content.split('\n');
+    const result = [];
+    let currentItem = null;
+
+    for (let i = 0; i < lines.length; i++) {
+      let line = lines[i].trim();
+
+      if (line.startsWith('#EXTINF:')) {
+        currentItem = { title: 'Tanpa Judul', category: 'Umum', url: '' };
+
+        const groupMatch = line.match(/group-title="([^"]+)"/i);
+        if (groupMatch) {
+          currentItem.category = groupMatch[1];
+        }
+
+        const commaIdx = line.lastIndexOf(',');
+        if (commaIdx !== -1) {
+          currentItem.title = line.substring(commaIdx + 1).trim();
+        }
+      } else if (line && !line.startsWith('#') && currentItem) {
+        currentItem.url = line;
+        result.push(currentItem);
+        currentItem = null;
+      }
+    }
+    return result;
+  }
+
+  function populateCategoriesUI() {
+    const categorySelect = document.getElementById('movieCategorySelect');
+    categorySelect.innerHTML = '';
+
+    const categories = [...new Set(parsedPlaylistData.map(item => item.category))];
+    
+    const allOption = document.createElement('option');
+    allOption.value = 'all';
+    allOption.innerText = `📁 Semua Kategori (${parsedPlaylistData.length})`;
+    categorySelect.appendChild(allOption);
+
+    categories.forEach(cat => {
+      const count = parsedPlaylistData.filter(i => i.category === cat).length;
+      const opt = document.createElement('option');
+      opt.value = cat;
+      opt.innerText = `📁 ${cat} (${count})`;
+      categorySelect.appendChild(opt);
+    });
+  }
+
+  function filterMoviesByCategory() {
+    const selectedCat = document.getElementById('movieCategorySelect').value;
+    const playlistSelect = document.getElementById('moviePlaylistSelect');
+    playlistSelect.innerHTML = '';
+
+    const filtered = selectedCat === 'all' 
+      ? parsedPlaylistData 
+      : parsedPlaylistData.filter(item => item.category === selectedCat);
+
+    filtered.forEach(item => {
+      const opt = document.createElement('option');
+      opt.value = item.url;
+      opt.innerText = `▶ ${item.title}`;
+      playlistSelect.appendChild(opt);
+    });
+
+    if (filtered.length > 0) {
+      playlistSelect.value = filtered[0].url;
+      playSelectedMovie();
+    }
+  }
+
+  function playSelectedMovie() {
+    const selectedUrl = document.getElementById('moviePlaylistSelect').value;
+    const video = document.getElementById('movieVideoPlayer');
+    
+    if (selectedUrl) {
+      video.src = selectedUrl;
+      video.play().catch(e => console.log("Autoplay dibatasi browser."));
+    }
+  }
 
   function toggleTheme() {
     const body = document.body;
@@ -819,7 +972,6 @@
     }
   }
 
-  /* --- FUNGSI TEXT-TO-SPEECH (TTS) --- */
   function initTTSOnInteraction() {
     initAudioContext();
     if ('speechSynthesis' in window) {
@@ -1282,7 +1434,6 @@
   }
   window.playVNFromData = playVNFromData;
 
-  /* PERBAIKAN PADA RENDER GAMBAR CHAT */
   function appendChatToBox(msg) {
     const box = document.getElementById('chatBox');
     const time = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
@@ -1305,7 +1456,6 @@
       const senderInfo = parts[0];
       const imgBase64 = parts[1];
 
-      // Memastikan fungsi window.openImagePreview terpanggil konsisten dari Home maupun Fullscreen
       formattedMsg = `${senderInfo}<br>
         <img src="${imgBase64}" class="chat-img-thumb" alt="Foto Kiriman" onclick="window.openImagePreview('${imgBase64}')">`;
     } 
