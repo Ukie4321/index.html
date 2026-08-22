@@ -326,7 +326,7 @@
     <button onclick="toggleScan()" id="scanBtn"><span class="white-icon">🔍</span> SCAN</button>
     <button onclick="toggleTheme()">🎨 TEMA</button>
     <label style="grid-column: span 3; margin-top: 2px;">
-      <input type="checkbox" id="ttsToggle" style="flex:none;"> 
+      <input type="checkbox" id="ttsToggle" style="flex:none;" onchange="initTTSOnInteraction()"> 
       <span class="white-icon">🔊</span> SUARA TEKS (TTS)
     </label>
   </div>
@@ -783,15 +783,51 @@
     }
   }
 
-  function speakText(text) {
-    if (document.getElementById('ttsToggle').checked && 'speechSynthesis' in window) {
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = 'id-ID';
-      speechSynthesis.speak(utterance);
+  /* --- FUNGSI TEXT-TO-SPEECH (TTS) YANG DIPERBAIKI --- */
+  function initTTSOnInteraction() {
+    initAudioContext();
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.getVoices();
     }
   }
 
+  function speakText(text) {
+    if (!document.getElementById('ttsToggle').checked || !('speechSynthesis' in window)) {
+      return;
+    }
+
+    // Bersihkan antrean suara sebelumnya jika ada yang tersangkut
+    window.speechSynthesis.cancel();
+
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'id-ID';
+    utterance.rate = 1.0;
+    utterance.pitch = 1.0;
+
+    // Cari/pilih daftar suara bahasa Indonesia
+    const voices = window.speechSynthesis.getVoices();
+    const idVoice = voices.find(voice => voice.lang.includes('id') || voice.lang.includes('ID'));
+    if (idVoice) {
+      utterance.voice = idVoice;
+    }
+
+    // Jika TTS sedang dalam kondisi paused, jalankan resume
+    if (window.speechSynthesis.paused) {
+      window.speechSynthesis.resume();
+    }
+
+    window.speechSynthesis.speak(utterance);
+  }
+
   window.addEventListener('DOMContentLoaded', () => {
+    // Inisialisasi daftar suara TTS sejak awal browser siap
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.getVoices();
+      if (speechSynthesis.onvoiceschanged !== undefined) {
+        speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+      }
+    }
+
     setInterval(() => {
       const bars = ["SIG: ▂", "SIG: ▂▄", "SIG: ▂▄▆", "SIG: ▂▄▆█"];
       document.getElementById('rssiMeter').innerText = bars[Math.floor(Math.random() * bars.length)];
