@@ -152,9 +152,6 @@
 </head>
 <body>
 
-<!-- File Input Kamera (Diperbarui agar mendukung capture langsung di berbagai browser mobile) -->
-<input type="file" id="cameraInput" accept="image/*" capture="camera" style="display:none" onchange="processCapturedImage(event)">
-
 <div class="ht-body" id="htContainer">
   <div style="text-align: center; margin-bottom: 10px;">
     <img src="logo.png" alt="Logo" style="width: 50px; height: 50px; border-radius: 50%;" onerror="this.style.display='none'">
@@ -282,6 +279,18 @@
   </div>
 </div>
 
+<!-- MODAL DIRECT STREAM KAMERA -->
+<div id="cameraModal" class="modal-overlay">
+  <div class="modal-box" style="max-width: 320px; padding: 12px; border-color: #0284c7;">
+    <div style="color: #0284c7; font-weight: bold; font-size: 13px; margin-bottom: 8px;">📷 AMBIL FOTO DIRECT</div>
+    <video id="webcamVideo" autoplay playsinline style="width: 100%; border-radius: 8px; background: #000; height: 220px; object-fit: cover; border: 1px solid #333;"></video>
+    <div class="modal-btns" style="margin-top: 10px;">
+      <button class="modal-btn-cancel" onclick="closeDirectCamera()">BATAL</button>
+      <button class="modal-btn-ok" style="background: #0284c7; border-color: #38bdf8;" onclick="takeDirectPhoto()">AMBIL & KIRIM</button>
+    </div>
+  </div>
+</div>
+
 <div id="customModal" class="modal-overlay">
   <div class="modal-box">
     <div class="modal-text" id="modalText">Pemberitahuan</div>
@@ -359,43 +368,60 @@
   const themes = ['default', 'theme-green', 'theme-pink'];
   let currentThemeIndex = 0;
 
-  // --- FUNGSI KAMERA & FOTO ---
-  function triggerCamera() {
+  // --- FUNGSI KAMERA DIRECT STREAM (100% PASTI KAMERA) ---
+  let localCamStream = null;
+
+  async function triggerCamera() {
     initAudioContext();
-    const cameraInput = document.getElementById('cameraInput');
-    if (cameraInput) {
-      cameraInput.value = ''; // Reset nilai agar bisa memilih file yang sama berkali-kali
-      cameraInput.click();
+    const modal = document.getElementById('cameraModal');
+    const video = document.getElementById('webcamVideo');
+
+    try {
+      // Memaksa penggunaan kamera belakang perangkat
+      localCamStream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: { exact: "environment" } },
+        audio: false
+      });
+      video.srcObject = localCamStream;
+      modal.style.display = 'flex';
+    } catch (err) {
+      // Fallback jika mode exact environment gagal (misal di PC atau HP tanpa kamera belakang ganda)
+      try {
+        localCamStream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: "environment" },
+          audio: false
+        });
+        video.srcObject = localCamStream;
+        modal.style.display = 'flex';
+      } catch (err2) {
+        alert("Gagal membuka kamera direct: " + err2.message);
+      }
     }
   }
 
-  function processCapturedImage(event) {
-    const file = event.target.files[0];
-    if (!file) return;
+  function closeDirectCamera() {
+    const modal = document.getElementById('cameraModal');
+    modal.style.display = 'none';
+    if (localCamStream) {
+      localCamStream.getTracks().forEach(track => track.stop());
+      localCamStream = null;
+    }
+  }
 
-    const reader = new FileReader();
-    reader.onload = function(e) {
-      const img = new Image();
-      img.src = e.target.result;
-      img.onload = function() {
-        const canvas = document.createElement('canvas');
-        const MAX_WIDTH = 800;
-        let scale = 1;
-        if (img.width > MAX_WIDTH) {
-          scale = MAX_WIDTH / img.width;
-        }
-        canvas.width = img.width * scale;
-        canvas.height = img.height * scale;
+  function takeDirectPhoto() {
+    const video = document.getElementById('webcamVideo');
+    const canvas = document.createElement('canvas');
+    
+    canvas.width = video.videoWidth || 640;
+    canvas.height = video.videoHeight || 480;
 
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-        const compressedBase64 = canvas.toDataURL('image/jpeg', 0.6);
-        sendPhotoMessage(compressedBase64);
-      };
-    };
-    reader.readAsDataURL(file);
-    event.target.value = '';
+    const compressedBase64 = canvas.toDataURL('image/jpeg', 0.6);
+    
+    sendPhotoMessage(compressedBase64);
+    closeDirectCamera();
   }
 
   function sendPhotoMessage(base64Image) {
