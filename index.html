@@ -152,6 +152,9 @@
 </head>
 <body>
 
+<!-- Input File Tersembunyi Khusus Galeri -->
+<input type="file" id="galleryInput" accept="image/*" style="display: none;" onchange="handleGalleryUpload(event)">
+
 <div class="ht-body" id="htContainer">
   <div style="text-align: center; margin-bottom: 10px;">
     <img src="logo.png" alt="Logo" style="width: 50px; height: 50px; border-radius: 50%;" onerror="this.style.display='none'">
@@ -171,6 +174,7 @@
 
   <div class="extra-tools">
     <button onclick="triggerCamera()" style="font-size: 9px; padding: 3px 5px; background: #0284c7; border-color: #38bdf8; color: #fff;">📷 FOTO</button>
+    <button onclick="triggerGallery()" style="font-size: 9px; padding: 3px 5px; background: #059669; border-color: #34d399; color: #fff;">🖼️ GALERI</button>
     <button onclick="openCompassModal()" style="font-size: 9px; padding: 3px 5px;">🧭 KOMPAS</button>
     <button onclick="sendGPSLocation()" style="font-size: 9px; padding: 3px 5px;">📍 GPS</button>
     <button onclick="toggleScan()" style="font-size: 9px; padding: 3px 5px;" id="scanBtn">
@@ -272,7 +276,8 @@
   <div class="fs-chat-body" id="fsChatBox"></div>
 
   <div class="fs-chat-footer">
-    <button onclick="triggerCamera()" style="background:#0284c7; color:#fff; border:none; border-radius:50%; width:42px; height:42px; padding:0; display:flex; align-items:center; justify-content:center; font-size:16px; flex-shrink:0;">📷</button>
+    <button onclick="triggerCamera()" style="background:#0284c7; color:#fff; border:none; border-radius:50%; width:36px; height:36px; padding:0; display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0;">📷</button>
+    <button onclick="triggerGallery()" style="background:#059669; color:#fff; border:none; border-radius:50%; width:36px; height:36px; padding:0; display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0;">🖼️</button>
     <input type="text" id="fsMsgInput" placeholder="Ketik pesan..." onkeypress="handleFsKeyPress(event)">
     <button onclick="sendFsText()">➤</button>
     <button class="fs-ptt-btn" id="fsPttBtn" title="Tahan untuk Rekam Suara">🎙️</button>
@@ -368,7 +373,53 @@
   const themes = ['default', 'theme-green', 'theme-pink'];
   let currentThemeIndex = 0;
 
-  // --- FUNGSI KAMERA DIRECT STREAM (100% PASTI KAMERA) ---
+  // --- FUNGSI PILIH FOTO DARI GALERI ---
+  function triggerGallery() {
+    initAudioContext();
+    document.getElementById('galleryInput').click();
+  }
+
+  function handleGalleryUpload(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const img = new Image();
+      img.onload = function() {
+        const canvas = document.createElement('canvas');
+        let width = img.width;
+        let height = img.height;
+
+        // Kompresi resolusi jika foto galeri terlalu besar
+        const maxDim = 800;
+        if (width > maxDim || height > maxDim) {
+          if (width > height) {
+            height = Math.round((height * maxDim) / width);
+            width = maxDim;
+          } else {
+            width = Math.round((width * maxDim) / height);
+            height = maxDim;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+
+        const compressedBase64 = canvas.toDataURL('image/jpeg', 0.6);
+        sendPhotoMessage(compressedBase64);
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+
+    // Reset input agar bisa pilih file yang sama berulang kali
+    event.target.value = '';
+  }
+
+  // --- FUNGSI KAMERA DIRECT STREAM (WEBCAM) ---
   let localCamStream = null;
 
   async function triggerCamera() {
@@ -377,7 +428,6 @@
     const video = document.getElementById('webcamVideo');
 
     try {
-      // Memaksa penggunaan kamera belakang perangkat
       localCamStream = await navigator.mediaDevices.getUserMedia({
         video: { facingMode: { exact: "environment" } },
         audio: false
@@ -385,7 +435,6 @@
       video.srcObject = localCamStream;
       modal.style.display = 'flex';
     } catch (err) {
-      // Fallback jika mode exact environment gagal (misal di PC atau HP tanpa kamera belakang ganda)
       try {
         localCamStream = await navigator.mediaDevices.getUserMedia({
           video: { facingMode: "environment" },
