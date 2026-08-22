@@ -9,17 +9,16 @@
     :root {
       --bg-main: #000000;
       --ht-bg: #121212;
-      --ht-border: #ffffff; /* Border Utama Putih */
-      --ht-neon: #a3e635;   /* Warna Efek Cahaya Neon (Default Hijau Limau) */
+      --ht-border: #ffffff;
+      --ht-neon: #a3e635;
       --text-color: #a3e635;
       --screen-bg: #050505;
-      --screen-border: #ffffff; /* Border Screen Putih */
+      --screen-border: #ffffff;
       --panel-bg: #080808;
       --btn-bg: #222222;
-      --btn-border: #ffffff;   /* Border Tombol Putih */
+      --btn-border: #ffffff;
       --slider-thumb: #a3e635;
       
-      /* Fullscreen Chat Variables */
       --fs-bg: #0b141a;
       --fs-bg-pattern: #182229;
       --fs-header-bg: #1f2c34;
@@ -32,11 +31,10 @@
       --wa-green: #00a884;
     }
 
-    /* --- TEMA HIJAU --- */
     .theme-green { 
       --ht-bg: #1b2612; 
       --ht-border: #ffffff; 
-      --ht-neon: #4ade80; /* Cahaya Neon Hijau Terang */
+      --ht-neon: #4ade80; 
       --text-color: #86efac;
       --screen-bg: #1a3300;
       --screen-border: #ffffff;
@@ -57,11 +55,10 @@
       --wa-green: #22c55e;
     }
 
-    /* --- TEMA PINK --- */
     .theme-pink { 
       --ht-bg: #2a0818; 
       --ht-border: #ffffff; 
-      --ht-neon: #f472b6; /* Cahaya Neon Pink Terang */
+      --ht-neon: #f472b6; 
       --text-color: #f472b6;
       --screen-bg: #3b0724;
       --screen-border: #ffffff;
@@ -82,7 +79,6 @@
       --wa-green: #ec4899;
     }
 
-    /* LAYOUT RESPONSIF UNTUK SEMUA PERANGKAT */
     *, *:before, *:after {
       box-sizing: border-box;
     }
@@ -110,7 +106,6 @@
       max-height: 96vh;
       max-height: 96dvh;
       overflow-y: auto;
-      /* Efek Bayangan + Cahaya Neon Mengikuti Tema */
       box-shadow: 0 0 15px var(--ht-neon), inset 0 0 10px var(--ht-neon); 
       position: relative; 
       transition: all 0.3s; 
@@ -124,7 +119,6 @@
       border-radius: 4px;
     }
 
-    /* PTT BUTTON */
     .ptt-container { text-align: center; margin-top: 10px; }
     .ptt-btn { 
       background: var(--wa-green) !important; 
@@ -212,7 +206,6 @@
     .user-count { font-weight: bold; }
     .user-names { color: #aaa; font-size: 10px; margin-top: 4px; word-break: break-all; }
 
-    /* --- STYLING KHUSUS FONT WHATSAPP KONSISTEN (PUTIH & TERANG) --- */
     .chat-box, 
     .fs-chat-body,
     #msgInput,
@@ -328,7 +321,6 @@
     .compass-mark-b { position: absolute; left: 6px; top: 50%; transform: translateY(-50%); color: #fff !important; font-size: 10px; }
     .compass-pointer { width: 4px; height: 45px; background: linear-gradient(to bottom, #ef4444 50%, #ffffff 50%); position: absolute; border-radius: 2px; }
 
-    /* FULLSCREEN CHAT OVERLAY */
     .fullscreen-chat-overlay {
       display: none;
       position: fixed;
@@ -403,10 +395,9 @@
   <div class="screen">
     <div class="status-bar">
       <span class="signal-meter" id="rssiMeter">SIG: ▂▄▆█</span>
-      <span id="scanStatus">SCAN: OFF</span>
       <span id="batDisplay">BAT: --% 🔋</span>
     </div>
-    <div class="freq" id="freqDisplay">145.820</div>
+    <div class="freq" id="freqDisplay">888.888</div>
     <div id="privateBadge" class="private-badge"></div>
   </div>
 
@@ -416,8 +407,7 @@
     <button onclick="openCompassModal()">🧭 KOMPAS</button>
     <button onclick="openMoviePlayer()" style="background: #7c3aed; color: #fff !important;">🎬 NONTON</button>
     <button onclick="sendGPSLocation()">📍 GPS</button>
-    <button onclick="toggleScan()" id="scanBtn"><span class="white-icon">🔍</span> SCAN</button>
-    <button onclick="toggleTheme()" style="grid-column: span 3;">🎨 TEMA</button>
+    <button onclick="toggleTheme()" style="grid-column: span 1;">🎨 TEMA</button>
   </div>
 
   <div class="radio-panel">
@@ -451,13 +441,15 @@
 
   <div class="input-group">
     <select id="groupSelect" onchange="switchGroupFromDropdown()">
-      <option value="145.820||">🌐 General (145.820)</option>
+      <option value="888.888||031283">📻 mrzyb aplikasi (888.888)</option>
+      <option value="111.111||150307">📻 mrzyb family (111.111)</option>
+      <option value="999.999||230887">📻 mrzyb random (999.999)</option>
     </select>
     <button onclick="openCreateGroupModal()" style="font-size: 10px; background: #065f46; color: #fff !important;">➕ GRUP</button>
   </div>
 
   <div class="input-group">
-    <input type="text" id="freqInput" placeholder="Freq/Grup ID (145.820)">
+    <input type="text" id="freqInput" placeholder="Freq/Grup ID (888.888)">
   </div>
   <div class="input-group">
     <input type="password" id="passInput" placeholder="Password Private (opsional)">
@@ -497,7 +489,7 @@
   <div class="fs-header">
     <div class="fs-header-title">
       <button onclick="closeFullscreenChat()" style="background:transparent; border:none; font-size:18px; padding:0; cursor:pointer; color:#fff;">←</button>
-      <span>💬 Chat Frekuensi <span id="fsFreqTitle">145.820</span></span>
+      <span>💬 Chat Frekuensi <span id="fsFreqTitle">888.888</span></span>
     </div>
     <button onclick="closeFullscreenChat()" style="font-size:11px; padding:5px 10px; border-radius:4px;">TUTUP</button>
   </div>
@@ -608,16 +600,143 @@
 </div>
 
 <script>
+  // --- UTILITY SANITIZER UNTUK KEAMANAN XSS ---
+  function escapeHTML(str) {
+    if (!str) return '';
+    return str.replace(/[&<>'"]/g, 
+      tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
+    );
+  }
+
+  // --- INDEXEDDB ENGINE ---
+  const DB_NAME = 'MRZYB_HT_DB';
+  const DB_VERSION = 1;
+
+  function openDB() {
+    return new Promise((resolve, reject) => {
+      const request = indexedDB.open(DB_NAME, DB_VERSION);
+
+      request.onupgradeneeded = (e) => {
+        const db = e.target.result;
+        
+        if (!db.objectStoreNames.contains('chats')) {
+          const chatStore = db.createObjectStore('chats', { keyPath: 'id' });
+          chatStore.createIndex('freq', 'freq', { unique: false });
+        }
+
+        if (!db.objectStoreNames.contains('groups')) {
+          db.createObjectStore('groups', { keyPath: 'freq' });
+        }
+      };
+
+      request.onsuccess = (e) => resolve(e.target.result);
+      request.onerror = (e) => reject(e.target.error);
+    });
+  }
+
+  async function dbSaveMessage(freq, msgData) {
+    try {
+      const db = await openDB();
+      const tx = db.transaction('chats', 'readwrite');
+      const store = tx.objectStore('chats');
+      store.put({
+        id: `${freq}_${msgData.msgId}`,
+        freq: freq,
+        msgId: msgData.msgId,
+        sender: msgData.sender,
+        message: msgData.message,
+        timestamp: Date.now()
+      });
+    } catch (e) {
+      console.error("IndexedDB Save Error:", e);
+    }
+  }
+
+  async function dbGetChatHistory(freq) {
+    try {
+      const db = await openDB();
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction('chats', 'readonly');
+        const store = tx.objectStore('chats');
+        const index = store.index('freq');
+        const request = index.getAll(freq);
+
+        request.onsuccess = () => resolve(request.result || []);
+        request.onerror = () => reject(request.error);
+      });
+    } catch (e) {
+      console.error("IndexedDB Fetch Error:", e);
+      return [];
+    }
+  }
+
+  async function dbClearChatHistory(freq) {
+    try {
+      const db = await openDB();
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction('chats', 'readwrite');
+        const store = tx.objectStore('chats');
+        const index = store.index('freq');
+        const request = index.openCursor(IDBKeyRange.only(freq));
+
+        request.onsuccess = (e) => {
+          const cursor = e.target.result;
+          if (cursor) {
+            store.delete(cursor.primaryKey);
+            cursor.continue();
+          } else {
+            resolve();
+          }
+        };
+        request.onerror = () => reject(request.error);
+      });
+    } catch (e) {
+      console.error("IndexedDB Clear Error:", e);
+    }
+  }
+
+  async function dbSaveGroup(group) {
+    try {
+      const db = await openDB();
+      const tx = db.transaction('groups', 'readwrite');
+      tx.objectStore('groups').put(group);
+    } catch (e) {
+      console.error("IndexedDB Save Group Error:", e);
+    }
+  }
+
+  async function dbGetAllGroups() {
+    try {
+      const db = await openDB();
+      return new Promise((resolve) => {
+        const tx = db.transaction('groups', 'readonly');
+        const request = tx.objectStore('groups').getAll();
+        request.onsuccess = () => resolve(request.result || []);
+        request.onerror = () => resolve([]);
+      });
+    } catch (e) {
+      return [];
+    }
+  }
+
+  // --- CORE APP VARIABLES ---
   const WORKER_URL = "wss://my-ht-project.ukielaki8387.workers.dev";
   const HTTP_WORKER_URL = "https://my-ht-project.ukielaki8387.workers.dev";
   
   const PLAYLIST_URL = "https://raw.githubusercontent.com/Ukie4321/mrzyb-playlist/refs/heads/main/playlist_film.m3u"; 
   let parsedPlaylistData = [];
 
-  let ws;
-  let currentFreq = "145.820";
+  let ws = null;
+  let wsReconnectTimer = null;
+  let reconnectDelay = 8000;
+  
+  let currentFreq = "888.888";
   window.currentFreq = currentFreq;
   window.myFcmToken = "";
+
+  // Variable Cache & Timer untuk Optimasi FCM Registration
+  let lastRegisteredFcmKey = ""; 
+  let fcmDebounceTimer = null;
 
   let mediaRecorder;
   let audioChunks = [];
@@ -625,18 +744,17 @@
   let activePttSource = 'main';
   let isRadioPlaying = false;
   let customRadioVolume = 0.8;
+  let pttMaxTimer = null;
 
   let isPttLocked = false;
-  let isScanning = false;
-  let scanInterval;
-  const SCAN_FREQS = ["145.820", "144.000", "143.550", "142.000"];
   let audioCtx;
 
   const renderedMsgIds = new Set();
 
   const PRIVATE_CHANNELS = {
-    "111.111": "1234",
-    "999.999": "admin"
+    "888.888": "031283",
+    "111.111": "150307",
+    "999.999": "230887"
   };
 
   const themes = ['default', 'theme-green', 'theme-pink'];
@@ -788,36 +906,37 @@
     const file = event.target.files[0];
     if (!file) return;
 
-    const reader = new FileReader();
-    reader.onload = function(e) {
-      const img = new Image();
-      img.onload = function() {
-        const canvas = document.createElement('canvas');
-        let width = img.width;
-        let height = img.height;
+    const img = new Image();
+    const objectUrl = URL.createObjectURL(file);
 
-        const maxDim = 800;
-        if (width > maxDim || height > maxDim) {
-          if (width > height) {
-            height = Math.round((height * maxDim) / width);
-            width = maxDim;
-          } else {
-            width = Math.round((width * maxDim) / height);
-            height = maxDim;
-          }
+    img.onload = function() {
+      const canvas = document.createElement('canvas');
+      let width = img.width;
+      let height = img.height;
+
+      const maxDim = 450;
+      if (width > maxDim || height > maxDim) {
+        if (width > height) {
+          height = Math.round((height * maxDim) / width);
+          width = maxDim;
+        } else {
+          width = Math.round((width * maxDim) / height);
+          height = maxDim;
         }
+      }
 
-        canvas.width = width;
-        canvas.height = height;
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(img, 0, 0, width, height);
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, width, height);
 
-        const compressedBase64 = canvas.toDataURL('image/jpeg', 0.6);
-        sendPhotoMessage(compressedBase64);
-      };
-      img.src = e.target.result;
+      const compressedBase64 = canvas.toDataURL('image/jpeg', 0.35);
+      sendPhotoMessage(compressedBase64);
+
+      URL.revokeObjectURL(objectUrl);
     };
-    reader.readAsDataURL(file);
+
+    img.src = objectUrl;
     event.target.value = '';
   }
 
@@ -862,13 +981,27 @@
     const video = document.getElementById('webcamVideo');
     const canvas = document.createElement('canvas');
     
-    canvas.width = video.videoWidth || 640;
-    canvas.height = video.videoHeight || 480;
+    const maxDim = 450;
+    let width = video.videoWidth || 640;
+    let height = video.videoHeight || 480;
+
+    if (width > maxDim || height > maxDim) {
+      if (width > height) {
+        height = Math.round((height * maxDim) / width);
+        width = maxDim;
+      } else {
+        width = Math.round((width * maxDim) / height);
+        height = maxDim;
+      }
+    }
+
+    canvas.width = width;
+    canvas.height = height;
 
     const ctx = canvas.getContext('2d');
     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-    const compressedBase64 = canvas.toDataURL('image/jpeg', 0.6);
+    const compressedBase64 = canvas.toDataURL('image/jpeg', 0.35);
     
     sendPhotoMessage(compressedBase64);
     closeDirectCamera();
@@ -913,20 +1046,30 @@
   window.setFcmToken = setFcmToken;
 
   function kirimTokenKeWorker(freq) {
-    if (window.myFcmToken) {
-      fetch(`${HTTP_WORKER_URL}/register-fcm`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          freq: freq,
-          token: window.myFcmToken,
-          callsign: localStorage.getItem('ht_nick') || "Anonim"
-        })
-      })
-      .then(res => res.json())
-      .then(data => console.log("Registrasi FCM ke Cloudflare Sukses:", data))
-      .catch(err => console.error("Gagal kirim FCM token ke Cloudflare:", err));
+    if (!window.myFcmToken) return;
+
+    const currentCallsign = localStorage.getItem('ht_nick') || "Anonim";
+    const requestKey = `${window.myFcmToken}_${freq}_${currentCallsign}`;
+
+    if (lastRegisteredFcmKey === requestKey) {
+      return; 
     }
+
+    fetch(`${HTTP_WORKER_URL}/register-fcm`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        freq: freq,
+        token: window.myFcmToken,
+        callsign: currentCallsign
+      })
+    })
+    .then(res => res.json())
+    .then(data => {
+      console.log("Registrasi FCM ke Cloudflare Sukses:", data);
+      lastRegisteredFcmKey = requestKey;
+    })
+    .catch(err => console.error("Gagal kirim FCM token ke Cloudflare:", err));
   }
   window.kirimTokenKeWorker = kirimTokenKeWorker;
 
@@ -1009,31 +1152,10 @@
     } catch(e) {}
   }
 
-  function toggleScan() {
-    initAudioContext();
-    isScanning = !isScanning;
-    const scanBtn = document.getElementById('scanBtn');
-    const scanStatus = document.getElementById('scanStatus');
+  window.addEventListener('DOMContentLoaded', async () => {
+    document.body.addEventListener('touchstart', initAudioContext, { once: true });
+    document.body.addEventListener('click', initAudioContext, { once: true });
 
-    if (isScanning) {
-      scanBtn.innerHTML = '<span class="white-icon">⏹</span> STOP';
-      scanStatus.innerText = "SCAN: ON";
-      let idx = 0;
-      scanInterval = setInterval(() => {
-        currentFreq = SCAN_FREQS[idx];
-        window.currentFreq = currentFreq;
-        document.getElementById('freqDisplay').innerText = currentFreq;
-        document.getElementById('freqInput').value = currentFreq;
-        idx = (idx + 1) % SCAN_FREQS.length;
-      }, 1500);
-    } else {
-      clearInterval(scanInterval);
-      scanBtn.innerHTML = '<span class="white-icon">🔍</span> SCAN';
-      scanStatus.innerText = "SCAN: OFF";
-    }
-  }
-
-  window.addEventListener('DOMContentLoaded', () => {
     setInterval(() => {
       const bars = ["SIG: ▂", "SIG: ▂▄", "SIG: ▂▄▆", "SIG: ▂▄▆█"];
       document.getElementById('rssiMeter').innerText = bars[Math.floor(Math.random() * bars.length)];
@@ -1056,8 +1178,8 @@
     }
 
     const savedNick = localStorage.getItem('ht_nick');
-    const savedFreq = localStorage.getItem('ht_freq');
-    const savedPass = localStorage.getItem('ht_pass');
+    const savedFreq = localStorage.getItem('ht_freq') || "888.888";
+    const savedPass = localStorage.getItem('ht_pass') || "031283";
 
     if (savedNick) document.getElementById('nickInput').value = savedNick;
     if (savedFreq) {
@@ -1067,26 +1189,35 @@
     }
     if (savedPass) document.getElementById('passInput').value = savedPass;
 
-    document.getElementById('nickInput').addEventListener('change', (e) => {
-      localStorage.setItem('ht_nick', e.target.value.trim());
-      kirimTokenKeWorker(currentFreq);
+    document.getElementById('nickInput').addEventListener('input', (e) => {
+      const newNick = e.target.value.trim();
+      localStorage.setItem('ht_nick', newNick);
+      
+      if (fcmDebounceTimer) clearTimeout(fcmDebounceTimer);
+      fcmDebounceTimer = setTimeout(() => {
+        kirimTokenKeWorker(currentFreq);
+      }, 1500);
     });
 
-    loadSavedGroupsUI();
-    loadLocalHistory(currentFreq);
+    await loadSavedGroupsUI();
+    await loadLocalHistory(currentFreq);
     connect();
     setupPTT();
   });
 
-  function loadSavedGroupsUI() {
+  async function loadSavedGroupsUI() {
     const groupSelect = document.getElementById('groupSelect');
-    groupSelect.innerHTML = `<option value="145.820||">🌐 General (145.820)</option>`;
+    groupSelect.innerHTML = `
+      <option value="888.888||031283">📻 mrzyb aplikasi (888.888)</option>
+      <option value="111.111||150307">📻 mrzyb family (111.111)</option>
+      <option value="999.999||230887">📻 mrzyb random (999.999)</option>
+    `;
     
-    const savedGroups = JSON.parse(localStorage.getItem('ht_my_groups')) || [];
+    const savedGroups = await dbGetAllGroups();
     savedGroups.forEach(g => {
       const option = document.createElement('option');
       option.value = `${g.freq}||${g.pass || ''}`;
-      option.innerText = `👥 ${g.name} (${g.freq})`;
+      option.innerText = `👥 ${escapeHTML(g.name)} (${escapeHTML(g.freq)})`;
       groupSelect.appendChild(option);
     });
   }
@@ -1100,7 +1231,7 @@
     document.getElementById('createGroupModal').style.display = 'none';
   }
 
-  function confirmCreateGroup() {
+  async function confirmCreateGroup() {
     initAudioContext();
     const name = document.getElementById('newGroupName').value.trim();
     const freq = document.getElementById('newGroupFreq').value.trim();
@@ -1111,16 +1242,13 @@
       return;
     }
 
-    let savedGroups = JSON.parse(localStorage.getItem('ht_my_groups')) || [];
-    savedGroups = savedGroups.filter(g => g.freq !== freq);
-    savedGroups.push({ name, freq, pass });
-    localStorage.setItem('ht_my_groups', JSON.stringify(savedGroups));
+    await dbSaveGroup({ name, freq, pass });
 
     document.getElementById('freqInput').value = freq;
     document.getElementById('passInput').value = pass;
     
     closeCreateGroupModal();
-    loadSavedGroupsUI();
+    await loadSavedGroupsUI();
 
     document.getElementById('groupSelect').value = `${freq}||${pass}`;
     joinFrequency(freq, pass);
@@ -1143,9 +1271,26 @@
   }
 
   function connect() {
+    if (wsReconnectTimer) {
+      clearTimeout(wsReconnectTimer);
+      wsReconnectTimer = null;
+    }
+
+    if (ws) {
+      ws.onopen = null;
+      ws.onmessage = null;
+      ws.onerror = null;
+      ws.onclose = null;
+      ws.close();
+      ws = null;
+    }
+
     ws = new WebSocket(WORKER_URL);
+
     ws.onopen = () => {
-      const savedPass = localStorage.getItem('ht_pass') || '';
+      reconnectDelay = 8000;
+
+      const savedPass = localStorage.getItem('ht_pass') || '031283';
       const savedNick = localStorage.getItem('ht_nick') || 'Anonim';
       if (ws && ws.readyState === WebSocket.OPEN) {
         ws.send(JSON.stringify({ type: 'join', freq: currentFreq, sender: savedNick, password: savedPass }));
@@ -1173,12 +1318,11 @@
               return msgTime > clearTimestamp;
             });
 
-            filteredMessages.forEach(msg => {
+            for (const msg of filteredMessages) {
               if (msg.msgId) renderedMsgIds.add(msg.msgId);
               appendChatToBox(`[${msg.sender}]: ${msg.message}`);
-            });
-            
-            localStorage.setItem(`local_chat_${currentFreq}`, JSON.stringify(filteredMessages));
+              await dbSaveMessage(currentFreq, msg);
+            }
           }
         }
         else if (data.type === 'join_success') {
@@ -1190,16 +1334,11 @@
         else if (data.type === 'presence') {
           const uniqueUsers = [...new Set((data.users || []).filter(u => u && u.trim() !== ''))];
           document.getElementById('onlineCount').innerText = uniqueUsers.length;
-          document.getElementById('namesList').innerText = uniqueUsers.length > 0 ? uniqueUsers.join(', ') : '-';
+          document.getElementById('namesList').innerText = uniqueUsers.length > 0 ? uniqueUsers.map(u => escapeHTML(u)).join(', ') : '-';
         } 
         else if (data.type === 'text') {
-          if (data.msgId && renderedMsgIds.has(data.msgId)) {
-            return;
-          }
-
-          if (data.msgId) {
-            renderedMsgIds.add(data.msgId);
-          }
+          if (data.msgId && renderedMsgIds.has(data.msgId)) return;
+          if (data.msgId) renderedMsgIds.add(data.msgId);
 
           const myNick = document.getElementById('nickInput').value.trim() || 'Anonim';
           
@@ -1208,14 +1347,25 @@
             playRogerBeep();
           }
 
-          saveAndAddSingleChat(data.msgId, data.sender, data.message);
+          await saveAndAddSingleChat(data.msgId, data.sender, data.message);
         } 
         else if (data.type === 'audio') {
           playAudio(data.audio);
         }
       } catch (e) {}
     };
-    ws.onclose = () => setTimeout(connect, 2000);
+
+    ws.onclose = () => {
+      console.warn(`WebSocket terputus. Mencoba terhubung kembali dalam ${reconnectDelay / 1000} detik...`);
+      wsReconnectTimer = setTimeout(() => {
+        connect();
+        reconnectDelay = Math.min(reconnectDelay * 1.5, 30000);
+      }, reconnectDelay);
+    };
+
+    ws.onerror = () => {
+      if (ws) ws.close();
+    };
   }
 
   function toggleRadio() {
@@ -1270,7 +1420,7 @@
     if (isRadioPlaying) player.volume = customRadioVolume;
   }
 
-  function joinFrequency(freq, password = '') {
+  async function joinFrequency(freq, password = '') {
     if (PRIVATE_CHANNELS[freq]) {
       const correctPass = PRIVATE_CHANNELS[freq];
       if (password !== correctPass) {
@@ -1284,18 +1434,19 @@
     localStorage.setItem('ht_nick', nick);
     localStorage.setItem('ht_freq', freq);
     localStorage.setItem('ht_pass', password);
-    loadLocalHistory(freq);
+    await loadLocalHistory(freq);
     
     kirimTokenKeWorker(freq);
 
     if (ws && ws.readyState === WebSocket.OPEN) {
       ws.send(JSON.stringify({ type: 'join', freq: freq, sender: nick, password: password }));
+    } else {
+      connect();
     }
   }
 
   function changeFreq() {
     initAudioContext();
-    if (isScanning) toggleScan();
     const newFreq = document.getElementById('freqInput').value.trim();
     const pass = document.getElementById('passInput').value.trim();
     if (newFreq) joinFrequency(newFreq, pass);
@@ -1365,26 +1516,19 @@
     if (e.key === 'Enter') sendText();
   }
 
-  function saveAndAddSingleChat(msgId, sender, message) {
+  async function saveAndAddSingleChat(msgId, sender, message) {
     appendChatToBox(`[${sender}]: ${message}`);
-    
-    let localMsgs = JSON.parse(localStorage.getItem(`local_chat_${currentFreq}`)) || [];
-    const alreadySaved = localMsgs.some(m => m.msgId === msgId);
-    if (!alreadySaved) {
-      localMsgs.push({ msgId, sender, message });
-      if (localMsgs.length > 30) localMsgs.shift();
-      localStorage.setItem(`local_chat_${currentFreq}`, JSON.stringify(localMsgs));
-    }
+    await dbSaveMessage(currentFreq, { msgId, sender, message });
   }
 
-  function loadLocalHistory(freq) {
+  async function loadLocalHistory(freq) {
     const chatBox = document.getElementById('chatBox');
     chatBox.innerHTML = '';
     addSystemMsg(`Frekuensi: ${freq}`);
     renderedMsgIds.clear();
 
     const clearTimestamp = parseInt(localStorage.getItem(`clear_time_${freq}`) || "0", 10);
-    const localMsgs = JSON.parse(localStorage.getItem(`local_chat_${freq}`)) || [];
+    const localMsgs = await dbGetChatHistory(freq);
     
     localMsgs.forEach(msg => {
       let msgTime = 0;
@@ -1417,7 +1561,7 @@
 
   function closeModal() { document.getElementById('customModal').style.display = 'none'; }
 
-  function confirmClearChat() {
+  async function confirmClearChat() {
     const chatBox = document.getElementById('chatBox');
     const fsBox = document.getElementById('fsChatBox');
     
@@ -1425,7 +1569,7 @@
     if (fsBox) fsBox.innerHTML = '';
     
     renderedMsgIds.clear();
-    localStorage.removeItem(`local_chat_${currentFreq}`);
+    await dbClearChatHistory(currentFreq);
     localStorage.setItem(`clear_time_${currentFreq}`, Date.now().toString());
 
     addSystemMsg(`Riwayat chat frekuensi ${currentFreq} telah dibersihkan.`);
@@ -1441,41 +1585,43 @@
     const box = document.getElementById('chatBox');
     const time = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
     
-    let formattedMsg = msg;
+    let formattedMsg = "";
     
     if (msg.includes("audio-vn-data:")) {
-      const parts = msg.split("audio-vn-data:");
-      const senderInfo = parts[0]; 
-      const audioBase64 = parts[1];
+      const splitIdx = msg.indexOf("audio-vn-data:");
+      const senderInfo = escapeHTML(msg.substring(0, splitIdx));
+      const audioBase64 = msg.substring(splitIdx + 14);
       
       formattedMsg = `${senderInfo}<br>
         <div class="vn-player-bubble">
-          <button class="vn-play-btn" onclick="playVNFromData('${audioBase64}')">▶</button>
+          <button class="vn-play-btn" onclick="playVNFromData('${escapeHTML(audioBase64)}')">▶</button>
           <span class="vn-label">🎙️ Voice Note</span>
         </div>`;
     } 
     else if (msg.includes("img-data:")) {
-      const parts = msg.split("img-data:");
-      const senderInfo = parts[0];
-      const imgBase64 = parts[1];
+      const splitIdx = msg.indexOf("img-data:");
+      const senderInfo = escapeHTML(msg.substring(0, splitIdx));
+      const imgBase64 = msg.substring(splitIdx + 9);
 
       formattedMsg = `${senderInfo}<br>
         <img src="${imgBase64}" class="chat-img-thumb" alt="Foto Kiriman" onclick="window.openImagePreview('${imgBase64}')">`;
     } 
     else {
+      const safeMsg = escapeHTML(msg);
       const urlRegex = /(https?:\/\/[^\s]+)/g;
-      formattedMsg = msg.replace(urlRegex, (url) => {
+      formattedMsg = safeMsg.replace(urlRegex, (url) => {
         return `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`;
       });
     }
 
     const content = `<div><span class="time-stamp">[${time}]</span>${formattedMsg}</div>`;
-    box.innerHTML += content;
+    
+    box.insertAdjacentHTML('beforeend', content);
     box.scrollTop = box.scrollHeight;
 
     const fsBox = document.getElementById('fsChatBox');
     if (fsBox) {
-      fsBox.innerHTML += content;
+      fsBox.insertAdjacentHTML('beforeend', content);
       fsBox.scrollTop = fsBox.scrollHeight;
     }
   }
@@ -1537,6 +1683,11 @@
 
       mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
       mediaRecorder.onstop = async () => {
+        if (pttMaxTimer) {
+          clearTimeout(pttMaxTimer);
+          pttMaxTimer = null;
+        }
+
         const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
         audioChunks = [];
         const reader = new FileReader();
@@ -1572,6 +1723,14 @@
       duckRadioVolume();
       mediaRecorder.start();
       document.getElementById('micStatus').innerText = "🎙️ MEREKAM (TRANSMIT)...";
+
+      pttMaxTimer = setTimeout(() => {
+        if (mediaRecorder && mediaRecorder.state === "recording") {
+          if (isPttLocked) togglePttLock();
+          else stopRecordingAudio();
+        }
+      }, 30000);
+
     } catch (err) {
       document.getElementById('micStatus').innerText = "Akses mikrofon ditolak/gagal";
       if (isPttLocked) togglePttLock(); 
@@ -1728,7 +1887,7 @@
   const messaging = getMessaging(app);
 
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/firebase-messaging-sw.js')
+    navigator.serviceWorker.register('./firebase-messaging-sw.js')
       .then((registration) => {
         console.log('Service Worker FCM Berhasil Didaftarkan:', registration);
       })
@@ -1746,7 +1905,7 @@
             console.log("Token FCM Web Berhasil Diperoleh:", currentToken);
             
             if (typeof window.kirimTokenKeWorker === 'function') {
-              window.kirimTokenKeWorker(window.currentFreq || "145.820");
+              window.kirimTokenKeWorker(window.currentFreq || "888.888");
             }
           }
         })
