@@ -152,8 +152,8 @@
 </head>
 <body>
 
-<!-- Hidden File Input Kamera -->
-<input type="file" id="cameraInput" accept="image/*" capture="environment" style="display:none" onchange="processCapturedImage(event)">
+<!-- File Input Kamera (Diperbarui agar mendukung capture langsung di berbagai browser mobile) -->
+<input type="file" id="cameraInput" accept="image/*" capture="camera" style="display:none" onchange="processCapturedImage(event)">
 
 <div class="ht-body" id="htContainer">
   <div style="text-align: center; margin-bottom: 10px;">
@@ -362,7 +362,11 @@
   // --- FUNGSI KAMERA & FOTO ---
   function triggerCamera() {
     initAudioContext();
-    document.getElementById('cameraInput').click();
+    const cameraInput = document.getElementById('cameraInput');
+    if (cameraInput) {
+      cameraInput.value = ''; // Reset nilai agar bisa memilih file yang sama berkali-kali
+      cameraInput.click();
+    }
   }
 
   function processCapturedImage(event) {
