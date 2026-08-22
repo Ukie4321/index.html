@@ -5,59 +5,131 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MRZYB-HT BLACK EDITION</title>
   <style>
-    body { background-color: #000; color: #a3e635; font-family: 'Courier New', monospace; margin: 0; display: flex; justify-content: center; min-height: 100vh; align-items: center; }
-    
-    .ht-body { background: #121212; border: 4px solid #333; border-radius: 20px; padding: 20px; width: 90%; max-width: 360px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); position: relative; transition: all 0.3s; }
-    
+    /* --- SYSTEM VARIABLES FOR THEMES --- */
+    :root {
+      --bg-main: #000000;
+      --ht-bg: #121212;
+      --ht-border: #333333;
+      --text-color: #a3e635;
+      --screen-bg: #050505;
+      --screen-border: #222222;
+      --panel-bg: #080808;
+      --btn-bg: #222222;
+      --btn-border: #444444;
+      --slider-thumb: #a3e635;
+      
+      /* Fullscreen Chat Variables (Default Black/Green Cyber) */
+      --fs-bg: #0b141a;
+      --fs-bg-pattern: #182229;
+      --fs-header-bg: #1f2c34;
+      --fs-header-border: #2a3942;
+      --fs-text: #e9edef;
+      --fs-accent: #a3e635;
+      --fs-input-bg: #2a3942;
+      --fs-bubble-bg: #1f2c34;
+      --fs-bubble-border: #334155;
+      --wa-green: #00a884;
+    }
+
     /* --- TEMA HIJAU --- */
-    .ht-body.theme-green { background: #1b2612; border-color: #3f5e22; }
-    .ht-body.theme-green .screen { background: #1a3300; border-color: #4d8000; }
-    .ht-body.theme-green *:not(.ptt-btn):not(.ptt-btn *) { color: #86efac !important; }
-    .ht-body.theme-green button:not(.ptt-btn) { background: #142900; border-color: #3f5e22; }
+    .theme-green { 
+      --ht-bg: #1b2612; 
+      --ht-border: #3f5e22; 
+      --text-color: #86efac;
+      --screen-bg: #1a3300;
+      --screen-border: #4d8000;
+      --panel-bg: #142900;
+      --btn-bg: #142900;
+      --btn-border: #3f5e22;
+      --slider-thumb: #86efac;
+
+      /* Fullscreen Theme Green */
+      --fs-bg: #0c1a09;
+      --fs-bg-pattern: #132b10;
+      --fs-header-bg: #163312;
+      --fs-header-border: #254a1f;
+      --fs-text: #dcfce7;
+      --fs-accent: #4ade80;
+      --fs-input-bg: #1f421a;
+      --fs-bubble-bg: #163312;
+      --fs-bubble-border: #2e5c26;
+      --wa-green: #22c55e;
+    }
 
     /* --- TEMA PINK --- */
-    .ht-body.theme-pink { background: #2a0818; border-color: #831843; box-shadow: 0 10px 30px rgba(236, 72, 153, 0.2); }
-    .ht-body.theme-pink .screen { background: #3b0724; border-color: #9d174d; }
-    .ht-body.theme-pink *:not(.ptt-btn):not(.ptt-btn *) { color: #f472b6 !important; }
-    .ht-body.theme-pink button:not(.ptt-btn) { background: #4c052e; border-color: #831843; }
-    .ht-body.theme-pink .quick-btn { background: #370621; border-color: #831843; color: #fbcfe8 !important; }
-    .ht-body.theme-pink .radio-panel, 
-    .ht-body.theme-pink .user-list, 
-    .ht-body.theme-pink .extra-tools { background: #1f0412; border-color: #701a45; }
-    .ht-body.theme-pink .modern-slider::-webkit-slider-thumb { background: #f472b6; box-shadow: 0 0 5px #f472b6; }
+    .theme-pink { 
+      --ht-bg: #2a0818; 
+      --ht-border: #831843; 
+      --text-color: #f472b6;
+      --screen-bg: #3b0724;
+      --screen-border: #9d174d;
+      --panel-bg: #1f0412;
+      --btn-bg: #4c052e;
+      --btn-border: #831843;
+      --slider-thumb: #f472b6;
 
-    /* --- PTT BUTTON & LOCK --- */
+      /* Fullscreen Theme Pink */
+      --fs-bg: #1a0410;
+      --fs-bg-pattern: #2b081c;
+      --fs-header-bg: #380b25;
+      --fs-header-border: #58123b;
+      --fs-text: #fce7f3;
+      --fs-accent: #f472b6;
+      --fs-input-bg: #4d1033;
+      --fs-bubble-bg: #380b25;
+      --fs-bubble-border: #6b1849;
+      --wa-green: #ec4899;
+    }
+
+    body { background-color: var(--bg-main); color: var(--text-color); font-family: 'Courier New', monospace; margin: 0; display: flex; justify-content: center; min-height: 100vh; align-items: center; }
+    
+    .ht-body { background: var(--ht-bg); border: 4px solid var(--ht-border); border-radius: 20px; padding: 20px; width: 90%; max-width: 360px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); position: relative; transition: all 0.3s; }
+    .ht-body *:not(.ptt-btn):not(.ptt-btn *) { color: var(--text-color) !important; }
+
+    /* --- PTT BUTTON (WHATSAPP MIC STYLE) --- */
     .ptt-container { text-align: center; margin-top: 10px; }
-    .ptt-btn, .ht-body.theme-green .ptt-btn, .ht-body.theme-pink .ptt-btn { 
-      background: #b91c1c !important; 
+    .ptt-btn { 
+      background: var(--wa-green) !important; 
       color: #ffffff !important; 
-      border: 2px solid #ef4444 !important;
+      border: none !important;
       border-radius: 50% !important;
-      width: 100px; 
-      height: 100px; 
+      width: 90px; 
+      height: 90px; 
       margin: 0 auto; 
-      display: block; 
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
       font-weight: bold; 
       font-family: inherit; 
       cursor: pointer; 
       user-select: none; 
       touch-action: manipulation;
-      box-shadow: 0 4px 15px rgba(185, 28, 28, 0.5) !important;
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.4) !important;
       transition: all 0.2s;
     }
-    .ptt-btn:active, .ht-body.theme-green .ptt-btn:active, .ht-body.theme-pink .ptt-btn:active { background: #ef4444 !important; }
+    .ptt-btn:active {
+      transform: scale(1.08);
+      background: #b91c1c !important;
+      box-shadow: 0 0 20px rgba(185, 28, 28, 0.8) !important;
+    }
+    .ptt-btn svg {
+      width: 32px;
+      height: 32px;
+      fill: #ffffff;
+    }
     
     .ptt-btn.locked {
-      background: #15803d !important;
-      border-color: #22c55e !important;
-      box-shadow: 0 0 20px rgba(34, 197, 94, 0.8) !important;
-      animation: pulse-green 1.5s infinite;
+      background: #ef4444 !important;
+      box-shadow: 0 0 20px rgba(239, 68, 68, 0.8) !important;
+      animation: pulse-red 1.5s infinite;
     }
 
-    @keyframes pulse-green {
-      0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); }
-      70% { box-shadow: 0 0 0 15px rgba(34, 197, 94, 0); }
-      100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+    @keyframes pulse-red {
+      0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+      70% { box-shadow: 0 0 0 15px rgba(239, 68, 68, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
     }
 
     .lock-btn {
@@ -65,64 +137,65 @@
       font-size: 10px;
       padding: 4px 10px;
       background: #181818;
-      color: #f59e0b;
+      color: #f59e0b !important;
       border: 1px solid #f59e0b;
       border-radius: 4px;
       cursor: pointer;
       font-weight: bold;
     }
 
-    .screen { background: #050505; border: 2px solid #222; padding: 12px; border-radius: 8px; margin-bottom: 12px; text-align: center; position: relative; }
+    .screen { background: var(--screen-bg); border: 2px solid var(--screen-border); padding: 12px; border-radius: 8px; margin-bottom: 12px; text-align: center; position: relative; }
     .status-bar { display: flex; justify-content: space-between; font-size: 9px; color: #888; margin-bottom: 4px; }
-    .signal-meter { color: #a3e635; font-weight: bold; letter-spacing: 1px; }
+    .signal-meter { font-weight: bold; letter-spacing: 1px; }
     .freq { font-size: 26px; font-weight: bold; line-height: 1.1; word-break: break-all; }
 
-    .user-list { border: 1px solid #222; background: #080808; padding: 8px; border-radius: 5px; margin-bottom: 12px; font-size: 11px; }
-    .user-count { color: #a3e635; font-weight: bold; }
+    .user-list { border: 1px solid var(--screen-border); background: var(--panel-bg); padding: 8px; border-radius: 5px; margin-bottom: 12px; font-size: 11px; }
+    .user-count { font-weight: bold; }
     .user-names { color: #888; font-size: 10px; margin-top: 4px; word-break: break-all; }
 
-    .chat-box { background: #050505; height: 110px; overflow-y: auto; border: 1px solid #222; padding: 8px; font-size: 11px; margin-bottom: 8px; border-radius: 5px; color: #ccc; word-wrap: break-word; }
-    .chat-box a { color: #60a5fa; text-decoration: underline; font-weight: bold; word-break: break-all; }
+    .chat-box { background: var(--screen-bg); height: 110px; overflow-y: auto; border: 1px solid var(--screen-border); padding: 8px; font-size: 11px; margin-bottom: 8px; border-radius: 5px; color: #ccc; word-wrap: break-word; }
+    .chat-box a { color: #60a5fa !important; text-decoration: underline; font-weight: bold; word-break: break-all; }
     .chat-img-thumb { max-width: 100%; max-height: 120px; border-radius: 5px; border: 1px solid #444; margin-top: 4px; cursor: pointer; display: block; }
     
     .input-group { display: flex; gap: 5px; margin-bottom: 8px; }
-    input, select { flex: 1; background: #0a0a0a; border: 1px solid #333; color: #a3e635; padding: 8px; border-radius: 3px; font-family: inherit; }
-    button { background: #222; color: #a3e635; border: 1px solid #444; padding: 8px 12px; cursor: pointer; border-radius: 3px; }
+    input, select { flex: 1; background: var(--screen-bg); border: 1px solid var(--btn-border); color: var(--text-color); padding: 8px; border-radius: 3px; font-family: inherit; }
+    button { background: var(--btn-bg); color: var(--text-color); border: 1px solid var(--btn-border); padding: 8px 12px; cursor: pointer; border-radius: 3px; }
     
     .quick-btns { display: flex; gap: 4px; margin-bottom: 10px; }
-    .quick-btn { flex: 1; font-size: 9px; padding: 4px; background: #181818; color: #888; border: 1px solid #333; }
+    .quick-btn { flex: 1; font-size: 9px; padding: 4px; background: var(--btn-bg); border: 1px solid var(--btn-border); }
     
-    .error-msg { color: #ef4444; font-size: 11px; text-align: center; margin-bottom: 10px; display: none; }
+    .error-msg { color: #ef4444 !important; font-size: 11px; text-align: center; margin-bottom: 10px; display: none; }
     .status { text-align: center; font-size: 11px; margin-top: 5px; color: #888; }
-    .private-badge { font-size: 10px; color: #f59e0b; margin-top: 2px; }
-    .radio-panel { border: 1px dashed #333; padding: 8px; border-radius: 5px; margin-bottom: 12px; background: #080808; }
-    .time-stamp { color: #555; font-size: 9px; margin-right: 4px; }
+    .private-badge { font-size: 10px; color: #f59e0b !important; margin-top: 2px; }
+    .radio-panel { border: 1px dashed var(--btn-border); padding: 8px; border-radius: 5px; margin-bottom: 12px; background: var(--panel-bg); }
+    .time-stamp { color: #555 !important; font-size: 9px; margin-right: 4px; }
 
-    .extra-tools { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-size: 10px; background: #080808; padding: 6px; border-radius: 5px; border: 1px solid #222; gap: 4px; flex-wrap: wrap; }
+    .extra-tools { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-size: 10px; background: var(--panel-bg); padding: 6px; border-radius: 5px; border: 1px solid var(--screen-border); gap: 4px; flex-wrap: wrap; }
     .extra-tools label { display: flex; align-items: center; gap: 4px; cursor: pointer; }
 
     .white-icon { filter: brightness(0) invert(1); display: inline-block; vertical-align: middle; margin-right: 4px; }
     
     .modern-slider { -webkit-appearance: none; width: 100%; background: transparent; cursor: pointer; }
     .modern-slider::-webkit-slider-runnable-track { width: 100%; height: 6px; background: #222; border-radius: 5px; }
-    .modern-slider::-webkit-slider-thumb { -webkit-appearance: none; height: 16px; width: 16px; border-radius: 50%; background: #a3e635; margin-top: -5px; box-shadow: 0 0 5px #a3e635; }
+    .modern-slider::-webkit-slider-thumb { -webkit-appearance: none; height: 16px; width: 16px; border-radius: 50%; background: var(--slider-thumb); margin-top: -5px; box-shadow: 0 0 5px var(--slider-thumb); }
 
     .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); justify-content: center; align-items: center; z-index: 1000; }
-    .modal-box { background: #121212; border: 2px solid #333; padding: 20px; border-radius: 10px; width: 80%; max-width: 280px; text-align: center; box-shadow: 0 0 15px rgba(0,0,0,0.9); position: relative; }
-    .modal-text { color: #ccc; font-size: 12px; margin-bottom: 15px; line-height: 1.4; }
+    .modal-box { background: var(--ht-bg); border: 2px solid var(--ht-border); padding: 20px; border-radius: 10px; width: 80%; max-width: 280px; text-align: center; box-shadow: 0 0 15px rgba(0,0,0,0.9); position: relative; }
+    .modal-text { color: #ccc !important; font-size: 12px; margin-bottom: 15px; line-height: 1.4; }
     .modal-btns { display: flex; gap: 10px; justify-content: center; }
-    .modal-btn-ok { background: #b91c1c; color: #fff; border: 1px solid #ef4444; padding: 6px 15px; font-size: 11px; cursor: pointer; }
-    .modal-btn-cancel { background: #222; color: #888; border: 1px solid #444; padding: 6px 15px; font-size: 11px; cursor: pointer; }
+    .modal-btn-ok { background: #b91c1c; color: #fff !important; border: 1px solid #ef4444; padding: 6px 15px; font-size: 11px; cursor: pointer; }
+    .modal-btn-cancel { background: #222; color: #888 !important; border: 1px solid #444; padding: 6px 15px; font-size: 11px; cursor: pointer; }
 
-    .close-x-btn { position: absolute; top: 8px; right: 12px; background: transparent; border: none; color: #ef4444; font-size: 18px; font-weight: bold; cursor: pointer; padding: 0; }
+    .close-x-btn { position: absolute; top: 8px; right: 12px; background: transparent; border: none; color: #ef4444 !important; font-size: 18px; font-weight: bold; cursor: pointer; padding: 0; }
     .compass-circle-outer { width: 140px; height: 140px; border: 3px solid #f59e0b; border-radius: 50%; margin: 10px auto; position: relative; display: flex; justify-content: center; align-items: center; background: radial-gradient(circle, #1a1a1a 0%, #050505 100%); box-shadow: 0 0 15px rgba(245, 158, 11, 0.2); }
     .compass-dial { position: absolute; width: 100%; height: 100%; border-radius: 50%; transition: transform 0.1s ease-out; }
-    .compass-mark-u { position: absolute; top: 4px; left: 50%; transform: translateX(-50%); color: #ef4444; font-weight: bold; font-size: 12px; }
-    .compass-mark-s { position: absolute; bottom: 4px; left: 50%; transform: translateX(-50%); color: #fff; font-size: 10px; }
-    .compass-mark-t { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); color: #fff; font-size: 10px; }
-    .compass-mark-b { position: absolute; left: 6px; top: 50%; transform: translateY(-50%); color: #fff; font-size: 10px; }
+    .compass-mark-u { position: absolute; top: 4px; left: 50%; transform: translateX(-50%); color: #ef4444 !important; font-weight: bold; font-size: 12px; }
+    .compass-mark-s { position: absolute; bottom: 4px; left: 50%; transform: translateX(-50%); color: #fff !important; font-size: 10px; }
+    .compass-mark-t { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); color: #fff !important; font-size: 10px; }
+    .compass-mark-b { position: absolute; left: 6px; top: 50%; transform: translateY(-50%); color: #fff !important; font-size: 10px; }
     .compass-pointer { width: 4px; height: 50px; background: linear-gradient(to bottom, #ef4444 50%, #ffffff 50%); position: absolute; border-radius: 2px; }
 
+    /* --- FULLSCREEN CHAT OVERLAY --- */
     .fullscreen-chat-overlay {
       display: none;
       position: fixed;
@@ -131,28 +204,49 @@
       width: 100vw;
       height: 100vh;
       height: 100dvh;
-      background: #0b141a;
+      background: var(--fs-bg);
       z-index: 9999;
       flex-direction: column;
+      transition: background 0.3s;
     }
     
     .fullscreen-chat-overlay.active { display: flex; }
-    .fs-header { background: #1f2c34; padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #2a3942; color: #e9edef; }
-    .fs-header-title { font-weight: bold; font-size: 15px; display: flex; align-items: center; gap: 8px; }
-    .fs-chat-body { flex: 1; padding: 15px; overflow-y: auto; background-color: #0b141a; background-image: radial-gradient(#182229 1px, transparent 1px); background-size: 16px 16px; display: flex; flex-direction: column; gap: 8px; position: relative; }
-    .fs-chat-footer { background: #1f2c34; padding: 10px 12px; display: flex; gap: 8px; align-items: center; }
-    .fs-chat-footer input { background: #2a3942; border: none; color: #e9edef; padding: 12px; border-radius: 20px; font-size: 14px; outline: none; }
-    .fs-chat-footer button { background: #00a884; color: #fff; border: none; border-radius: 50%; width: 42px; height: 42px; padding: 0; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
-    .fs-ptt-btn { background: #b91c1c; color: #fff; border: 2px solid #ef4444; border-radius: 50%; width: 42px; height: 42px; font-size: 18px; display: flex; align-items: center; justify-content: center; cursor: pointer; user-select: none; touch-action: manipulation; box-shadow: 0 4px 10px rgba(0,0,0,0.5); transition: all 0.2s; }
-    .fs-ptt-btn:active { background: #ef4444; transform: scale(1.1); }
-    .vn-player-bubble { display: inline-flex; align-items: center; gap: 8px; background: #1f2c34; border: 1px solid #00a884; padding: 4px 10px; border-radius: 12px; margin-top: 4px; margin-bottom: 2px; }
-    .vn-play-btn { background: #00a884; color: #fff; border: none; border-radius: 50%; width: 26px; height: 26px; font-size: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; }
-    .vn-label { font-size: 10px; color: #00a884; font-weight: bold; }
+    .fs-header { background: var(--fs-header-bg); padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--fs-header-border); color: var(--fs-text); }
+    .fs-header-title { font-weight: bold; font-size: 15px; display: flex; align-items: center; gap: 8px; color: var(--fs-text) !important; }
+    .fs-header-title span { color: var(--fs-accent) !important; }
+    .fs-chat-body { flex: 1; padding: 15px; overflow-y: auto; background-color: var(--fs-bg); background-image: radial-gradient(var(--fs-bg-pattern) 1px, transparent 1px); background-size: 16px 16px; display: flex; flex-direction: column; gap: 8px; position: relative; }
+    .fs-chat-body * { color: var(--fs-text) !important; }
+    .fs-chat-footer { background: var(--fs-header-bg); padding: 10px 12px; display: flex; gap: 8px; align-items: center; border-top: 1px solid var(--fs-header-border); }
+    .fs-chat-footer input { background: var(--fs-input-bg); border: none; color: var(--fs-text) !important; padding: 12px; border-radius: 20px; font-size: 14px; outline: none; }
+    .fs-chat-footer button { background: var(--fs-accent); color: #000 !important; border: none; border-radius: 50%; width: 42px; height: 42px; padding: 0; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; font-weight: bold; }
+    
+    /* Fullscreen WhatsApp Mic Icon Button */
+    .fs-ptt-btn { 
+      background: var(--wa-green) !important; 
+      color: #fff !important; 
+      border: none; 
+      border-radius: 50%; 
+      width: 42px; 
+      height: 42px; 
+      display: flex; 
+      align-items: center; 
+      justify-content: center; 
+      cursor: pointer; 
+      user-select: none; 
+      touch-action: manipulation; 
+      box-shadow: 0 2px 8px rgba(0,0,0,0.4); 
+      transition: all 0.2s; 
+    }
+    .fs-ptt-btn:active { background: #b91c1c !important; transform: scale(1.15); }
+    .fs-ptt-btn svg { width: 22px; height: 22px; fill: #ffffff; }
+
+    .vn-player-bubble { display: inline-flex; align-items: center; gap: 8px; background: var(--fs-bubble-bg); border: 1px solid var(--fs-bubble-border); padding: 4px 10px; border-radius: 12px; margin-top: 4px; margin-bottom: 2px; }
+    .vn-play-btn { background: var(--fs-accent) !important; color: #000 !important; border: none; border-radius: 50%; width: 26px; height: 26px; font-size: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; font-weight: bold; }
+    .vn-label { font-size: 10px; color: var(--fs-accent) !important; font-weight: bold; }
   </style>
 </head>
 <body>
 
-<!-- Input File Tersembunyi Khusus Galeri -->
 <input type="file" id="galleryInput" accept="image/*" style="display: none;" onchange="handleGalleryUpload(event)">
 
 <div class="ht-body" id="htContainer">
@@ -160,7 +254,7 @@
     <img src="logo.png" alt="Logo" style="width: 50px; height: 50px; border-radius: 50%;" onerror="this.style.display='none'">
   </div>
 
-  <h2 style="text-align: center; color: #a3e635; margin-top: 0; font-size: 18px; letter-spacing: 2px;">MRZYB-HT</h2>
+  <h2 style="text-align: center; margin-top: 0; font-size: 18px; letter-spacing: 2px;">MRZYB-HT</h2>
 
   <div class="screen">
     <div class="status-bar">
@@ -173,8 +267,8 @@
   </div>
 
   <div class="extra-tools">
-    <button onclick="triggerCamera()" style="font-size: 9px; padding: 3px 5px; background: #0284c7; border-color: #38bdf8; color: #fff;">📷 FOTO</button>
-    <button onclick="triggerGallery()" style="font-size: 9px; padding: 3px 5px; background: #059669; border-color: #34d399; color: #fff;">🖼️ GALERI</button>
+    <button onclick="triggerCamera()" style="font-size: 9px; padding: 3px 5px; background: #0284c7; border-color: #38bdf8; color: #fff !important;">📷 FOTO</button>
+    <button onclick="triggerGallery()" style="font-size: 9px; padding: 3px 5px; background: #059669; border-color: #34d399; color: #fff !important;">🖼️ GALERI</button>
     <button onclick="openCompassModal()" style="font-size: 9px; padding: 3px 5px;">🧭 KOMPAS</button>
     <button onclick="sendGPSLocation()" style="font-size: 9px; padding: 3px 5px;">📍 GPS</button>
     <button onclick="toggleScan()" style="font-size: 9px; padding: 3px 5px;" id="scanBtn">
@@ -220,7 +314,7 @@
     <select id="groupSelect" onchange="switchGroupFromDropdown()">
       <option value="145.820||">🌐 General (145.820)</option>
     </select>
-    <button onclick="openCreateGroupModal()" style="font-size: 11px; background: #065f46; border-color: #10b981; color: #fff;">➕ GRUP</button>
+    <button onclick="openCreateGroupModal()" style="font-size: 11px; background: #065f46; border-color: #10b981; color: #fff !important;">➕ GRUP</button>
   </div>
 
   <div class="input-group">
@@ -234,8 +328,8 @@
   <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
     <span style="font-size: 10px; color: #888;">RIWAYAT CHAT:</span>
     <div style="display: flex; gap: 4px;">
-      <button onclick="openFullscreenChat()" style="font-size: 9px; padding: 2px 6px; background: #181818; color: #60a5fa; border: 1px solid #333;">⛶ FULLSCREEN</button>
-      <button onclick="openClearModal()" style="font-size: 9px; padding: 2px 6px; background: #181818; color: #ef4444; border: 1px solid #333;">HAPUS CHAT</button>
+      <button onclick="openFullscreenChat()" style="font-size: 9px; padding: 2px 6px; background: #181818; color: #60a5fa !important; border: 1px solid #333;">⛶ FULLSCREEN</button>
+      <button onclick="openClearModal()" style="font-size: 9px; padding: 2px 6px; background: #181818; color: #ef4444 !important; border: 1px solid #333;">HAPUS CHAT</button>
     </div>
   </div>
 
@@ -257,8 +351,15 @@
     <span class="white-icon">▶</span> REPLAY LAST AUDIO
   </button>
 
+  <!-- PTT BUTTON DENGAN ICON MIC WHATSAPP -->
   <div class="ptt-container">
-    <button class="ptt-btn" id="pttBtn">TEKAN &<br>TAHAN UTK<br>BICARA</button>
+    <button class="ptt-btn" id="pttBtn">
+      <svg viewBox="0 0 24 24">
+        <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/>
+        <path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/>
+      </svg>
+      <span style="font-size: 10px;" id="pttLabel">PUSH TO TALK</span>
+    </button>
     <button class="lock-btn" id="lockPttBtn" onclick="togglePttLock()">🔓 KUNCI PTT (HANDS-FREE)</button>
   </div>
   <div class="status" id="micStatus">Mikrofon Siap</div>
@@ -267,27 +368,33 @@
 <div class="fullscreen-chat-overlay" id="fullscreenChat">
   <div class="fs-header">
     <div class="fs-header-title">
-      <button onclick="closeFullscreenChat()" style="background:transparent; border:none; color:#00a884; font-size:18px; padding:0; cursor:pointer;">←</button>
-      <span>💬 Chat Frekuensi <span id="fsFreqTitle" style="color:#00a884;">145.820</span></span>
+      <button onclick="closeFullscreenChat()" style="background:transparent; border:none; font-size:18px; padding:0; cursor:pointer;">←</button>
+      <span>💬 Chat Frekuensi <span id="fsFreqTitle">145.820</span></span>
     </div>
-    <button onclick="closeFullscreenChat()" style="background:#2a3942; border:none; color:#e9edef; font-size:11px; padding:5px 10px; border-radius:4px;">TUTUP</button>
+    <button onclick="closeFullscreenChat()" style="font-size:11px; padding:5px 10px; border-radius:4px;">TUTUP</button>
   </div>
 
   <div class="fs-chat-body" id="fsChatBox"></div>
 
   <div class="fs-chat-footer">
-    <button onclick="triggerCamera()" style="background:#0284c7; color:#fff; border:none; border-radius:50%; width:36px; height:36px; padding:0; display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0;">📷</button>
-    <button onclick="triggerGallery()" style="background:#059669; color:#fff; border:none; border-radius:50%; width:36px; height:36px; padding:0; display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0;">🖼️</button>
+    <button onclick="triggerCamera()" style="background:#0284c7; color:#fff !important; border:none; border-radius:50%; width:36px; height:36px; padding:0; display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0;">📷</button>
+    <button onclick="triggerGallery()" style="background:#059669; color:#fff !important; border:none; border-radius:50%; width:36px; height:36px; padding:0; display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0;">🖼️</button>
     <input type="text" id="fsMsgInput" placeholder="Ketik pesan..." onkeypress="handleFsKeyPress(event)">
     <button onclick="sendFsText()">➤</button>
-    <button class="fs-ptt-btn" id="fsPttBtn" title="Tahan untuk Rekam Suara">🎙️</button>
+    
+    <!-- MIC ICON WHATSAPP UNTUK FULLSCREEN CHAT -->
+    <button class="fs-ptt-btn" id="fsPttBtn" title="Tahan untuk Rekam Suara">
+      <svg viewBox="0 0 24 24">
+        <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/>
+        <path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/>
+      </svg>
+    </button>
   </div>
 </div>
 
-<!-- MODAL DIRECT STREAM KAMERA -->
 <div id="cameraModal" class="modal-overlay">
   <div class="modal-box" style="max-width: 320px; padding: 12px; border-color: #0284c7;">
-    <div style="color: #0284c7; font-weight: bold; font-size: 13px; margin-bottom: 8px;">📷 AMBIL FOTO DIRECT</div>
+    <div style="color: #0284c7 !important; font-weight: bold; font-size: 13px; margin-bottom: 8px;">📷 AMBIL FOTO DIRECT</div>
     <video id="webcamVideo" autoplay playsinline style="width: 100%; border-radius: 8px; background: #000; height: 220px; object-fit: cover; border: 1px solid #333;"></video>
     <div class="modal-btns" style="margin-top: 10px;">
       <button class="modal-btn-cancel" onclick="closeDirectCamera()">BATAL</button>
@@ -307,7 +414,7 @@
 
 <div id="createGroupModal" class="modal-overlay">
   <div class="modal-box" style="border-color: #10b981;">
-    <div style="color: #10b981; font-weight: bold; font-size: 14px; margin-bottom: 10px;">👥 BUAT / GABUNG GRUP</div>
+    <div style="color: #10b981 !important; font-weight: bold; font-size: 14px; margin-bottom: 10px;">👥 BUAT / GABUNG GRUP</div>
     <input type="text" id="newGroupName" placeholder="Nama Grup (misal: SQUAD-ALPHA)" style="width: 90%; margin-bottom: 8px;">
     <input type="text" id="newGroupFreq" placeholder="ID/Frekuensi Grup (misal: 888.500)" style="width: 90%; margin-bottom: 8px;">
     <input type="password" id="newGroupPass" placeholder="PIN/Password (Kosongkan jika Publik)" style="width: 90%; margin-bottom: 12px;">
@@ -321,7 +428,7 @@
 <div id="compassModal" class="modal-overlay">
   <div class="modal-box" style="border-color: #f59e0b;">
     <button class="close-x-btn" onclick="closeCompassModal()">✕</button>
-    <div style="color: #f59e0b; font-weight: bold; font-size: 14px; margin-bottom: 5px;">🧭 KOMPAS HARDWARE</div>
+    <div style="color: #f59e0b !important; font-weight: bold; font-size: 14px; margin-bottom: 5px;">🧭 KOMPAS HARDWARE</div>
     
     <div class="compass-circle-outer">
       <div class="compass-dial" id="compassDial">
@@ -333,10 +440,10 @@
       <div class="compass-pointer"></div>
     </div>
 
-    <div style="font-size: 20px; font-weight: bold; color: #fff; margin-top: 5px;" id="popupCompassDeg">0°</div>
-    <div style="font-size: 13px; color: #f59e0b; font-weight: bold; margin-bottom: 12px;" id="popupCompassDir">UTARA</div>
+    <div style="font-size: 20px; font-weight: bold; color: #fff !important; margin-top: 5px;" id="popupCompassDeg">0°</div>
+    <div style="font-size: 13px; color: #f59e0b !important; font-weight: bold; margin-bottom: 12px;" id="popupCompassDir">UTARA</div>
     
-    <button class="modal-btn-cancel" onclick="closeCompassModal()" style="width: 100%; border-color: #f59e0b; color: #f59e0b;">TUTUP</button>
+    <button class="modal-btn-cancel" onclick="closeCompassModal()" style="width: 100%; border-color: #f59e0b; color: #f59e0b !important;">TUTUP</button>
   </div>
 </div>
 
@@ -373,7 +480,22 @@
   const themes = ['default', 'theme-green', 'theme-pink'];
   let currentThemeIndex = 0;
 
-  // --- FUNGSI PILIH FOTO DARI GALERI ---
+  function toggleTheme() {
+    const body = document.body;
+    const container = document.getElementById('htContainer');
+    
+    container.classList.remove('theme-green', 'theme-pink');
+    body.classList.remove('theme-green', 'theme-pink');
+    
+    currentThemeIndex = (currentThemeIndex + 1) % themes.length;
+    const selectedTheme = themes[currentThemeIndex];
+    
+    if (selectedTheme !== 'default') {
+      container.classList.add(selectedTheme);
+      body.classList.add(selectedTheme);
+    }
+  }
+
   function triggerGallery() {
     initAudioContext();
     document.getElementById('galleryInput').click();
@@ -391,7 +513,6 @@
         let width = img.width;
         let height = img.height;
 
-        // Kompresi resolusi jika foto galeri terlalu besar
         const maxDim = 800;
         if (width > maxDim || height > maxDim) {
           if (width > height) {
@@ -414,12 +535,9 @@
       img.src = e.target.result;
     };
     reader.readAsDataURL(file);
-
-    // Reset input agar bisa pilih file yang sama berulang kali
     event.target.value = '';
   }
 
-  // --- FUNGSI KAMERA DIRECT STREAM (WEBCAM) ---
   let localCamStream = null;
 
   async function triggerCamera() {
@@ -513,18 +631,6 @@
     }
   }
   window.kirimTokenKeWorker = kirimTokenKeWorker;
-
-  function toggleTheme() {
-    const container = document.getElementById('htContainer');
-    container.classList.remove('theme-green', 'theme-pink');
-    
-    currentThemeIndex = (currentThemeIndex + 1) % themes.length;
-    const selectedTheme = themes[currentThemeIndex];
-    
-    if (selectedTheme !== 'default') {
-      container.classList.add(selectedTheme);
-    }
-  }
 
   function initAudioContext() {
     if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -768,11 +874,22 @@
             addSystemMsg(`Terhubung ke frekuensi ${currentFreq}`);
             renderedMsgIds.clear();
             
-            data.messages.forEach(msg => {
+            // FILTER HISTORY BERDASARKAN PENANDA WAKTU HAPUS
+            const clearTimestamp = parseInt(localStorage.getItem(`clear_time_${currentFreq}`) || "0", 10);
+            const filteredMessages = data.messages.filter(msg => {
+              let msgTime = 0;
+              if (msg.msgId && msg.msgId.includes('_')) {
+                msgTime = parseInt(msg.msgId.split('_')[0], 10) || 0;
+              }
+              return msgTime > clearTimestamp;
+            });
+
+            filteredMessages.forEach(msg => {
               if (msg.msgId) renderedMsgIds.add(msg.msgId);
               appendChatToBox(`[${msg.sender}]: ${msg.message}`);
             });
-            localStorage.setItem(`local_chat_${currentFreq}`, JSON.stringify(data.messages));
+            
+            localStorage.setItem(`local_chat_${currentFreq}`, JSON.stringify(filteredMessages));
           }
         }
         else if (data.type === 'join_success') {
@@ -995,11 +1112,20 @@
     chatBox.innerHTML = '';
     addSystemMsg(`Frekuensi: ${freq}`);
     renderedMsgIds.clear();
-    
+
+    const clearTimestamp = parseInt(localStorage.getItem(`clear_time_${freq}`) || "0", 10);
     const localMsgs = JSON.parse(localStorage.getItem(`local_chat_${freq}`)) || [];
+    
     localMsgs.forEach(msg => {
-      if (msg.msgId) renderedMsgIds.add(msg.msgId);
-      appendChatToBox(`[${msg.sender}]: ${msg.message}`);
+      let msgTime = 0;
+      if (msg.msgId && msg.msgId.includes('_')) {
+        msgTime = parseInt(msg.msgId.split('_')[0], 10) || 0;
+      }
+      
+      if (msgTime > clearTimestamp) {
+        if (msg.msgId) renderedMsgIds.add(msg.msgId);
+        appendChatToBox(`[${msg.sender}]: ${msg.message}`);
+      }
     });
   }
 
@@ -1023,9 +1149,17 @@
 
   function confirmClearChat() {
     const chatBox = document.getElementById('chatBox');
+    const fsBox = document.getElementById('fsChatBox');
+    
     chatBox.innerHTML = '';
+    if (fsBox) fsBox.innerHTML = '';
+    
     renderedMsgIds.clear();
     localStorage.removeItem(`local_chat_${currentFreq}`);
+    
+    // PENANDA WAKTU PENGHAPUSAN CHAT
+    localStorage.setItem(`clear_time_${currentFreq}`, Date.now().toString());
+
     addSystemMsg(`Riwayat chat frekuensi ${currentFreq} telah dibersihkan.`);
     closeModal();
   }
@@ -1082,7 +1216,6 @@
 
   function addSystemMsg(msg) { appendChatToBox(`[SYS] ${msg}`); }
 
-  /* --- FULLSCREEN CHAT MODE --- */
   function openFullscreenChat() {
     initAudioContext();
     document.getElementById('fsFreqTitle').innerText = currentFreq;
@@ -1211,19 +1344,20 @@
     initAudioContext();
     const pttBtn = document.getElementById('pttBtn');
     const lockBtn = document.getElementById('lockPttBtn');
+    const pttLabel = document.getElementById('pttLabel');
 
     isPttLocked = !isPttLocked;
 
     if (isPttLocked) {
       pttBtn.classList.add('locked');
-      pttBtn.innerHTML = "🎙️ MEMANCAR<br>(LOCK ON)";
+      if (pttLabel) pttLabel.innerText = "LOCK ON";
       lockBtn.innerText = "🔒 BUKA KUNCI PTT";
-      lockBtn.style.background = "#22c55e";
-      lockBtn.style.color = "#000";
+      lockBtn.style.background = "#ef4444";
+      lockBtn.style.color = "#fff";
       startRecordingAudio('main');
     } else {
       pttBtn.classList.remove('locked');
-      pttBtn.innerHTML = "TEKAN &<br>TAHAN UTK<br>BICARA";
+      if (pttLabel) pttLabel.innerText = "PUSH TO TALK";
       lockBtn.innerText = "🔓 KUNCI PTT (HANDS-FREE)";
       lockBtn.style.background = "#181818";
       lockBtn.style.color = "#f59e0b";
