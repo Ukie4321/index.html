@@ -207,7 +207,8 @@
       word-wrap: break-word; 
     }
     .chat-box a { color: #60a5fa !important; text-decoration: underline; font-weight: bold; word-break: break-all; }
-    .chat-img-thumb { max-width: 100%; max-height: 120px; border-radius: 5px; border: 1px solid #444; margin-top: 4px; cursor: pointer; display: block; }
+    .chat-img-thumb { max-width: 100%; max-height: 120px; border-radius: 5px; border: 1px solid #444; margin-top: 4px; cursor: pointer; display: block; transition: transform 0.2s; }
+    .chat-img-thumb:hover { transform: scale(1.02); }
     
     .input-group { display: flex; gap: 5px; margin-bottom: 8px; }
     input, select { flex: 1; background: var(--screen-bg); border: 1px solid var(--btn-border); color: var(--text-color); padding: 8px; border-radius: 3px; font-family: inherit; font-size: 12px; }
@@ -295,6 +296,20 @@
     .vn-player-bubble { display: inline-flex; align-items: center; gap: 8px; background: var(--fs-bubble-bg); border: 1px solid var(--fs-bubble-border); padding: 4px 10px; border-radius: 12px; margin-top: 4px; margin-bottom: 2px; }
     .vn-play-btn { background: var(--fs-accent) !important; color: #000 !important; border: none; border-radius: 50%; width: 26px; height: 26px; font-size: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; font-weight: bold; }
     .vn-label { font-size: 10px; color: var(--fs-accent) !important; font-weight: bold; }
+
+    /* PERBAIKAN Z-INDEX PREVIEW MODAL DITINGKATKAN LEBIH TINGGI DARI FULLSCREEN (9999) */
+    #imagePreviewModal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0,0,0,0.9);
+      justify-content: center;
+      align-items: center;
+      z-index: 99999;
+    }
   </style>
 </head>
 <body>
@@ -495,6 +510,12 @@
   </div>
 </div>
 
+<!-- MODAL PREVIEW GAMBAR (LIGHTBOX) -->
+<div id="imagePreviewModal" class="modal-overlay" onclick="closeImagePreview()">
+  <span style="position: absolute; top: 15px; right: 20px; color: #fff; font-size: 30px; font-weight: bold; cursor: pointer; z-index: 100000;">✕</span>
+  <img id="previewImgContent" style="max-width: 90%; max-height: 85vh; border-radius: 8px; border: 2px solid var(--text-color); box-shadow: 0 0 20px rgba(0,0,0,0.8); object-fit: contain;" src="">
+</div>
+
 <script>
   const WORKER_URL = "wss://my-ht-project.ukielaki8387.workers.dev";
   const HTTP_WORKER_URL = "https://my-ht-project.ukielaki8387.workers.dev";
@@ -654,6 +675,21 @@
     }
   }
 
+  function openImagePreview(src) {
+    initAudioContext();
+    const modal = document.getElementById('imagePreviewModal');
+    const img = document.getElementById('previewImgContent');
+    img.src = src;
+    modal.style.display = 'flex';
+  }
+  window.openImagePreview = openImagePreview;
+
+  function closeImagePreview() {
+    const modal = document.getElementById('imagePreviewModal');
+    modal.style.display = 'none';
+    document.getElementById('previewImgContent').src = '';
+  }
+
   function setFcmToken(token) {
     if (!token) return;
     window.myFcmToken = token;
@@ -783,7 +819,7 @@
     }
   }
 
-  /* --- FUNGSI TEXT-TO-SPEECH (TTS) YANG DIPERBAIKI --- */
+  /* --- FUNGSI TEXT-TO-SPEECH (TTS) --- */
   function initTTSOnInteraction() {
     initAudioContext();
     if ('speechSynthesis' in window) {
@@ -796,7 +832,6 @@
       return;
     }
 
-    // Bersihkan antrean suara sebelumnya jika ada yang tersangkut
     window.speechSynthesis.cancel();
 
     const utterance = new SpeechSynthesisUtterance(text);
@@ -804,14 +839,12 @@
     utterance.rate = 1.0;
     utterance.pitch = 1.0;
 
-    // Cari/pilih daftar suara bahasa Indonesia
     const voices = window.speechSynthesis.getVoices();
     const idVoice = voices.find(voice => voice.lang.includes('id') || voice.lang.includes('ID'));
     if (idVoice) {
       utterance.voice = idVoice;
     }
 
-    // Jika TTS sedang dalam kondisi paused, jalankan resume
     if (window.speechSynthesis.paused) {
       window.speechSynthesis.resume();
     }
@@ -820,7 +853,6 @@
   }
 
   window.addEventListener('DOMContentLoaded', () => {
-    // Inisialisasi daftar suara TTS sejak awal browser siap
     if ('speechSynthesis' in window) {
       window.speechSynthesis.getVoices();
       if (speechSynthesis.onvoiceschanged !== undefined) {
@@ -1250,6 +1282,7 @@
   }
   window.playVNFromData = playVNFromData;
 
+  /* PERBAIKAN PADA RENDER GAMBAR CHAT */
   function appendChatToBox(msg) {
     const box = document.getElementById('chatBox');
     const time = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
@@ -1272,10 +1305,9 @@
       const senderInfo = parts[0];
       const imgBase64 = parts[1];
 
+      // Memastikan fungsi window.openImagePreview terpanggil konsisten dari Home maupun Fullscreen
       formattedMsg = `${senderInfo}<br>
-        <a href="${imgBase64}" target="_blank">
-          <img src="${imgBase64}" class="chat-img-thumb" alt="Foto Kiriman">
-        </a>`;
+        <img src="${imgBase64}" class="chat-img-thumb" alt="Foto Kiriman" onclick="window.openImagePreview('${imgBase64}')">`;
     } 
     else {
       const urlRegex = /(https?:\/\/[^\s]+)/g;
