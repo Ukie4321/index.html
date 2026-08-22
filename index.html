@@ -9,73 +9,76 @@
     :root {
       --bg-main: #000000;
       --ht-bg: #121212;
-      --ht-border: #333333;
+      --ht-border: #ffffff; /* Border Utama Putih */
+      --ht-neon: #a3e635;   /* Warna Efek Cahaya Neon (Default Hijau Limau) */
       --text-color: #a3e635;
       --screen-bg: #050505;
-      --screen-border: #222222;
+      --screen-border: #ffffff; /* Border Screen Putih */
       --panel-bg: #080808;
       --btn-bg: #222222;
-      --btn-border: #444444;
+      --btn-border: #ffffff;   /* Border Tombol Putih */
       --slider-thumb: #a3e635;
       
       /* Fullscreen Chat Variables */
       --fs-bg: #0b141a;
       --fs-bg-pattern: #182229;
       --fs-header-bg: #1f2c34;
-      --fs-header-border: #2a3942;
+      --fs-header-border: #ffffff;
       --fs-text: #ffffff;
       --fs-accent: #a3e635;
       --fs-input-bg: #2a3942;
       --fs-bubble-bg: #1f2c34;
-      --fs-bubble-border: #334155;
+      --fs-bubble-border: #ffffff;
       --wa-green: #00a884;
     }
 
     /* --- TEMA HIJAU --- */
     .theme-green { 
       --ht-bg: #1b2612; 
-      --ht-border: #3f5e22; 
+      --ht-border: #ffffff; 
+      --ht-neon: #4ade80; /* Cahaya Neon Hijau Terang */
       --text-color: #86efac;
       --screen-bg: #1a3300;
-      --screen-border: #4d8000;
+      --screen-border: #ffffff;
       --panel-bg: #142900;
       --btn-bg: #142900;
-      --btn-border: #3f5e22;
+      --btn-border: #ffffff;
       --slider-thumb: #86efac;
 
       --fs-bg: #0c1a09;
       --fs-bg-pattern: #132b10;
       --fs-header-bg: #163312;
-      --fs-header-border: #254a1f;
+      --fs-header-border: #ffffff;
       --fs-text: #ffffff;
       --fs-accent: #4ade80;
       --fs-input-bg: #1f421a;
       --fs-bubble-bg: #163312;
-      --fs-bubble-border: #2e5c26;
+      --fs-bubble-border: #ffffff;
       --wa-green: #22c55e;
     }
 
     /* --- TEMA PINK --- */
     .theme-pink { 
       --ht-bg: #2a0818; 
-      --ht-border: #831843; 
+      --ht-border: #ffffff; 
+      --ht-neon: #f472b6; /* Cahaya Neon Pink Terang */
       --text-color: #f472b6;
       --screen-bg: #3b0724;
-      --screen-border: #9d174d;
+      --screen-border: #ffffff;
       --panel-bg: #1f0412;
       --btn-bg: #4c052e;
-      --btn-border: #831843;
+      --btn-border: #ffffff;
       --slider-thumb: #f472b6;
 
       --fs-bg: #1a0410;
       --fs-bg-pattern: #2b081c;
       --fs-header-bg: #380b25;
-      --fs-header-border: #58123b;
+      --fs-header-border: #ffffff;
       --fs-text: #ffffff;
       --fs-accent: #f472b6;
       --fs-input-bg: #4d1033;
       --fs-bubble-bg: #380b25;
-      --fs-bubble-border: #6b1849;
+      --fs-bubble-border: #ffffff;
       --wa-green: #ec4899;
     }
 
@@ -99,7 +102,7 @@
     
     .ht-body { 
       background: var(--ht-bg); 
-      border: 4px solid var(--ht-border); 
+      border: 3px solid #ffffff; 
       border-radius: 20px; 
       padding: 15px; 
       width: 100%; 
@@ -107,7 +110,8 @@
       max-height: 96vh;
       max-height: 96dvh;
       overflow-y: auto;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.8); 
+      /* Efek Bayangan + Cahaya Neon Mengikuti Tema */
+      box-shadow: 0 0 15px var(--ht-neon), inset 0 0 10px var(--ht-neon); 
       position: relative; 
       transition: all 0.3s; 
     }
@@ -116,7 +120,7 @@
       width: 4px;
     }
     .ht-body::-webkit-scrollbar-thumb {
-      background: var(--ht-border);
+      background: #ffffff;
       border-radius: 4px;
     }
 
@@ -125,7 +129,7 @@
     .ptt-btn { 
       background: var(--wa-green) !important; 
       color: #ffffff !important; 
-      border: none !important;
+      border: 2px solid #ffffff !important;
       border-radius: 50% !important;
       width: 85px; 
       height: 85px; 
@@ -140,7 +144,7 @@
       cursor: pointer; 
       user-select: none; 
       touch-action: manipulation;
-      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.4) !important;
+      box-shadow: 0 0 12px var(--ht-neon) !important;
       transition: all 0.2s;
     }
     .ptt-btn:active {
@@ -172,21 +176,41 @@
       padding: 6px 10px;
       background: #181818;
       color: #f59e0b !important;
-      border: 1px solid #f59e0b;
+      border: 1px solid #ffffff;
+      box-shadow: 0 0 5px var(--ht-neon);
       border-radius: 4px;
       cursor: pointer;
       font-weight: bold;
       width: 100%;
     }
 
-    .screen { background: var(--screen-bg); border: 2px solid var(--screen-border); padding: 10px; border-radius: 8px; margin-bottom: 10px; text-align: center; position: relative; color: var(--text-color); }
-    .status-bar { display: flex; justify-content: space-between; font-size: 9px; color: #888; margin-bottom: 4px; }
+    .screen { 
+      background: var(--screen-bg); 
+      border: 2px solid #ffffff; 
+      box-shadow: 0 0 8px var(--ht-neon);
+      padding: 10px; 
+      border-radius: 8px; 
+      margin-bottom: 10px; 
+      text-align: center; 
+      position: relative; 
+      color: var(--text-color); 
+    }
+    .status-bar { display: flex; justify-content: space-between; font-size: 9px; color: #aaa; margin-bottom: 4px; }
     .signal-meter { font-weight: bold; letter-spacing: 1px; }
     .freq { font-size: 24px; font-weight: bold; line-height: 1.1; word-break: break-all; }
 
-    .user-list { border: 1px solid var(--screen-border); background: var(--panel-bg); padding: 8px; border-radius: 5px; margin-bottom: 10px; font-size: 11px; color: var(--text-color); }
+    .user-list { 
+      border: 1px solid #ffffff; 
+      box-shadow: 0 0 6px var(--ht-neon);
+      background: var(--panel-bg); 
+      padding: 8px; 
+      border-radius: 5px; 
+      margin-bottom: 10px; 
+      font-size: 11px; 
+      color: var(--text-color); 
+    }
     .user-count { font-weight: bold; }
-    .user-names { color: #888; font-size: 10px; margin-top: 4px; word-break: break-all; }
+    .user-names { color: #aaa; font-size: 10px; margin-top: 4px; word-break: break-all; }
 
     /* --- STYLING KHUSUS FONT WHATSAPP KONSISTEN (PUTIH & TERANG) --- */
     .chat-box, 
@@ -210,44 +234,93 @@
       min-height: 90px;
       max-height: 160px;
       overflow-y: auto; 
-      border: 1px solid var(--screen-border); 
+      border: 1px solid #ffffff; 
+      box-shadow: inset 0 0 6px var(--ht-neon);
       padding: 8px; 
       margin-bottom: 8px; 
       border-radius: 5px; 
       word-wrap: break-word; 
     }
     .chat-box a, .fs-chat-body a { color: #38bdf8 !important; text-decoration: underline; font-weight: bold; word-break: break-all; }
-    .chat-img-thumb { max-width: 100%; max-height: 120px; border-radius: 5px; border: 1px solid #444; margin-top: 4px; cursor: pointer; display: block; transition: transform 0.2s; }
+    .chat-img-thumb { max-width: 100%; max-height: 120px; border-radius: 5px; border: 1px solid #ffffff; margin-top: 4px; cursor: pointer; display: block; transition: transform 0.2s; }
     .chat-img-thumb:hover { transform: scale(1.02); }
     
     .input-group { display: flex; gap: 5px; margin-bottom: 8px; }
-    input, select { flex: 1; background: var(--screen-bg); border: 1px solid var(--btn-border); color: #ffffff !important; padding: 8px; border-radius: 3px; font-size: 13px; }
-    button { background: var(--btn-bg); color: var(--text-color); border: 1px solid var(--btn-border); padding: 8px 12px; cursor: pointer; border-radius: 3px; }
+    input, select { 
+      flex: 1; 
+      background: var(--screen-bg); 
+      border: 1px solid #ffffff; 
+      box-shadow: 0 0 4px var(--ht-neon);
+      color: #ffffff !important; 
+      padding: 8px; 
+      border-radius: 3px; 
+      font-size: 13px; 
+    }
+    button { 
+      background: var(--btn-bg); 
+      color: var(--text-color); 
+      border: 1px solid #ffffff; 
+      box-shadow: 0 0 5px var(--ht-neon);
+      padding: 8px 12px; 
+      cursor: pointer; 
+      border-radius: 3px; 
+      transition: all 0.2s;
+    }
     
     .error-msg { color: #ef4444 !important; font-size: 11px; text-align: center; margin-bottom: 10px; display: none; }
-    .status { text-align: center; font-size: 11px; margin-top: 5px; color: #888; }
+    .status { text-align: center; font-size: 11px; margin-top: 5px; color: #aaa; }
     .private-badge { font-size: 10px; color: #f59e0b !important; margin-top: 2px; }
-    .radio-panel { border: 1px dashed var(--btn-border); padding: 8px; border-radius: 5px; margin-bottom: 10px; background: var(--panel-bg); color: var(--text-color); }
+    .radio-panel { 
+      border: 1px dashed #ffffff; 
+      box-shadow: 0 0 6px var(--ht-neon);
+      padding: 8px; 
+      border-radius: 5px; 
+      margin-bottom: 10px; 
+      background: var(--panel-bg); 
+      color: var(--text-color); 
+    }
     .time-stamp { color: #8696a0 !important; font-size: 11px !important; margin-right: 5px; }
 
-    .extra-tools { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; margin-bottom: 10px; font-size: 10px; background: var(--panel-bg); padding: 6px; border-radius: 5px; border: 1px solid var(--screen-border); color: var(--text-color); }
+    .extra-tools { 
+      display: grid; 
+      grid-template-columns: repeat(3, 1fr); 
+      gap: 4px; 
+      margin-bottom: 10px; 
+      font-size: 10px; 
+      background: var(--panel-bg); 
+      padding: 6px; 
+      border-radius: 5px; 
+      border: 1px solid #ffffff; 
+      box-shadow: 0 0 6px var(--ht-neon);
+      color: var(--text-color); 
+    }
     .extra-tools button { padding: 5px 2px; font-size: 9px; text-align: center; }
 
     .white-icon { filter: brightness(0) invert(1); display: inline-block; vertical-align: middle; margin-right: 2px; }
     
     .modern-slider { -webkit-appearance: none; width: 100%; background: transparent; cursor: pointer; }
-    .modern-slider::-webkit-slider-runnable-track { width: 100%; height: 6px; background: #222; border-radius: 5px; }
-    .modern-slider::-webkit-slider-thumb { -webkit-appearance: none; height: 16px; width: 16px; border-radius: 50%; background: var(--slider-thumb); margin-top: -5px; box-shadow: 0 0 5px var(--slider-thumb); }
+    .modern-slider::-webkit-slider-runnable-track { width: 100%; height: 6px; background: #222; border-radius: 5px; border: 1px solid #ffffff; }
+    .modern-slider::-webkit-slider-thumb { -webkit-appearance: none; height: 16px; width: 16px; border-radius: 50%; background: var(--slider-thumb); margin-top: -5px; box-shadow: 0 0 8px var(--ht-neon); }
 
     .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); justify-content: center; align-items: center; z-index: 1000; }
-    .modal-box { background: var(--ht-bg); border: 2px solid var(--ht-border); padding: 20px; border-radius: 10px; width: 85%; max-width: 300px; text-align: center; box-shadow: 0 0 15px rgba(0,0,0,0.9); position: relative; }
+    .modal-box { 
+      background: var(--ht-bg); 
+      border: 2px solid #ffffff; 
+      box-shadow: 0 0 20px var(--ht-neon);
+      padding: 20px; 
+      border-radius: 10px; 
+      width: 85%; 
+      max-width: 300px; 
+      text-align: center; 
+      position: relative; 
+    }
     .modal-text { color: #ccc !important; font-size: 12px; margin-bottom: 15px; line-height: 1.4; }
     .modal-btns { display: flex; gap: 10px; justify-content: center; }
-    .modal-btn-ok { background: #b91c1c; color: #fff !important; border: 1px solid #ef4444; padding: 6px 15px; font-size: 11px; cursor: pointer; }
-    .modal-btn-cancel { background: #222; color: #888 !important; border: 1px solid #444; padding: 6px 15px; font-size: 11px; cursor: pointer; }
+    .modal-btn-ok { background: #b91c1c; color: #fff !important; border: 1px solid #ffffff; padding: 6px 15px; font-size: 11px; cursor: pointer; }
+    .modal-btn-cancel { background: #222; color: #888 !important; border: 1px solid #ffffff; padding: 6px 15px; font-size: 11px; cursor: pointer; }
 
     .close-x-btn { position: absolute; top: 8px; right: 12px; background: transparent; border: none; color: #ef4444 !important; font-size: 18px; font-weight: bold; cursor: pointer; padding: 0; }
-    .compass-circle-outer { width: 130px; height: 130px; border: 3px solid #f59e0b; border-radius: 50%; margin: 10px auto; position: relative; display: flex; justify-content: center; align-items: center; background: radial-gradient(circle, #1a1a1a 0%, #050505 100%); box-shadow: 0 0 15px rgba(245, 158, 11, 0.2); }
+    .compass-circle-outer { width: 130px; height: 130px; border: 3px solid #f59e0b; border-radius: 50%; margin: 10px auto; position: relative; display: flex; justify-content: center; align-items: center; background: radial-gradient(circle, #1a1a1a 0%, #050505 100%); box-shadow: 0 0 15px rgba(245, 158, 11, 0.4); }
     .compass-dial { position: absolute; width: 100%; height: 100%; border-radius: 50%; transition: transform 0.1s ease-out; }
     .compass-mark-u { position: absolute; top: 4px; left: 50%; transform: translateX(-50%); color: #ef4444 !important; font-weight: bold; font-size: 12px; }
     .compass-mark-s { position: absolute; bottom: 4px; left: 50%; transform: translateX(-50%); color: #fff !important; font-size: 10px; }
@@ -271,18 +344,18 @@
     }
     
     .fullscreen-chat-overlay.active { display: flex; }
-    .fs-header { background: var(--fs-header-bg); padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--fs-header-border); color: #ffffff; }
+    .fs-header { background: var(--fs-header-bg); padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ffffff; color: #ffffff; }
     .fs-header-title { font-weight: bold; font-size: 15px; display: flex; align-items: center; gap: 8px; color: #ffffff !important; }
     .fs-header-title span { color: var(--fs-accent) !important; }
     .fs-chat-body { flex: 1; padding: 15px; overflow-y: auto; background-color: var(--fs-bg); background-image: radial-gradient(var(--fs-bg-pattern) 1px, transparent 1px); background-size: 16px 16px; display: flex; flex-direction: column; gap: 8px; position: relative; }
-    .fs-chat-footer { background: var(--fs-header-bg); padding: 10px 12px; display: flex; gap: 6px; align-items: center; border-top: 1px solid var(--fs-header-border); }
-    .fs-chat-footer input { background: var(--fs-input-bg); border: none; padding: 10px 12px; border-radius: 20px; outline: none; }
-    .fs-chat-footer button { background: var(--fs-accent); color: #000 !important; border: none; border-radius: 50%; width: 38px; height: 38px; padding: 0; display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0; font-weight: bold; }
+    .fs-chat-footer { background: var(--fs-header-bg); padding: 10px 12px; display: flex; gap: 6px; align-items: center; border-top: 1px solid #ffffff; }
+    .fs-chat-footer input { background: var(--fs-input-bg); border: 1px solid #ffffff; padding: 10px 12px; border-radius: 20px; outline: none; }
+    .fs-chat-footer button { background: var(--fs-accent); color: #000 !important; border: 1px solid #ffffff; border-radius: 50%; width: 38px; height: 38px; padding: 0; display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0; font-weight: bold; box-shadow: 0 0 8px var(--ht-neon); }
     
     .fs-ptt-btn { 
       background: var(--wa-green) !important; 
       color: #fff !important; 
-      border: none; 
+      border: 1px solid #ffffff; 
       border-radius: 50%; 
       width: 38px; 
       height: 38px; 
@@ -292,13 +365,13 @@
       cursor: pointer; 
       user-select: none; 
       touch-action: manipulation; 
-      box-shadow: 0 2px 8px rgba(0,0,0,0.4); 
+      box-shadow: 0 0 8px var(--ht-neon); 
       transition: all 0.2s; 
     }
     .fs-ptt-btn:active { background: #b91c1c !important; transform: scale(1.15); }
     .fs-ptt-btn svg { width: 20px; height: 20px; fill: #ffffff; }
 
-    .vn-player-bubble { display: inline-flex; align-items: center; gap: 8px; background: var(--fs-bubble-bg); border: 1px solid var(--fs-bubble-border); padding: 4px 10px; border-radius: 12px; margin-top: 4px; margin-bottom: 2px; }
+    .vn-player-bubble { display: inline-flex; align-items: center; gap: 8px; background: var(--fs-bubble-bg); border: 1px solid #ffffff; padding: 4px 10px; border-radius: 12px; margin-top: 4px; margin-bottom: 2px; }
     .vn-play-btn { background: var(--fs-accent) !important; color: #000 !important; border: none; border-radius: 50%; width: 26px; height: 26px; font-size: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; font-weight: bold; }
     .vn-label { font-size: 10px; color: var(--fs-accent) !important; font-weight: bold; }
 
@@ -322,7 +395,7 @@
 
 <div class="ht-body" id="htContainer">
   <div style="text-align: center; margin-bottom: 8px;">
-    <img src="logo.png" alt="Logo" style="width: 45px; height: 45px; border-radius: 50%;" onerror="this.style.display='none'">
+    <img src="logo.png" alt="Logo" style="width: 45px; height: 45px; border-radius: 50%; border: 1px solid #ffffff;" onerror="this.style.display='none'">
   </div>
 
   <h2 style="text-align: center; margin-top: 0; font-size: 16px; letter-spacing: 2px; margin-bottom: 10px; color: var(--text-color);">MRZYB-HT</h2>
@@ -338,17 +411,17 @@
   </div>
 
   <div class="extra-tools">
-    <button onclick="triggerCamera()" style="background: #0284c7; border-color: #38bdf8; color: #fff !important;">📷 FOTO</button>
-    <button onclick="triggerGallery()" style="background: #059669; border-color: #34d399; color: #fff !important;">🖼️ GALERI</button>
+    <button onclick="triggerCamera()" style="background: #0284c7; color: #fff !important;">📷 FOTO</button>
+    <button onclick="triggerGallery()" style="background: #059669; color: #fff !important;">🖼️ GALERI</button>
     <button onclick="openCompassModal()">🧭 KOMPAS</button>
-    <button onclick="openMoviePlayer()" style="background: #7c3aed; border-color: #a78bfa; color: #fff !important;">🎬 NONTON</button>
+    <button onclick="openMoviePlayer()" style="background: #7c3aed; color: #fff !important;">🎬 NONTON</button>
     <button onclick="sendGPSLocation()">📍 GPS</button>
     <button onclick="toggleScan()" id="scanBtn"><span class="white-icon">🔍</span> SCAN</button>
     <button onclick="toggleTheme()" style="grid-column: span 3;">🎨 TEMA</button>
   </div>
 
   <div class="radio-panel">
-    <div style="font-size: 9px; color: #888; margin-bottom: 4px; text-align: center;">📻 MONITORING RADIO FM</div>
+    <div style="font-size: 9px; color: #aaa; margin-bottom: 4px; text-align: center;">📻 MONITORING RADIO FM</div>
     <div class="input-group" style="margin-bottom: 4px;">
       <select id="radioSelect" onchange="changeRadioChannel()">
         <option value="https://n08.radiojar.com/7csmg90fuqruv.mp3?1673348819=&rj-tok=AAABhZtmUCUAwkYyBBgriH-X9g&rj-ttl=5">HardRock</option>
@@ -358,7 +431,7 @@
       </select>
       <button id="radioBtn" onclick="toggleRadio()" style="padding: 4px 10px; font-size: 11px;">PLAY</button>
     </div>
-    <div style="display: flex; align-items: center; gap: 5px; font-size: 9px; color: #888;">
+    <div style="display: flex; align-items: center; gap: 5px; font-size: 9px; color: #aaa;">
       <span>VOL:</span>
       <input type="range" id="radioVol" class="modern-slider" min="0" max="1" step="0.05" value="0.8" oninput="adjustRadioVolume(this.value)">
     </div>
@@ -380,7 +453,7 @@
     <select id="groupSelect" onchange="switchGroupFromDropdown()">
       <option value="145.820||">🌐 General (145.820)</option>
     </select>
-    <button onclick="openCreateGroupModal()" style="font-size: 10px; background: #065f46; border-color: #10b981; color: #fff !important;">➕ GRUP</button>
+    <button onclick="openCreateGroupModal()" style="font-size: 10px; background: #065f46; color: #fff !important;">➕ GRUP</button>
   </div>
 
   <div class="input-group">
@@ -392,10 +465,10 @@
   </div>
 
   <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-    <span style="font-size: 10px; color: #888;">RIWAYAT CHAT:</span>
+    <span style="font-size: 10px; color: #aaa;">RIWAYAT CHAT:</span>
     <div style="display: flex; gap: 4px;">
-      <button onclick="openFullscreenChat()" style="font-size: 9px; padding: 2px 6px; background: #181818; color: #60a5fa !important; border: 1px solid #333;">⛶ FULLSCREEN</button>
-      <button onclick="openClearModal()" style="font-size: 9px; padding: 2px 6px; background: #181818; color: #ef4444 !important; border: 1px solid #333;">HAPUS CHAT</button>
+      <button onclick="openFullscreenChat()" style="font-size: 9px; padding: 2px 6px; background: #181818; color: #60a5fa !important;">⛶ FULLSCREEN</button>
+      <button onclick="openClearModal()" style="font-size: 9px; padding: 2px 6px; background: #181818; color: #ef4444 !important;">HAPUS CHAT</button>
     </div>
   </div>
 
@@ -432,8 +505,8 @@
   <div class="fs-chat-body" id="fsChatBox"></div>
 
   <div class="fs-chat-footer">
-    <button onclick="triggerCamera()" style="background:#0284c7; color:#fff !important; border:none; border-radius:50%; width:36px; height:36px; padding:0; display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0;">📷</button>
-    <button onclick="triggerGallery()" style="background:#059669; color:#fff !important; border:none; border-radius:50%; width:36px; height:36px; padding:0; display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0;">🖼️</button>
+    <button onclick="triggerCamera()" style="background:#0284c7; color:#fff !important; border-radius:50%; width:36px; height:36px; padding:0; display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0;">📷</button>
+    <button onclick="triggerGallery()" style="background:#059669; color:#fff !important; border-radius:50%; width:36px; height:36px; padding:0; display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0;">🖼️</button>
     <input type="text" id="fsMsgInput" placeholder="Ketik pesan..." onkeypress="handleFsKeyPress(event)">
     <button onclick="sendFsText()">➤</button>
     
@@ -448,38 +521,38 @@
 
 <!-- MODAL POPUP MOVIE PLAYER -->
 <div id="movieModal" class="modal-overlay">
-  <div class="modal-box" style="max-width: 380px; width: 92%; padding: 12px; border-color: #7c3aed; background: #0c0a09; text-align: left;">
+  <div class="modal-box" style="max-width: 380px; width: 92%; padding: 12px; background: #0c0a09; text-align: left;">
     <button class="close-x-btn" onclick="closeMoviePlayer()">✕</button>
     <div style="color: #a78bfa !important; font-weight: bold; font-size: 13px; margin-bottom: 8px; text-align: center;">🎬 MOVIE & TV PLAYER</div>
     
-    <div style="width: 100%; height: 200px; background: #000; border-radius: 6px; overflow: hidden; margin-bottom: 8px; border: 1px solid #333;">
+    <div style="width: 100%; height: 200px; background: #000; border-radius: 6px; overflow: hidden; margin-bottom: 8px; border: 1px solid #ffffff;">
       <video id="movieVideoPlayer" controls autoplay controlsList="nodownload" oncontextmenu="return false;" style="width: 100%; height: 100%; background: #000; object-fit: contain;"></video>
     </div>
 
     <div style="display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px;">
-      <select id="movieCategorySelect" onchange="filterMoviesByCategory()" style="background: #1c1917; border-color: #7c3aed; color: #fff; font-size: 11px; padding: 6px;">
+      <select id="movieCategorySelect" onchange="filterMoviesByCategory()" style="background: #1c1917; color: #fff; font-size: 11px; padding: 6px;">
         <option value="all">📁 Mengunduh Kategori...</option>
       </select>
-      <select id="moviePlaylistSelect" onchange="playSelectedMovie()" style="background: #1c1917; border-color: #7c3aed; color: #fff; font-size: 11px; padding: 6px;">
+      <select id="moviePlaylistSelect" onchange="playSelectedMovie()" style="background: #1c1917; color: #fff; font-size: 11px; padding: 6px;">
         <option value="">-- Memuat Playlist... --</option>
       </select>
     </div>
 
-    <div style="font-size: 9px; color: #888; text-align: center; margin-bottom: 8px;" id="playlistStatus">Memuat playlist otomatis...</div>
+    <div style="font-size: 9px; color: #aaa; text-align: center; margin-bottom: 8px;" id="playlistStatus">Memuat playlist otomatis...</div>
 
     <div class="modal-btns">
-      <button class="modal-btn-cancel" onclick="closeMoviePlayer()" style="width: 100%; border-color: #7c3aed; color: #a78bfa !important;">TUTUP</button>
+      <button class="modal-btn-cancel" onclick="closeMoviePlayer()" style="width: 100%; color: #a78bfa !important;">TUTUP</button>
     </div>
   </div>
 </div>
 
 <div id="cameraModal" class="modal-overlay">
-  <div class="modal-box" style="max-width: 320px; padding: 12px; border-color: #0284c7;">
+  <div class="modal-box" style="max-width: 320px; padding: 12px;">
     <div style="color: #0284c7 !important; font-weight: bold; font-size: 13px; margin-bottom: 8px;">📷 AMBIL FOTO DIRECT</div>
-    <video id="webcamVideo" autoplay playsinline style="width: 100%; border-radius: 8px; background: #000; height: 200px; object-fit: cover; border: 1px solid #333;"></video>
+    <video id="webcamVideo" autoplay playsinline style="width: 100%; border-radius: 8px; background: #000; height: 200px; object-fit: cover; border: 1px solid #ffffff;"></video>
     <div class="modal-btns" style="margin-top: 10px;">
       <button class="modal-btn-cancel" onclick="closeDirectCamera()">BATAL</button>
-      <button class="modal-btn-ok" style="background: #0284c7; border-color: #38bdf8;" onclick="takeDirectPhoto()">AMBIL & KIRIM</button>
+      <button class="modal-btn-ok" style="background: #0284c7;" onclick="takeDirectPhoto()">AMBIL & KIRIM</button>
     </div>
   </div>
 </div>
@@ -494,20 +567,20 @@
 </div>
 
 <div id="createGroupModal" class="modal-overlay">
-  <div class="modal-box" style="border-color: #10b981;">
+  <div class="modal-box">
     <div style="color: #10b981 !important; font-weight: bold; font-size: 14px; margin-bottom: 10px;">👥 BUAT / GABUNG GRUP</div>
     <input type="text" id="newGroupName" placeholder="Nama Grup (misal: SQUAD-ALPHA)" style="width: 90%; margin-bottom: 8px;">
     <input type="text" id="newGroupFreq" placeholder="ID/Frekuensi Grup (misal: 888.500)" style="width: 90%; margin-bottom: 8px;">
     <input type="password" id="newGroupPass" placeholder="PIN/Password (Kosongkan jika Publik)" style="width: 90%; margin-bottom: 12px;">
     <div class="modal-btns">
       <button class="modal-btn-cancel" onclick="closeCreateGroupModal()">BATAL</button>
-      <button class="modal-btn-ok" style="background: #065f46; border-color: #10b981;" onclick="confirmCreateGroup()">SIMPAN & JOIN</button>
+      <button class="modal-btn-ok" style="background: #065f46;" onclick="confirmCreateGroup()">SIMPAN & JOIN</button>
     </div>
   </div>
 </div>
 
 <div id="compassModal" class="modal-overlay">
-  <div class="modal-box" style="border-color: #f59e0b;">
+  <div class="modal-box">
     <button class="close-x-btn" onclick="closeCompassModal()">✕</button>
     <div style="color: #f59e0b !important; font-weight: bold; font-size: 14px; margin-bottom: 5px;">🧭 KOMPAS HARDWARE</div>
     
@@ -524,14 +597,14 @@
     <div style="font-size: 20px; font-weight: bold; color: #fff !important; margin-top: 5px;" id="popupCompassDeg">0°</div>
     <div style="font-size: 13px; color: #f59e0b !important; font-weight: bold; margin-bottom: 12px;" id="popupCompassDir">UTARA</div>
     
-    <button class="modal-btn-cancel" onclick="closeCompassModal()" style="width: 100%; border-color: #f59e0b; color: #f59e0b !important;">TUTUP</button>
+    <button class="modal-btn-cancel" onclick="closeCompassModal()" style="width: 100%; color: #f59e0b !important;">TUTUP</button>
   </div>
 </div>
 
 <!-- MODAL PREVIEW GAMBAR -->
 <div id="imagePreviewModal" class="modal-overlay" onclick="closeImagePreview()">
   <span style="position: absolute; top: 15px; right: 20px; color: #fff; font-size: 30px; font-weight: bold; cursor: pointer; z-index: 100000;">✕</span>
-  <img id="previewImgContent" style="max-width: 90%; max-height: 85vh; border-radius: 8px; border: 2px solid #ffffff; box-shadow: 0 0 20px rgba(0,0,0,0.8); object-fit: contain;" src="">
+  <img id="previewImgContent" style="max-width: 90%; max-height: 85vh; border-radius: 8px; border: 2px solid #ffffff; box-shadow: 0 0 25px var(--ht-neon); object-fit: contain;" src="">
 </div>
 
 <script>
