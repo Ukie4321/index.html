@@ -149,7 +149,7 @@
     .ptt-btn svg {
       width: 30px;
       height: 30px;
-      fill: #ffffff;
+      fill: currentColor;
     }
     
     .ptt-btn.locked {
@@ -258,6 +258,10 @@
       cursor: pointer; 
       border-radius: 3px; 
       transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
     }
     
     .error-msg { color: #ef4444 !important; font-size: 11px; text-align: center; margin-bottom: 10px; display: none; }
@@ -271,6 +275,31 @@
       margin-bottom: 10px; 
       background: var(--panel-bg); 
       color: var(--text-color); 
+    }
+    .radio-header {
+      font-size: 9px;
+      color: #aaa;
+      margin-bottom: 4px;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+    }
+    .svg-icon {
+      width: 14px;
+      height: 14px;
+      fill: currentColor;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    .svg-check {
+      width: 13px;
+      height: 13px;
+      fill: var(--fs-accent);
+      display: inline-block;
+      vertical-align: middle;
+      margin-left: 4px;
     }
     .time-stamp { color: #8696a0 !important; font-size: 11px !important; margin-right: 5px; }
 
@@ -289,13 +318,22 @@
     }
     .extra-tools button { padding: 5px 2px; font-size: 9px; text-align: center; }
 
-    .white-icon { filter: brightness(0) invert(1); display: inline-block; vertical-align: middle; margin-right: 2px; }
-    
     .modern-slider { -webkit-appearance: none; width: 100%; background: transparent; cursor: pointer; }
     .modern-slider::-webkit-slider-runnable-track { width: 100%; height: 6px; background: #222; border-radius: 5px; border: 1px solid #ffffff; }
     .modern-slider::-webkit-slider-thumb { -webkit-appearance: none; height: 16px; width: 16px; border-radius: 50%; background: var(--slider-thumb); margin-top: -5px; box-shadow: 0 0 8px var(--ht-neon); }
 
-    .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); justify-content: center; align-items: center; z-index: 1000; }
+    .modal-overlay { 
+      display: none; 
+      position: fixed; 
+      top: 0; 
+      left: 0; 
+      width: 100%; 
+      height: 100%; 
+      background: rgba(0,0,0,0.85); 
+      justify-content: center; 
+      align-items: center; 
+      z-index: 10000;
+    }
     .modal-box { 
       background: var(--ht-bg); 
       border: 2px solid #ffffff; 
@@ -361,11 +399,14 @@
       transition: all 0.2s; 
     }
     .fs-ptt-btn:active { background: #b91c1c !important; transform: scale(1.15); }
-    .fs-ptt-btn svg { width: 20px; height: 20px; fill: #ffffff; }
+    .fs-ptt-btn svg { width: 20px; height: 20px; fill: currentColor; }
 
+    /* CSS BUBBLE VOICE NOTE DENGAN SVG */
     .vn-player-bubble { display: inline-flex; align-items: center; gap: 8px; background: var(--fs-bubble-bg); border: 1px solid #ffffff; padding: 4px 10px; border-radius: 12px; margin-top: 4px; margin-bottom: 2px; }
     .vn-play-btn { background: var(--fs-accent) !important; color: #000 !important; border: none; border-radius: 50%; width: 26px; height: 26px; font-size: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; font-weight: bold; }
-    .vn-label { font-size: 10px; color: var(--fs-accent) !important; font-weight: bold; }
+    .vn-play-btn svg { width: 12px; height: 12px; fill: currentColor; margin-left: 1px; }
+    .vn-label { font-size: 10px; color: var(--fs-accent) !important; font-weight: bold; display: flex; align-items: center; gap: 4px; }
+    .vn-label svg { width: 14px; height: 14px; fill: currentColor; }
 
     #imagePreviewModal {
       display: none;
@@ -377,7 +418,7 @@
       background: rgba(0,0,0,0.9);
       justify-content: center;
       align-items: center;
-      z-index: 99999;
+      z-index: 100000;
     }
   </style>
 </head>
@@ -410,8 +451,14 @@
     <button onclick="toggleTheme()" style="grid-column: span 1;">🎨 TEMA</button>
   </div>
 
+  <!-- PANEL RADIO DENGAN SVG RADIO & SVG PLAY -->
   <div class="radio-panel">
-    <div style="font-size: 9px; color: #aaa; margin-bottom: 4px; text-align: center;">📻 MONITORING RADIO FM</div>
+    <div class="radio-header">
+      <svg class="svg-icon" viewBox="0 0 24 24">
+        <path d="M3.24 6.15C2.51 6.43 2 7.17 2 8v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2H8.3l7.43-3.71c.45-.23.64-.78.41-1.24-.23-.45-.78-.64-1.24-.41L6.1 6.15zM12 18c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm8-6h-2v-2h2v2z"/>
+      </svg>
+      <span>MONITORING RADIO FM</span>
+    </div>
     <div class="input-group" style="margin-bottom: 4px;">
       <select id="radioSelect" onchange="changeRadioChannel()">
         <option value="https://n08.radiojar.com/7csmg90fuqruv.mp3?1673348819=&rj-tok=AAABhZtmUCUAwkYyBBgriH-X9g&rj-ttl=5">HardRock</option>
@@ -419,7 +466,10 @@
         <option value="https://stream.denger.in/">Dmi</option>
         <option value="https://stream.rcs.revma.com/ugpyzu9n5k3vv">Musik Indonesia</option>
       </select>
-      <button id="radioBtn" onclick="toggleRadio()" style="padding: 4px 10px; font-size: 11px;">PLAY</button>
+      <button id="radioBtn" onclick="toggleRadio()" style="padding: 4px 10px; font-size: 11px; display: flex; align-items: center; gap: 4px;">
+        <svg class="svg-icon" id="radioBtnIcon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        <span id="radioBtnText">PLAY</span>
+      </button>
     </div>
     <div style="display: flex; align-items: center; gap: 5px; font-size: 9px; color: #aaa;">
       <span>VOL:</span>
@@ -441,11 +491,16 @@
 
   <div class="input-group">
     <select id="groupSelect" onchange="switchGroupFromDropdown()">
-      <option value="888.888||031283">📻 mrzyb aplikasi (888.888)</option>
-      <option value="111.111||150307">📻 mrzyb family (111.111)</option>
-      <option value="999.999||230887">📻 mrzyb random (999.999)</option>
+      <option value="888.888||031283">mrzyb aplikasi (888.888)</option>
+      <option value="111.111||150307">mrzyb family (111.111)</option>
+      <option value="999.999||230887">mrzyb random (999.999)</option>
     </select>
-    <button onclick="openCreateGroupModal()" style="font-size: 10px; background: #065f46; color: #fff !important;">➕ GRUP</button>
+    <button onclick="openCreateGroupModal()" style="font-size: 10px; background: #065f46; color: #fff !important;">
+      <svg class="svg-icon" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg> GRUP
+    </button>
+    <button onclick="deleteSelectedGroup()" style="font-size: 10px; background: #991b1b; color: #fff !important;">
+      <svg class="svg-icon" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg> HAPUS
+    </button>
   </div>
 
   <div class="input-group">
@@ -471,6 +526,7 @@
     <button onclick="sendText()">KIRIM</button>
   </div>
 
+  <!-- TOMBOL PTT UTAMA -->
   <div class="ptt-container">
     <button class="ptt-btn" id="pttBtn">
       <svg viewBox="0 0 24 24">
@@ -511,11 +567,11 @@
   </div>
 </div>
 
-<!-- MODAL POPUP MOVIE PLAYER -->
+<!-- MODAL OVERLAYS -->
 <div id="movieModal" class="modal-overlay">
   <div class="modal-box" style="max-width: 380px; width: 92%; padding: 12px; background: #0c0a09; text-align: left;">
     <button class="close-x-btn" onclick="closeMoviePlayer()">✕</button>
-    <div style="color: #a78bfa !important; font-weight: bold; font-size: 13px; margin-bottom: 8px; text-align: center;">🎬 MOVIE & TV PLAYER</div>
+    <div style="color: #a78bfa !important; font-weight: bold; font-size: 13px; margin-bottom: 8px; text-align: center;">🎬 MOVIE PLAYER</div>
     
     <div style="width: 100%; height: 200px; background: #000; border-radius: 6px; overflow: hidden; margin-bottom: 8px; border: 1px solid #ffffff;">
       <video id="movieVideoPlayer" controls autoplay controlsList="nodownload" oncontextmenu="return false;" style="width: 100%; height: 100%; background: #000; object-fit: contain;"></video>
@@ -540,7 +596,7 @@
 
 <div id="cameraModal" class="modal-overlay">
   <div class="modal-box" style="max-width: 320px; padding: 12px;">
-    <div style="color: #0284c7 !important; font-weight: bold; font-size: 13px; margin-bottom: 8px;">📷 AMBIL FOTO DIRECT</div>
+    <div style="color: #0284c7 !important; font-weight: bold; font-size: 13px; margin-bottom: 8px;">📷 AMBIL FOTO </div>
     <video id="webcamVideo" autoplay playsinline style="width: 100%; border-radius: 8px; background: #000; height: 200px; object-fit: cover; border: 1px solid #ffffff;"></video>
     <div class="modal-btns" style="margin-top: 10px;">
       <button class="modal-btn-cancel" onclick="closeDirectCamera()">BATAL</button>
@@ -593,14 +649,15 @@
   </div>
 </div>
 
-<!-- MODAL PREVIEW GAMBAR -->
 <div id="imagePreviewModal" class="modal-overlay" onclick="closeImagePreview()">
   <span style="position: absolute; top: 15px; right: 20px; color: #fff; font-size: 30px; font-weight: bold; cursor: pointer; z-index: 100000;">✕</span>
   <img id="previewImgContent" style="max-width: 90%; max-height: 85vh; border-radius: 8px; border: 2px solid #ffffff; box-shadow: 0 0 25px var(--ht-neon); object-fit: contain;" src="">
 </div>
 
 <script>
-  // --- UTILITY SANITIZER UNTUK KEAMANAN XSS ---
+  const PASS_BUAT_GRUP = "ADMIN0809";   
+  const PASS_HAPUS_GRUP = "SUPERADMIN0905"; 
+
   function escapeHTML(str) {
     if (!str) return '';
     return str.replace(/[&<>'"]/g, 
@@ -608,27 +665,22 @@
     );
   }
 
-  // --- INDEXEDDB ENGINE ---
   const DB_NAME = 'MRZYB_HT_DB';
   const DB_VERSION = 1;
 
   function openDB() {
     return new Promise((resolve, reject) => {
       const request = indexedDB.open(DB_NAME, DB_VERSION);
-
       request.onupgradeneeded = (e) => {
         const db = e.target.result;
-        
         if (!db.objectStoreNames.contains('chats')) {
           const chatStore = db.createObjectStore('chats', { keyPath: 'id' });
           chatStore.createIndex('freq', 'freq', { unique: false });
         }
-
         if (!db.objectStoreNames.contains('groups')) {
           db.createObjectStore('groups', { keyPath: 'freq' });
         }
       };
-
       request.onsuccess = (e) => resolve(e.target.result);
       request.onerror = (e) => reject(e.target.error);
     });
@@ -638,8 +690,7 @@
     try {
       const db = await openDB();
       const tx = db.transaction('chats', 'readwrite');
-      const store = tx.objectStore('chats');
-      store.put({
+      tx.objectStore('chats').put({
         id: `${freq}_${msgData.msgId}`,
         freq: freq,
         msgId: msgData.msgId,
@@ -647,9 +698,7 @@
         message: msgData.message,
         timestamp: Date.now()
       });
-    } catch (e) {
-      console.error("IndexedDB Save Error:", e);
-    }
+    } catch (e) { console.error("IndexedDB Save Error:", e); }
   }
 
   async function dbGetChatHistory(freq) {
@@ -657,17 +706,12 @@
       const db = await openDB();
       return new Promise((resolve, reject) => {
         const tx = db.transaction('chats', 'readonly');
-        const store = tx.objectStore('chats');
-        const index = store.index('freq');
+        const index = tx.objectStore('chats').index('freq');
         const request = index.getAll(freq);
-
         request.onsuccess = () => resolve(request.result || []);
         request.onerror = () => reject(request.error);
       });
-    } catch (e) {
-      console.error("IndexedDB Fetch Error:", e);
-      return [];
-    }
+    } catch (e) { return []; }
   }
 
   async function dbClearChatHistory(freq) {
@@ -678,21 +722,13 @@
         const store = tx.objectStore('chats');
         const index = store.index('freq');
         const request = index.openCursor(IDBKeyRange.only(freq));
-
         request.onsuccess = (e) => {
           const cursor = e.target.result;
-          if (cursor) {
-            store.delete(cursor.primaryKey);
-            cursor.continue();
-          } else {
-            resolve();
-          }
+          if (cursor) { store.delete(cursor.primaryKey); cursor.continue(); } else { resolve(); }
         };
         request.onerror = () => reject(request.error);
       });
-    } catch (e) {
-      console.error("IndexedDB Clear Error:", e);
-    }
+    } catch (e) {}
   }
 
   async function dbSaveGroup(group) {
@@ -700,9 +736,15 @@
       const db = await openDB();
       const tx = db.transaction('groups', 'readwrite');
       tx.objectStore('groups').put(group);
-    } catch (e) {
-      console.error("IndexedDB Save Group Error:", e);
-    }
+    } catch (e) {}
+  }
+
+  async function dbDeleteGroup(freq) {
+    try {
+      const db = await openDB();
+      const tx = db.transaction('groups', 'readwrite');
+      tx.objectStore('groups').delete(freq);
+    } catch (e) {}
   }
 
   async function dbGetAllGroups() {
@@ -714,15 +756,11 @@
         request.onsuccess = () => resolve(request.result || []);
         request.onerror = () => resolve([]);
       });
-    } catch (e) {
-      return [];
-    }
+    } catch (e) { return []; }
   }
 
-  // --- CORE APP VARIABLES ---
   const WORKER_URL = "wss://my-ht-project.ukielaki8387.workers.dev";
   const HTTP_WORKER_URL = "https://my-ht-project.ukielaki8387.workers.dev";
-  
   const PLAYLIST_URL = "https://raw.githubusercontent.com/Ukie4321/mrzyb-playlist/refs/heads/main/playlist_film.m3u"; 
   let parsedPlaylistData = [];
 
@@ -734,7 +772,6 @@
   window.currentFreq = currentFreq;
   window.myFcmToken = "";
 
-  // Variable Cache & Timer untuk Optimasi FCM Registration
   let lastRegisteredFcmKey = ""; 
   let fcmDebounceTimer = null;
 
@@ -763,9 +800,7 @@
   async function openMoviePlayer() {
     initAudioContext();
     document.getElementById('movieModal').style.display = 'flex';
-    if (parsedPlaylistData.length === 0) {
-      await autoLoadDirectPlaylist();
-    }
+    if (parsedPlaylistData.length === 0) await autoLoadDirectPlaylist();
   }
 
   function closeMoviePlayer() {
@@ -782,7 +817,6 @@
     try {
       const response = await fetch(PLAYLIST_URL);
       if (!response.ok) throw new Error("Gagal mengambil data playlist.");
-      
       const m3uText = await response.text();
       parsedPlaylistData = parseM3U(m3uText);
 
@@ -791,11 +825,10 @@
         return;
       }
 
-      statusEl.innerText = `✅ Siap! Total ${parsedPlaylistData.length} media.`;
+      statusEl.innerText = `Total ${parsedPlaylistData.length} Video.`;
       populateCategoriesUI();
       filterMoviesByCategory();
     } catch (err) {
-      console.error(err);
       statusEl.innerText = "❌ Gagal memuat playlist otomatis.";
     }
   }
@@ -807,19 +840,12 @@
 
     for (let i = 0; i < lines.length; i++) {
       let line = lines[i].trim();
-
       if (line.startsWith('#EXTINF:')) {
         currentItem = { title: 'Tanpa Judul', category: 'Umum', url: '' };
-
         const groupMatch = line.match(/group-title="([^"]+)"/i);
-        if (groupMatch) {
-          currentItem.category = groupMatch[1];
-        }
-
+        if (groupMatch) currentItem.category = groupMatch[1];
         const commaIdx = line.lastIndexOf(',');
-        if (commaIdx !== -1) {
-          currentItem.title = line.substring(commaIdx + 1).trim();
-        }
+        if (commaIdx !== -1) currentItem.title = line.substring(commaIdx + 1).trim();
       } else if (line && !line.startsWith('#') && currentItem) {
         currentItem.url = line;
         result.push(currentItem);
@@ -832,7 +858,6 @@
   function populateCategoriesUI() {
     const categorySelect = document.getElementById('movieCategorySelect');
     categorySelect.innerHTML = '';
-
     const categories = [...new Set(parsedPlaylistData.map(item => item.category))];
     
     const allOption = document.createElement('option');
@@ -874,7 +899,6 @@
   function playSelectedMovie() {
     const selectedUrl = document.getElementById('moviePlaylistSelect').value;
     const video = document.getElementById('movieVideoPlayer');
-    
     if (selectedUrl) {
       video.src = selectedUrl;
       video.play().catch(e => console.log("Autoplay dibatasi browser."));
@@ -884,13 +908,11 @@
   function toggleTheme() {
     const body = document.body;
     const container = document.getElementById('htContainer');
-    
     container.classList.remove('theme-green', 'theme-pink');
     body.classList.remove('theme-green', 'theme-pink');
     
     currentThemeIndex = (currentThemeIndex + 1) % themes.length;
     const selectedTheme = themes[currentThemeIndex];
-    
     if (selectedTheme !== 'default') {
       container.classList.add(selectedTheme);
       body.classList.add(selectedTheme);
@@ -932,7 +954,6 @@
 
       const compressedBase64 = canvas.toDataURL('image/jpeg', 0.35);
       sendPhotoMessage(compressedBase64);
-
       URL.revokeObjectURL(objectUrl);
     };
 
@@ -948,29 +969,20 @@
     const video = document.getElementById('webcamVideo');
 
     try {
-      localCamStream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: { exact: "environment" } },
-        audio: false
-      });
+      localCamStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { exact: "environment" } }, audio: false });
       video.srcObject = localCamStream;
       modal.style.display = 'flex';
     } catch (err) {
       try {
-        localCamStream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: "environment" },
-          audio: false
-        });
+        localCamStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" }, audio: false });
         video.srcObject = localCamStream;
         modal.style.display = 'flex';
-      } catch (err2) {
-        alert("Gagal membuka kamera direct: " + err2.message);
-      }
+      } catch (err2) { alert("Gagal membuka kamera direct: " + err2.message); }
     }
   }
 
   function closeDirectCamera() {
-    const modal = document.getElementById('cameraModal');
-    modal.style.display = 'none';
+    document.getElementById('cameraModal').style.display = 'none';
     if (localCamStream) {
       localCamStream.getTracks().forEach(track => track.stop());
       localCamStream = null;
@@ -980,29 +992,20 @@
   function takeDirectPhoto() {
     const video = document.getElementById('webcamVideo');
     const canvas = document.createElement('canvas');
-    
     const maxDim = 450;
     let width = video.videoWidth || 640;
     let height = video.videoHeight || 480;
 
     if (width > maxDim || height > maxDim) {
-      if (width > height) {
-        height = Math.round((height * maxDim) / width);
-        width = maxDim;
-      } else {
-        width = Math.round((width * maxDim) / height);
-        height = maxDim;
-      }
+      if (width > height) { height = Math.round((height * maxDim) / width); width = maxDim; }
+      else { width = Math.round((width * maxDim) / height); height = maxDim; }
     }
 
     canvas.width = width;
     canvas.height = height;
-
-    const ctx = canvas.getContext('2d');
-    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
 
     const compressedBase64 = canvas.toDataURL('image/jpeg', 0.35);
-    
     sendPhotoMessage(compressedBase64);
     closeDirectCamera();
   }
@@ -1011,13 +1014,8 @@
     const nick = document.getElementById('nickInput').value.trim() || 'Anonim';
     if (ws && ws.readyState === WebSocket.OPEN) {
       const msgId = Date.now() + '_' + Math.random().toString(36).substr(2, 5);
-      const photoPayload = `img-data:${base64Image}`;
       ws.send(JSON.stringify({
-        type: 'text',
-        freq: currentFreq,
-        sender: nick,
-        message: photoPayload,
-        msgId: msgId
+        type: 'text', freq: currentFreq, sender: nick, message: `img-data:${base64Image}`, msgId: msgId
       }));
     }
   }
@@ -1025,51 +1023,37 @@
   function openImagePreview(src) {
     initAudioContext();
     const modal = document.getElementById('imagePreviewModal');
-    const img = document.getElementById('previewImgContent');
-    img.src = src;
+    document.getElementById('previewImgContent').src = src;
     modal.style.display = 'flex';
   }
   window.openImagePreview = openImagePreview;
 
   function closeImagePreview() {
-    const modal = document.getElementById('imagePreviewModal');
-    modal.style.display = 'none';
+    document.getElementById('imagePreviewModal').style.display = 'none';
     document.getElementById('previewImgContent').src = '';
   }
 
   function setFcmToken(token) {
     if (!token) return;
     window.myFcmToken = token;
-    console.log("Token FCM Diterima dari Native Android:", token);
     kirimTokenKeWorker(currentFreq);
   }
   window.setFcmToken = setFcmToken;
 
   function kirimTokenKeWorker(freq) {
     if (!window.myFcmToken) return;
-
     const currentCallsign = localStorage.getItem('ht_nick') || "Anonim";
     const requestKey = `${window.myFcmToken}_${freq}_${currentCallsign}`;
-
-    if (lastRegisteredFcmKey === requestKey) {
-      return; 
-    }
+    if (lastRegisteredFcmKey === requestKey) return;
 
     fetch(`${HTTP_WORKER_URL}/register-fcm`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        freq: freq,
-        token: window.myFcmToken,
-        callsign: currentCallsign
-      })
+      body: JSON.stringify({ freq: freq, token: window.myFcmToken, callsign: currentCallsign })
     })
     .then(res => res.json())
-    .then(data => {
-      console.log("Registrasi FCM ke Cloudflare Sukses:", data);
-      lastRegisteredFcmKey = requestKey;
-    })
-    .catch(err => console.error("Gagal kirim FCM token ke Cloudflare:", err));
+    .then(() => { lastRegisteredFcmKey = requestKey; })
+    .catch(err => console.error("Gagal kirim FCM token:", err));
   }
   window.kirimTokenKeWorker = kirimTokenKeWorker;
 
@@ -1083,15 +1067,12 @@
       initAudioContext();
       const osc = audioCtx.createOscillator();
       const gain = audioCtx.createGain();
-
       osc.type = 'sine';
       osc.frequency.setValueAtTime(880, audioCtx.currentTime);
       gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
       gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.35);
-
       osc.connect(gain);
       gain.connect(audioCtx.destination);
-
       osc.start();
       osc.stop(audioCtx.currentTime + 0.35);
     } catch(e) {}
@@ -1099,7 +1080,6 @@
 
   function showBannerNotification(sender, message) {
     playNotificationSound();
-
     if ("Notification" in window && Notification.permission === "granted") {
       try {
         let msgBody = message;
@@ -1107,9 +1087,7 @@
         else if (message.includes("img-data:")) msgBody = "📷 Mengirimkan Foto";
 
         new Notification(`Pesan HT [${currentFreq}] dari ${sender}`, {
-          body: msgBody,
-          icon: 'logo.png',
-          vibrate: [200, 100, 200]
+          body: msgBody, icon: 'logo.png', vibrate: [200, 100, 200]
         });
       } catch(e) {}
     }
@@ -1122,9 +1100,7 @@
       const bufferSize = audioCtx.sampleRate * duration;
       const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
       const output = buffer.getChannelData(0);
-      for (let i = 0; i < bufferSize; i++) {
-        output[i] = Math.random() * 2 - 1;
-      }
+      for (let i = 0; i < bufferSize; i++) output[i] = Math.random() * 2 - 1;
       const whiteNoise = audioCtx.createBufferSource();
       whiteNoise.buffer = buffer;
       const gain = audioCtx.createGain();
@@ -1164,11 +1140,8 @@
     if ('getBattery' in navigator) {
       navigator.getBattery().then(battery => {
         const updateBatteryUI = () => {
-          const level = Math.round(battery.level * 100);
-          const charging = battery.charging ? "⚡" : "🔋";
-          document.getElementById('batDisplay').innerText = `BAT: ${level}% ${charging}`;
+          document.getElementById('batDisplay').innerText = `BAT: ${Math.round(battery.level * 100)}% ${battery.charging ? "⚡" : "🔋"}`;
         };
-        
         updateBatteryUI();
         battery.addEventListener('levelchange', updateBatteryUI);
         battery.addEventListener('chargingchange', updateBatteryUI);
@@ -1190,13 +1163,9 @@
     if (savedPass) document.getElementById('passInput').value = savedPass;
 
     document.getElementById('nickInput').addEventListener('input', (e) => {
-      const newNick = e.target.value.trim();
-      localStorage.setItem('ht_nick', newNick);
-      
+      localStorage.setItem('ht_nick', e.target.value.trim());
       if (fcmDebounceTimer) clearTimeout(fcmDebounceTimer);
-      fcmDebounceTimer = setTimeout(() => {
-        kirimTokenKeWorker(currentFreq);
-      }, 1500);
+      fcmDebounceTimer = setTimeout(() => kirimTokenKeWorker(currentFreq), 1500);
     });
 
     await loadSavedGroupsUI();
@@ -1208,11 +1177,10 @@
   async function loadSavedGroupsUI() {
     const groupSelect = document.getElementById('groupSelect');
     groupSelect.innerHTML = `
-      <option value="888.888||031283">📻 mrzyb aplikasi (888.888)</option>
-      <option value="111.111||150307">📻 mrzyb family (111.111)</option>
-      <option value="999.999||230887">📻 mrzyb random (999.999)</option>
+      <option value="888.888||031283">mrzyb aplikasi (888.888)</option>
+      <option value="111.111||150307">mrzyb family (111.111)</option>
+      <option value="999.999||230887">mrzyb random (999.999)</option>
     `;
-    
     const savedGroups = await dbGetAllGroups();
     savedGroups.forEach(g => {
       const option = document.createElement('option');
@@ -1224,12 +1192,16 @@
 
   function openCreateGroupModal() {
     initAudioContext();
+    const inputPass = prompt("Masukkan Password untuk BUAT GRUP baru:");
+    if (inputPass === null) return;
+    if (inputPass !== PASS_BUAT_GRUP) {
+      showAlert("Password Buat Grup Salah!");
+      return;
+    }
     document.getElementById('createGroupModal').style.display = 'flex';
   }
 
-  function closeCreateGroupModal() {
-    document.getElementById('createGroupModal').style.display = 'none';
-  }
+  function closeCreateGroupModal() { document.getElementById('createGroupModal').style.display = 'none'; }
 
   async function confirmCreateGroup() {
     initAudioContext();
@@ -1243,10 +1215,8 @@
     }
 
     await dbSaveGroup({ name, freq, pass });
-
     document.getElementById('freqInput').value = freq;
     document.getElementById('passInput').value = pass;
-    
     closeCreateGroupModal();
     await loadSavedGroupsUI();
 
@@ -1258,38 +1228,47 @@
     document.getElementById('newGroupPass').value = '';
   }
 
+  async function deleteSelectedGroup() {
+    initAudioContext();
+    const select = document.getElementById('groupSelect');
+    const selectedFreq = select.value.split('||')[0];
+
+    if (["888.888", "111.111", "999.999"].includes(selectedFreq)) {
+      showAlert("Grup bawaan sistem tidak dapat dihapus!");
+      return;
+    }
+
+    const inputPass = prompt(`Masukkan Password untuk HAPUS GRUP (${selectedFreq}):`);
+    if (inputPass === null) return;
+    if (inputPass !== PASS_HAPUS_GRUP) {
+      showAlert("Password Hapus Grup Salah!");
+      return;
+    }
+
+    if (confirm(`Hapus grup frekuensi ${selectedFreq}?`)) {
+      await dbDeleteGroup(selectedFreq);
+      await loadSavedGroupsUI();
+      document.getElementById('groupSelect').value = "888.888||031283";
+      switchGroupFromDropdown();
+      showAlert("Grup berhasil dihapus.");
+    }
+  }
+
   function switchGroupFromDropdown() {
     initAudioContext();
-    const val = document.getElementById('groupSelect').value;
-    const parts = val.split('||');
-    const freq = parts[0];
-    const pass = parts[1] || '';
-
-    document.getElementById('freqInput').value = freq;
-    document.getElementById('passInput').value = pass;
-    joinFrequency(freq, pass);
+    const parts = document.getElementById('groupSelect').value.split('||');
+    document.getElementById('freqInput').value = parts[0];
+    document.getElementById('passInput').value = parts[1] || '';
+    joinFrequency(parts[0], parts[1] || '');
   }
 
   function connect() {
-    if (wsReconnectTimer) {
-      clearTimeout(wsReconnectTimer);
-      wsReconnectTimer = null;
-    }
-
-    if (ws) {
-      ws.onopen = null;
-      ws.onmessage = null;
-      ws.onerror = null;
-      ws.onclose = null;
-      ws.close();
-      ws = null;
-    }
+    if (wsReconnectTimer) { clearTimeout(wsReconnectTimer); wsReconnectTimer = null; }
+    if (ws) { ws.onopen = ws.onmessage = ws.onerror = ws.onclose = null; ws.close(); ws = null; }
 
     ws = new WebSocket(WORKER_URL);
-
     ws.onopen = () => {
       reconnectDelay = 8000;
-
       const savedPass = localStorage.getItem('ht_pass') || '031283';
       const savedNick = localStorage.getItem('ht_nick') || 'Anonim';
       if (ws && ws.readyState === WebSocket.OPEN) {
@@ -1301,23 +1280,16 @@
     ws.onmessage = async (event) => {
       try {
         const data = JSON.parse(event.data);
-        
         if (data.type === 'history') {
           if (data.messages && data.messages.length > 0) {
-            const chatBox = document.getElementById('chatBox');
-            chatBox.innerHTML = ''; 
+            document.getElementById('chatBox').innerHTML = ''; 
             addSystemMsg(`Terhubung ke frekuensi ${currentFreq}`);
             renderedMsgIds.clear();
-            
             const clearTimestamp = parseInt(localStorage.getItem(`clear_time_${currentFreq}`) || "0", 10);
             const filteredMessages = data.messages.filter(msg => {
-              let msgTime = 0;
-              if (msg.msgId && msg.msgId.includes('_')) {
-                msgTime = parseInt(msg.msgId.split('_')[0], 10) || 0;
-              }
+              let msgTime = msg.msgId && msg.msgId.includes('_') ? parseInt(msg.msgId.split('_')[0], 10) || 0 : 0;
               return msgTime > clearTimestamp;
             });
-
             for (const msg of filteredMessages) {
               if (msg.msgId) renderedMsgIds.add(msg.msgId);
               appendChatToBox(`[${msg.sender}]: ${msg.message}`);
@@ -1339,14 +1311,11 @@
         else if (data.type === 'text') {
           if (data.msgId && renderedMsgIds.has(data.msgId)) return;
           if (data.msgId) renderedMsgIds.add(data.msgId);
-
           const myNick = document.getElementById('nickInput').value.trim() || 'Anonim';
-          
           if (data.sender !== myNick) {
             showBannerNotification(data.sender, data.message);
             playRogerBeep();
           }
-
           await saveAndAddSingleChat(data.msgId, data.sender, data.message);
         } 
         else if (data.type === 'audio') {
@@ -1356,39 +1325,40 @@
     };
 
     ws.onclose = () => {
-      console.warn(`WebSocket terputus. Mencoba terhubung kembali dalam ${reconnectDelay / 1000} detik...`);
       wsReconnectTimer = setTimeout(() => {
         connect();
         reconnectDelay = Math.min(reconnectDelay * 1.5, 30000);
       }, reconnectDelay);
     };
-
-    ws.onerror = () => {
-      if (ws) ws.close();
-    };
+    ws.onerror = () => { if (ws) ws.close(); };
   }
 
   function toggleRadio() {
     initAudioContext();
     const player = document.getElementById('radioPlayer');
+    const textEl = document.getElementById('radioBtnText');
+    const iconEl = document.getElementById('radioBtnIcon');
     const btn = document.getElementById('radioBtn');
-    const select = document.getElementById('radioSelect');
+
     if (!isRadioPlaying) {
-      player.src = select.value;
+      player.src = document.getElementById('radioSelect').value;
       player.volume = customRadioVolume;
       player.play().catch(() => {
         showAlert("Gagal memutar Radio.");
-        btn.innerText = "PLAY";
+        textEl.innerText = "PLAY";
+        iconEl.innerHTML = `<path d="M8 5v14l11-7z"/>`;
         btn.style.background = "#222";
         isRadioPlaying = false;
       });
-      btn.innerText = "STOP";
+      textEl.innerText = "STOP";
+      iconEl.innerHTML = `<path d="M6 6h12v12H6z"/>`;
       btn.style.background = "#b91c1c";
       isRadioPlaying = true;
     } else {
       player.pause();
       player.src = "";
-      btn.innerText = "PLAY";
+      textEl.innerText = "PLAY";
+      iconEl.innerHTML = `<path d="M8 5v14l11-7z"/>`;
       btn.style.background = "#222";
       isRadioPlaying = false;
     }
@@ -1396,10 +1366,9 @@
 
   function changeRadioChannel() {
     const player = document.getElementById('radioPlayer');
-    const select = document.getElementById('radioSelect');
     if (isRadioPlaying) {
       player.pause();
-      player.src = select.value;
+      player.src = document.getElementById('radioSelect').value;
       player.load();
       player.play().catch(() => {});
     }
@@ -1411,22 +1380,17 @@
   }
 
   function duckRadioVolume() {
-    const player = document.getElementById('radioPlayer');
-    if (isRadioPlaying) player.volume = customRadioVolume * 0.1;
+    if (isRadioPlaying) document.getElementById('radioPlayer').volume = customRadioVolume * 0.1;
   }
 
   function restoreRadioVolume() {
-    const player = document.getElementById('radioPlayer');
-    if (isRadioPlaying) player.volume = customRadioVolume;
+    if (isRadioPlaying) document.getElementById('radioPlayer').volume = customRadioVolume;
   }
 
   async function joinFrequency(freq, password = '') {
-    if (PRIVATE_CHANNELS[freq]) {
-      const correctPass = PRIVATE_CHANNELS[freq];
-      if (password !== correctPass) {
-        showError("🔒 Frekuensi Private! Password Salah.");
-        return;
-      }
+    if (PRIVATE_CHANNELS[freq] && password !== PRIVATE_CHANNELS[freq]) {
+      showError("🔒 Frekuensi Private! Password Salah.");
+      return;
     }
     currentFreq = freq;
     window.currentFreq = currentFreq;
@@ -1435,14 +1399,11 @@
     localStorage.setItem('ht_freq', freq);
     localStorage.setItem('ht_pass', password);
     await loadLocalHistory(freq);
-    
     kirimTokenKeWorker(freq);
 
     if (ws && ws.readyState === WebSocket.OPEN) {
       ws.send(JSON.stringify({ type: 'join', freq: freq, sender: nick, password: password }));
-    } else {
-      connect();
-    }
+    } else { connect(); }
   }
 
   function changeFreq() {
@@ -1457,64 +1418,33 @@
     const input = document.getElementById('msgInput');
     const nick = document.getElementById('nickInput').value.trim() || 'Anonim';
     const msgText = input.value.trim();
-    
     if (msgText && ws && ws.readyState === WebSocket.OPEN) {
       const msgId = Date.now() + '_' + Math.random().toString(36).substr(2, 5);
-      
-      ws.send(JSON.stringify({ 
-        type: 'text', 
-        freq: currentFreq, 
-        sender: nick, 
-        message: msgText,
-        msgId: msgId
-      }));
-
+      ws.send(JSON.stringify({ type: 'text', freq: currentFreq, sender: nick, message: msgText, msgId: msgId }));
       input.value = '';
     }
   }
 
   function sendGPSLocation() {
     initAudioContext();
-    if (!navigator.geolocation) {
-      showAlert("Fitur GPS tidak didukung pada browser/perangkat ini.");
-      return;
-    }
-
+    if (!navigator.geolocation) return showAlert("Fitur GPS tidak didukung.");
     addSystemMsg("Mencari koordinat GPS...");
-
     navigator.geolocation.getCurrentPosition(
       (position) => {
-        const lat = position.coords.latitude.toFixed(5);
-        const lon = position.coords.longitude.toFixed(5);
-        const mapUrl = `https://maps.google.com/?q=${lat},${lon}`;
-        const gpsMsg = `📍 POSISI GPS: ${mapUrl}`;
-
+        const gpsMsg = `📍 POSISI GPS: https://maps.google.com/?q=${position.coords.latitude.toFixed(5)},${position.coords.longitude.toFixed(5)}`;
         const nick = document.getElementById('nickInput').value.trim() || 'Anonim';
         if (ws && ws.readyState === WebSocket.OPEN) {
-          const msgId = Date.now() + '_' + Math.random().toString(36).substr(2, 5);
           ws.send(JSON.stringify({
-            type: 'text',
-            freq: currentFreq,
-            sender: nick,
-            message: gpsMsg,
-            msgId: msgId
+            type: 'text', freq: currentFreq, sender: nick, message: gpsMsg, msgId: Date.now() + '_' + Math.random().toString(36).substr(2, 5)
           }));
         }
       },
-      (error) => {
-        let errDesc = "Gagal mengambil lokasi.";
-        if (error.code === error.PERMISSION_DENIED) errDesc = "Izin akses lokasi/GPS ditolak.";
-        else if (error.code === error.POSITION_UNAVAILABLE) errDesc = "Sinyal GPS tidak tersedia.";
-        else if (error.code === error.TIMEOUT) errDesc = "Waktu permintaan GPS habis.";
-        showAlert(errDesc);
-      },
+      () => showAlert("Gagal mengambil lokasi."),
       { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
     );
   }
 
-  function handleKeyPress(e) {
-    if (e.key === 'Enter') sendText();
-  }
+  function handleKeyPress(e) { if (e.key === 'Enter') sendText(); }
 
   async function saveAndAddSingleChat(msgId, sender, message) {
     appendChatToBox(`[${sender}]: ${message}`);
@@ -1529,13 +1459,8 @@
 
     const clearTimestamp = parseInt(localStorage.getItem(`clear_time_${freq}`) || "0", 10);
     const localMsgs = await dbGetChatHistory(freq);
-    
     localMsgs.forEach(msg => {
-      let msgTime = 0;
-      if (msg.msgId && msg.msgId.includes('_')) {
-        msgTime = parseInt(msg.msgId.split('_')[0], 10) || 0;
-      }
-      
+      let msgTime = msg.msgId && msg.msgId.includes('_') ? parseInt(msg.msgId.split('_')[0], 10) || 0 : 0;
       if (msgTime > clearTimestamp) {
         if (msg.msgId) renderedMsgIds.add(msg.msgId);
         appendChatToBox(`[${msg.sender}]: ${msg.message}`);
@@ -1551,7 +1476,7 @@
 
   function openClearModal() {
     initAudioContext();
-    document.getElementById('modalText').innerText = `Yakin ingin menghapus riwayat chat di frekuensi ${currentFreq}?`;
+    document.getElementById('modalText').innerText = `Hapus riwayat chat frekuensi ${currentFreq}?`;
     document.getElementById('modalBtns').innerHTML = `
       <button class="modal-btn-cancel" onclick="closeModal()">BATAL</button>
       <button class="modal-btn-ok" onclick="confirmClearChat()">HAPUS</button>
@@ -1562,60 +1487,50 @@
   function closeModal() { document.getElementById('customModal').style.display = 'none'; }
 
   async function confirmClearChat() {
-    const chatBox = document.getElementById('chatBox');
-    const fsBox = document.getElementById('fsChatBox');
-    
-    chatBox.innerHTML = '';
-    if (fsBox) fsBox.innerHTML = '';
-    
+    document.getElementById('chatBox').innerHTML = '';
+    if (document.getElementById('fsChatBox')) document.getElementById('fsChatBox').innerHTML = '';
     renderedMsgIds.clear();
     await dbClearChatHistory(currentFreq);
     localStorage.setItem(`clear_time_${currentFreq}`, Date.now().toString());
-
-    addSystemMsg(`Riwayat chat frekuensi ${currentFreq} telah dibersihkan.`);
+    addSystemMsg(`Riwayat chat frekuensi ${currentFreq} dibersihkan.`);
     closeModal();
   }
 
-  function playVNFromData(base64Data) {
-    playAudio(base64Data);
-  }
+  function playVNFromData(base64Data) { playAudio(base64Data); }
   window.playVNFromData = playVNFromData;
 
   function appendChatToBox(msg) {
     const box = document.getElementById('chatBox');
     const time = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
-    
     let formattedMsg = "";
     
+    // ICON SVG CEKLIS DOUBLE (MODEL WHATSAPP)
+    const checkSvg = `<svg class="svg-check" viewBox="0 0 24 24"><path d="M18 7l-1.41-1.41-6.34 6.34 1.41 1.41L18 7zm4.24-1.41L11.66 16.17 7.41 11.93l-1.41 1.41 5.66 5.66 12-12-1.42-1.41zM0 13.34l5.66 5.66 1.41-1.41L1.41 11.93 0 13.34z"/></svg>`;
+
     if (msg.includes("audio-vn-data:")) {
       const splitIdx = msg.indexOf("audio-vn-data:");
-      const senderInfo = escapeHTML(msg.substring(0, splitIdx));
-      const audioBase64 = msg.substring(splitIdx + 14);
-      
-      formattedMsg = `${senderInfo}<br>
+      formattedMsg = `${escapeHTML(msg.substring(0, splitIdx))}<br>
         <div class="vn-player-bubble">
-          <button class="vn-play-btn" onclick="playVNFromData('${escapeHTML(audioBase64)}')">▶</button>
-          <span class="vn-label">🎙️ Voice Note</span>
+          <button class="vn-play-btn" onclick="playVNFromData('${escapeHTML(msg.substring(splitIdx + 14))}')">
+            <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+          </button>
+          <span class="vn-label">
+            <svg viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5-3c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg>
+            Voice Note
+          </span>
         </div>`;
     } 
     else if (msg.includes("img-data:")) {
       const splitIdx = msg.indexOf("img-data:");
-      const senderInfo = escapeHTML(msg.substring(0, splitIdx));
       const imgBase64 = msg.substring(splitIdx + 9);
-
-      formattedMsg = `${senderInfo}<br>
+      formattedMsg = `${escapeHTML(msg.substring(0, splitIdx))}<br>
         <img src="${imgBase64}" class="chat-img-thumb" alt="Foto Kiriman" onclick="window.openImagePreview('${imgBase64}')">`;
     } 
     else {
-      const safeMsg = escapeHTML(msg);
-      const urlRegex = /(https?:\/\/[^\s]+)/g;
-      formattedMsg = safeMsg.replace(urlRegex, (url) => {
-        return `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`;
-      });
+      formattedMsg = escapeHTML(msg).replace(/(https?:\/\/[^\s]+)/g, url => `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`);
     }
 
-    const content = `<div><span class="time-stamp">[${time}]</span>${formattedMsg}</div>`;
-    
+    const content = `<div><span class="time-stamp">[${time}]</span>${formattedMsg} ${checkSvg}</div>`;
     box.insertAdjacentHTML('beforeend', content);
     box.scrollTop = box.scrollHeight;
 
@@ -1632,41 +1547,25 @@
     initAudioContext();
     document.getElementById('fsFreqTitle').innerText = currentFreq;
     const fsBox = document.getElementById('fsChatBox');
-    const chatBox = document.getElementById('chatBox');
-    
-    fsBox.innerHTML = chatBox.innerHTML;
+    fsBox.innerHTML = document.getElementById('chatBox').innerHTML;
     document.getElementById('fullscreenChat').classList.add('active');
     fsBox.scrollTop = fsBox.scrollHeight;
   }
 
-  function closeFullscreenChat() {
-    document.getElementById('fullscreenChat').classList.remove('active');
-  }
+  function closeFullscreenChat() { document.getElementById('fullscreenChat').classList.remove('active'); }
 
   function sendFsText() {
     initAudioContext();
     const input = document.getElementById('fsMsgInput');
     const nick = document.getElementById('nickInput').value.trim() || 'Anonim';
     const msgText = input.value.trim();
-    
     if (msgText && ws && ws.readyState === WebSocket.OPEN) {
-      const msgId = Date.now() + '_' + Math.random().toString(36).substr(2, 5);
-      
-      ws.send(JSON.stringify({ 
-        type: 'text', 
-        freq: currentFreq, 
-        sender: nick, 
-        message: msgText,
-        msgId: msgId
-      }));
-
+      ws.send(JSON.stringify({ type: 'text', freq: currentFreq, sender: nick, message: msgText, msgId: Date.now() + '_' + Math.random().toString(36).substr(2, 5) }));
       input.value = '';
     }
   }
 
-  function handleFsKeyPress(e) {
-    if (e.key === 'Enter') sendFsText();
-  }
+  function handleFsKeyPress(e) { if (e.key === 'Enter') sendFsText(); }
 
   async function startRecordingAudio(source = 'main') {
     initAudioContext();
@@ -1674,49 +1573,27 @@
     if (mediaRecorder && mediaRecorder.state === "recording") return;
 
     try {
-      micStream = await navigator.mediaDevices.getUserMedia({
-        audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true }
-      });
-
+      micStream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true } });
       audioChunks = [];
       mediaRecorder = new MediaRecorder(micStream);
-
       mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
       mediaRecorder.onstop = async () => {
-        if (pttMaxTimer) {
-          clearTimeout(pttMaxTimer);
-          pttMaxTimer = null;
-        }
-
+        if (pttMaxTimer) { clearTimeout(pttMaxTimer); pttMaxTimer = null; }
         const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
         audioChunks = [];
         const reader = new FileReader();
         reader.readAsDataURL(audioBlob);
         reader.onloadend = () => {
-          const base64Audio = reader.result;
           const nick = document.getElementById('nickInput').value.trim() || 'Anonim';
-          
           if (ws && ws.readyState === WebSocket.OPEN) {
             if (activePttSource === 'fullscreen') {
-              const msgId = Date.now() + '_' + Math.random().toString(36).substr(2, 5);
-              const vnPayload = `audio-vn-data:${base64Audio}`;
-              ws.send(JSON.stringify({
-                type: 'text',
-                freq: currentFreq,
-                sender: nick,
-                message: vnPayload,
-                msgId: msgId
-              }));
+              ws.send(JSON.stringify({ type: 'text', freq: currentFreq, sender: nick, message: `audio-vn-data:${reader.result}`, msgId: Date.now() + '_' + Math.random().toString(36).substr(2, 5) }));
             } else {
-              ws.send(JSON.stringify({ type: 'audio', freq: currentFreq, audio: base64Audio }));
+              ws.send(JSON.stringify({ type: 'audio', freq: currentFreq, audio: reader.result }));
             }
           }
         };
-
-        if (micStream) {
-          micStream.getTracks().forEach(track => track.stop());
-          micStream = null;
-        }
+        if (micStream) { micStream.getTracks().forEach(track => track.stop()); micStream = null; }
       };
 
       playSquelchNoise(0.1);
@@ -1798,14 +1675,8 @@
     const audio = new Audio(base64Data);
     audio.play();
 
-    audio.onended = () => {
-      playRogerBeep();
-      restoreRadioVolume();
-    };
-
-    audio.onerror = () => {
-      restoreRadioVolume();
-    };
+    audio.onended = () => { playRogerBeep(); restoreRadioVolume(); };
+    audio.onerror = () => { restoreRadioVolume(); };
   }
 
   function showError(msg) {
@@ -1814,29 +1685,18 @@
     alert.style.display = 'block';
   }
 
-  function hideError() {
-    const alert = document.getElementById('errorAlert');
-    alert.style.display = 'none';
-  }
+  function hideError() { document.getElementById('errorAlert').style.display = 'none'; }
 
   function openCompassModal() {
     initAudioContext();
-    if (typeof DeviceOrientationEvent === 'undefined') {
-      alert("Sensor tidak didukung pada browser/perangkat ini.");
-      return;
-    }
-
+    if (typeof DeviceOrientationEvent === 'undefined') return alert("Sensor tidak didukung.");
     if (typeof DeviceOrientationEvent.requestPermission === 'function') {
-      DeviceOrientationEvent.requestPermission()
-        .then(response => {
-          if (response === 'granted') {
-            window.addEventListener('deviceorientation', handlePopupCompass);
-            document.getElementById('compassModal').style.display = 'flex';
-          } else {
-            alert("Izin sensor ditolak.");
-          }
-        })
-        .catch(err => alert("Gagal mendapatkan izin kompas: " + err));
+      DeviceOrientationEvent.requestPermission().then(response => {
+        if (response === 'granted') {
+          window.addEventListener('deviceorientation', handlePopupCompass);
+          document.getElementById('compassModal').style.display = 'flex';
+        } else alert("Izin sensor ditolak.");
+      });
     } else {
       window.addEventListener('deviceorientation', handlePopupCompass);
       document.getElementById('compassModal').style.display = 'flex';
@@ -1849,28 +1709,17 @@
   }
 
   function handlePopupCompass(event) {
-    let heading = 0;
-    if (event.webkitCompassHeading !== undefined) {
-      heading = event.webkitCompassHeading;
-    } else if (event.alpha !== null) {
-      heading = 360 - event.alpha;
-    }
-
+    let heading = event.webkitCompassHeading !== undefined ? event.webkitCompassHeading : (event.alpha !== null ? 360 - event.alpha : 0);
     const degrees = Math.round(heading);
     const directions = ['UTARA', 'TIMUR LAUT', 'TIMUR', 'TENGGARA', 'SELATAN', 'BARAT DAYA', 'BARAT', 'BARAT LAUT'];
-    const index = Math.round(degrees / 45) % 8;
-
     document.getElementById('popupCompassDeg').innerText = degrees + '°';
-    document.getElementById('popupCompassDir').innerText = directions[index];
+    document.getElementById('popupCompassDir').innerText = directions[Math.round(degrees / 45) % 8];
 
     const dial = document.getElementById('compassDial');
-    if (dial) {
-      dial.style.transform = `rotate(${-degrees}deg)`;
-    }
+    if (dial) dial.style.transform = `rotate(${-degrees}deg)`;
   }
 </script>
 
-<!-- INTEGRASI FIREBASE FCM -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
   import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-messaging.js";
@@ -1887,13 +1736,7 @@
   const messaging = getMessaging(app);
 
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('./firebase-messaging-sw.js')
-      .then((registration) => {
-        console.log('Service Worker FCM Berhasil Didaftarkan:', registration);
-      })
-      .catch((err) => {
-        console.error('Gagal Mendaftarkan Service Worker FCM:', err);
-      });
+    navigator.serviceWorker.register('./firebase-messaging-sw.js').catch(() => {});
   }
 
   Notification.requestPermission().then((permission) => {
@@ -1902,22 +1745,17 @@
         .then((currentToken) => {
           if (currentToken) {
             window.myFcmToken = currentToken;
-            console.log("Token FCM Web Berhasil Diperoleh:", currentToken);
-            
             if (typeof window.kirimTokenKeWorker === 'function') {
               window.kirimTokenKeWorker(window.currentFreq || "888.888");
             }
           }
-        })
-        .catch(err => console.error("Gagal mendapatkan Token FCM Web:", err));
+        });
     }
   });
 
   onMessage(messaging, (payload) => {
-    if (payload.notification) {
-      if (typeof window.showBannerNotification === 'function') {
-        window.showBannerNotification(payload.notification.title, payload.notification.body);
-      }
+    if (payload.notification && typeof window.showBannerNotification === 'function') {
+      window.showBannerNotification(payload.notification.title, payload.notification.body);
     }
   });
 </script>
