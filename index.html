@@ -573,7 +573,14 @@
     <button class="close-x-btn" onclick="closeMoviePlayer()">✕</button>
     <div style="color: #a78bfa !important; font-weight: bold; font-size: 13px; margin-bottom: 8px; text-align: center;">🎬 MOVIE PLAYER</div>
     
-    <div style="width: 100%; height: 200px; background: #000; border-radius: 6px; overflow: hidden; margin-bottom: 8px; border: 1px solid #ffffff;">
+    <!-- CONTAINER POSTER FILM -->
+    <div id="posterContainer" style="width: 100%; height: 160px; background: #18181b; border-radius: 6px; overflow: hidden; margin-bottom: 8px; border: 1px solid #ffffff; display: flex; justify-content: center; align-items: center;">
+      <img id="moviePoster" src="" alt="Poster Film" style="max-height: 100%; max-width: 100%; object-fit: contain; display: none;">
+      <span id="posterPlaceholder" style="font-size: 10px; color: #71717a;">Poster Tidak Tersedia</span>
+    </div>
+
+    <!-- PLAYER VIDEO -->
+    <div style="width: 100%; height: 180px; background: #000; border-radius: 6px; overflow: hidden; margin-bottom: 8px; border: 1px solid #ffffff;">
       <video id="movieVideoPlayer" controls autoplay controlsList="nodownload" oncontextmenu="return false;" style="width: 100%; height: 100%; background: #000; object-fit: contain;"></video>
     </div>
 
@@ -805,8 +812,11 @@
 
   function closeMoviePlayer() {
     const video = document.getElementById('movieVideoPlayer');
+    const imgPoster = document.getElementById('moviePoster');
     video.pause();
     video.src = "";
+    video.removeAttribute('poster');
+    if (imgPoster) imgPoster.src = "";
     document.getElementById('movieModal').style.display = 'none';
   }
 
@@ -841,12 +851,24 @@
     for (let i = 0; i < lines.length; i++) {
       let line = lines[i].trim();
       if (line.startsWith('#EXTINF:')) {
-        currentItem = { title: 'Tanpa Judul', category: 'Umum', url: '' };
+        currentItem = { title: 'Tanpa Judul', category: 'Umum', url: '', poster: '' };
+        
+        // Ambil Kategori
         const groupMatch = line.match(/group-title="([^"]+)"/i);
         if (groupMatch) currentItem.category = groupMatch[1];
+        
+        // Ambil Logo / Poster dari tvg-logo="..."
+        const logoMatch = line.match(/tvg-logo="([^"]+)"/i);
+        if (logoMatch) currentItem.poster = logoMatch[1];
+
+        // Ambil Judul
         const commaIdx = line.lastIndexOf(',');
         if (commaIdx !== -1) currentItem.title = line.substring(commaIdx + 1).trim();
-      } else if (line && !line.startsWith('#') && currentItem) {
+      } 
+      else if (line.startsWith('#EXTIMG:') && currentItem) {
+        currentItem.poster = line.replace('#EXTIMG:', '').trim();
+      }
+      else if (line && !line.startsWith('#') && currentItem) {
         currentItem.url = line;
         result.push(currentItem);
         currentItem = null;
@@ -897,8 +919,26 @@
   }
 
   function playSelectedMovie() {
-    const selectedUrl = document.getElementById('moviePlaylistSelect').value;
+    const playlistSelect = document.getElementById('moviePlaylistSelect');
+    const selectedUrl = playlistSelect.value;
     const video = document.getElementById('movieVideoPlayer');
+    const imgPoster = document.getElementById('moviePoster');
+    const placeholder = document.getElementById('posterPlaceholder');
+
+    const activeMovie = parsedPlaylistData.find(item => item.url === selectedUrl);
+
+    if (activeMovie && activeMovie.poster) {
+      imgPoster.src = activeMovie.poster;
+      imgPoster.style.display = 'block';
+      if (placeholder) placeholder.style.display = 'none';
+      video.poster = activeMovie.poster;
+    } else {
+      imgPoster.src = '';
+      imgPoster.style.display = 'none';
+      if (placeholder) placeholder.style.display = 'block';
+      video.removeAttribute('poster');
+    }
+
     if (selectedUrl) {
       video.src = selectedUrl;
       video.play().catch(e => console.log("Autoplay dibatasi browser."));
