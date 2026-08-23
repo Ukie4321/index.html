@@ -305,7 +305,7 @@
 
     .extra-tools { 
       display: grid; 
-      grid-template-columns: repeat(3, 1fr); 
+      grid-template-columns: repeat(4, 1fr); 
       gap: 4px; 
       margin-bottom: 10px; 
       font-size: 10px; 
@@ -446,9 +446,10 @@
     <button onclick="triggerGallery()" style="background: #059669; color: #fff !important;">🖼️ GALERI</button>
     <button onclick="openCompassModal()">🧭 KOMPAS</button>
     <button onclick="openMoviePlayer()" style="background: #7c3aed; color: #fff !important;">🎬 NONTON</button>
+    <button onclick="openMusicPlayer()" style="background: #0284c7; color: #fff !important;">🎵 MUSIK</button>
     <button onclick="sendGPSLocation()">📍 GPS</button>
-    <button onclick="toggleTheme()" style="grid-column: span 1;">🎨 TEMA</button>
-    <button onclick="openSosConfirm()" style="background: #991b1b; color: #fff !important; font-weight: bold; grid-column: span 3;">🚨 TOMBOL SOS DARURAT</button>
+    <button onclick="toggleTheme()">🎨 TEMA</button>
+    <button onclick="openSosConfirm()" style="background: #991b1b; color: #fff !important; font-weight: bold;">🚨 SOS</button>
   </div>
 
   <div class="radio-panel">
@@ -564,6 +565,7 @@
   </div>
 </div>
 
+<!-- MOVIE PLAYER MODAL -->
 <div id="movieModal" class="modal-overlay">
   <div class="modal-box" style="max-width: 380px; width: 92%; padding: 12px; background: #0c0a09; text-align: left;">
     <button class="close-x-btn" onclick="closeMoviePlayer()">✕</button>
@@ -591,6 +593,38 @@
 
     <div class="modal-btns">
       <button class="modal-btn-cancel" onclick="closeMoviePlayer()" style="width: 100%; color: #a78bfa !important;">TUTUP</button>
+    </div>
+  </div>
+</div>
+
+<!-- MUSIC PLAYER MODAL -->
+<div id="musicModal" class="modal-overlay">
+  <div class="modal-box" style="max-width: 380px; width: 92%; padding: 12px; background: #0c0a09; text-align: left;">
+    <button class="close-x-btn" onclick="closeMusicPlayer()">✕</button>
+    <div style="color: #38bdf8 !important; font-weight: bold; font-size: 13px; margin-bottom: 8px; text-align: center;">🎵 MUSIC PLAYER</div>
+    
+    <div id="musicCoverContainer" style="width: 100%; height: 160px; background: #18181b; border-radius: 6px; overflow: hidden; margin-bottom: 8px; border: 1px solid #ffffff; display: flex; justify-content: center; align-items: center;">
+      <img id="musicCover" src="" alt="Cover Musik" style="max-height: 100%; max-width: 100%; object-fit: contain; display: none;">
+      <span id="musicCoverPlaceholder" style="font-size: 10px; color: #71717a;">Cover Tidak Tersedia</span>
+    </div>
+
+    <div style="width: 100%; background: #000; border-radius: 6px; overflow: hidden; margin-bottom: 8px; border: 1px solid #ffffff; padding: 5px;">
+      <audio id="audioPlayerControl" controls style="width: 100%; filter: invert(0.8);"></audio>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px;">
+      <select id="musicCategorySelect" onchange="filterMusicByCategory()" style="background: #1c1917; color: #fff; font-size: 11px; padding: 6px;">
+        <option value="all">📁 Mengunduh Kategori...</option>
+      </select>
+      <select id="musicPlaylistSelect" onchange="playSelectedMusic()" style="background: #1c1917; color: #fff; font-size: 11px; padding: 6px;">
+        <option value="">-- Memuat Playlist... --</option>
+      </select>
+    </div>
+
+    <div style="font-size: 9px; color: #aaa; text-align: center; margin-bottom: 8px;" id="musicPlaylistStatus">Memuat playlist otomatis...</div>
+
+    <div class="modal-btns">
+      <button class="modal-btn-cancel" onclick="closeMusicPlayer()" style="width: 100%; color: #38bdf8 !important;">TUTUP</button>
     </div>
   </div>
 </div>
@@ -765,6 +799,10 @@
   const PLAYLIST_URL = "https://raw.githubusercontent.com/Mutia4321/index_film/refs/heads/main/movie.m3u"; 
   let parsedPlaylistData = [];
 
+  // --- PLAYLIST MUSIK URL ---
+  const MUSIC_PLAYLIST_URL = "https://raw.githubusercontent.com/ukie432/mrzybfilm/refs/heads/main/musikku.m3u"; 
+  let parsedMusicPlaylistData = [];
+
   let ws = null;
   let wsReconnectTimer = null;
   let reconnectDelay = 8000;
@@ -807,6 +845,7 @@
     return true; 
   }
 
+  /* --- LOGIKA MOVIE PLAYER --- */
   async function openMoviePlayer() {
     initAudioContext();
     document.getElementById('movieModal').style.display = 'flex';
@@ -942,6 +981,111 @@
     if (selectedUrl) {
       video.src = selectedUrl;
       video.play().catch(e => console.log("Autoplay dibatasi browser."));
+    }
+  }
+
+  /* --- LOGIKA MUSIC PLAYER --- */
+  async function openMusicPlayer() {
+    initAudioContext();
+    document.getElementById('musicModal').style.display = 'flex';
+    if (parsedMusicPlaylistData.length === 0) await autoLoadDirectMusicPlaylist();
+  }
+
+  function closeMusicPlayer() {
+    const audio = document.getElementById('audioPlayerControl');
+    const imgCover = document.getElementById('musicCover');
+    audio.pause();
+    audio.src = "";
+    if (imgCover) imgCover.src = "";
+    document.getElementById('musicModal').style.display = 'none';
+  }
+
+  async function autoLoadDirectMusicPlaylist() {
+    const statusEl = document.getElementById('musicPlaylistStatus');
+    statusEl.innerText = "⏳ Memuat playlist musik...";
+
+    try {
+      const response = await fetch(MUSIC_PLAYLIST_URL);
+      if (!response.ok) throw new Error("Gagal mengambil data playlist musik.");
+      const m3uText = await response.text();
+      parsedMusicPlaylistData = parseM3U(m3uText);
+
+      if (parsedMusicPlaylistData.length === 0) {
+        statusEl.innerText = "❌ Playlist musik kosong atau format salah.";
+        return;
+      }
+
+      statusEl.innerText = `Total ${parsedMusicPlaylistData.length} Lagu.`;
+      populateMusicCategoriesUI();
+      filterMusicByCategory();
+    } catch (err) {
+      statusEl.innerText = "❌ Gagal memuat playlist musik.";
+    }
+  }
+
+  function populateMusicCategoriesUI() {
+    const categorySelect = document.getElementById('musicCategorySelect');
+    categorySelect.innerHTML = '';
+    const categories = [...new Set(parsedMusicPlaylistData.map(item => item.category))];
+    
+    const allOption = document.createElement('option');
+    allOption.value = 'all';
+    allOption.innerText = `📁 Semua Kategori (${parsedMusicPlaylistData.length})`;
+    categorySelect.appendChild(allOption);
+
+    categories.forEach(cat => {
+      const count = parsedMusicPlaylistData.filter(i => i.category === cat).length;
+      const opt = document.createElement('option');
+      opt.value = cat;
+      opt.innerText = `📁 ${cat} (${count})`;
+      categorySelect.appendChild(opt);
+    });
+  }
+
+  function filterMusicByCategory() {
+    const selectedCat = document.getElementById('musicCategorySelect').value;
+    const playlistSelect = document.getElementById('musicPlaylistSelect');
+    playlistSelect.innerHTML = '';
+
+    const filtered = selectedCat === 'all' 
+      ? parsedMusicPlaylistData 
+      : parsedMusicPlaylistData.filter(item => item.category === selectedCat);
+
+    filtered.forEach(item => {
+      const opt = document.createElement('option');
+      opt.value = item.url;
+      opt.innerText = `🎵 ${item.title}`;
+      playlistSelect.appendChild(opt);
+    });
+
+    if (filtered.length > 0) {
+      playlistSelect.value = filtered[0].url;
+      playSelectedMusic();
+    }
+  }
+
+  function playSelectedMusic() {
+    const playlistSelect = document.getElementById('musicPlaylistSelect');
+    const selectedUrl = playlistSelect.value;
+    const audio = document.getElementById('audioPlayerControl');
+    const imgCover = document.getElementById('musicCover');
+    const placeholder = document.getElementById('musicCoverPlaceholder');
+
+    const activeMusic = parsedMusicPlaylistData.find(item => item.url === selectedUrl);
+
+    if (activeMusic && activeMusic.poster) {
+      imgCover.src = activeMusic.poster;
+      imgCover.style.display = 'block';
+      if (placeholder) placeholder.style.display = 'none';
+    } else {
+      imgCover.src = '';
+      imgCover.style.display = 'none';
+      if (placeholder) placeholder.style.display = 'block';
+    }
+
+    if (selectedUrl) {
+      audio.src = selectedUrl;
+      audio.play().catch(e => console.log("Autoplay dibatasi browser."));
     }
   }
 
@@ -1121,7 +1265,6 @@
     } catch(e) {}
   }
 
-  // --- FUNGSI KHUSUS SUARA SOS KERAS ---
   function playSosSound() {
     try {
       initAudioContext();
@@ -1130,11 +1273,10 @@
       const osc = audioCtx.createOscillator();
       const gainNode = audioCtx.createGain();
       
-      osc.type = 'square'; // Suara tajam seperti alarm/sirine
+      osc.type = 'square';
       osc.frequency.setValueAtTime(700, audioCtx.currentTime);
       osc.frequency.exponentialRampToValueAtTime(1400, audioCtx.currentTime + 0.5);
       
-      // Boost volume SOS (Gain = 3.5 = 350% suara maksimal)
       gainNode.gain.setValueAtTime(3.5, audioCtx.currentTime); 
       gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 2.5);
 
@@ -1144,7 +1286,6 @@
       osc.start();
       osc.stop(audioCtx.currentTime + 2.5);
 
-      // Efek layar berkedip merah saat SOS berbunyi
       document.body.style.backgroundColor = "#991b1b";
       setTimeout(() => { document.body.style.backgroundColor = "#000000"; }, 2500);
     } catch(e) {}
@@ -1412,7 +1553,7 @@
           
           if (data.sender !== myNick) {
             if (data.message.includes("SOS DARURAT")) {
-              playSosSound(); // PENTING: Membunyikan suara SOS keras otomatis di penerima
+              playSosSound();
             } else {
               showBannerNotification(data.sender, data.message);
               playRogerBeep();
@@ -1566,8 +1707,6 @@
     if (!navigator.geolocation) return showAlert("GPS tidak didukung.");
 
     addSystemMsg("Mengirim koordinat SOS...");
-    
-    // Bunyikan suara SOS keras di pengirim juga
     playSosSound();
 
     navigator.geolocation.getCurrentPosition(
