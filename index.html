@@ -1089,6 +1089,18 @@
     }
   }
 
+  /* --- FUNGSI OTOMATIS LANJUT MUSIK SELANJUTNYA --- */
+  function playNextMusic() {
+    const playlistSelect = document.getElementById('musicPlaylistSelect');
+    if (!playlistSelect || playlistSelect.options.length === 0) return;
+
+    let currentIndex = playlistSelect.selectedIndex;
+    let nextIndex = (currentIndex + 1) % playlistSelect.options.length;
+    
+    playlistSelect.selectedIndex = nextIndex;
+    playSelectedMusic();
+  }
+
   function toggleTheme() {
     const body = document.body;
     const container = document.getElementById('htContainer');
@@ -1350,6 +1362,12 @@
   window.addEventListener('DOMContentLoaded', async () => {
     document.body.addEventListener('touchstart', initAudioContext, { once: true });
     document.body.addEventListener('click', initAudioContext, { once: true });
+
+    // Event listener untuk otomatis lanjut musik saat lagu selesai diputar
+    const musicAudio = document.getElementById('audioPlayerControl');
+    if (musicAudio) {
+      musicAudio.addEventListener('ended', playNextMusic);
+    }
 
     setInterval(() => {
       const bars = ["SIG: ▂", "SIG: ▂▄", "SIG: ▂▄▆", "SIG: ▂▄▆█"];
