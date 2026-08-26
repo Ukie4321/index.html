@@ -611,27 +611,42 @@
 
   let pttAuthenticated = false;
 
-  function editNickViaRemote() {
-    initAudioContext();
-    const currentNick = document.getElementById('nickInput').value;
-    customPrompt("Masukkan Callsign / Nama:", function(val) {
-      if (val !== null) {
-        document.getElementById('nickInput').value = val.trim();
-        localStorage.setItem('ht_nick', val.trim());
-        kirimTokenKeWorker(currentFreq);
-      }
-    });
-    document.getElementById('promptInputValue').value = currentNick;
-  }
+ function editNickViaRemote() {
+  initAudioContext();
+
+  const currentNick = document.getElementById('nickInput').value;
+
+  customPrompt("Masukkan Callsign / Nama:", function(val) {
+    if (val !== null) {
+      document.getElementById('nickInput').value = val.trim();
+      localStorage.setItem('ht_nick', val.trim());
+      kirimTokenKeWorker(currentFreq);
+    }
+  });
+
+  // Isi nilai setelah popup dibuat
+  const input = document.getElementById('promptInputValue');
+  input.value = currentNick;
+
+  // Fokus kembali ke input
+  input.focus();
+}
 
   function editPassViaRemote() {
-    initAudioContext();
-    customPrompt("Masukkan Password PIN Akses:", function(val) {
-      if (val !== null) {
-        document.getElementById('passInput').value = val.trim();
-      }
-    });
-  }
+  initAudioContext();
+
+  const currentPass = document.getElementById('passInput').value;
+
+  customPrompt("Masukkan Password PIN Akses:", function(val) {
+    if (val !== null) {
+      document.getElementById('passInput').value = val.trim();
+    }
+  });
+
+  const input = document.getElementById('promptInputValue');
+  input.value = currentPass;
+  input.focus();
+}
 
   function escapeHTML(str) {
     if (!str) return '';
@@ -641,36 +656,40 @@
   }
 
   let promptCallback = null;
-  function customPrompt(text, callback) {
+
+function customPrompt(text, callback) {
   const modal = document.getElementById('promptModal');
   const input = document.getElementById('promptInputValue');
 
   document.getElementById('promptText').innerText = text;
 
-  // Pastikan input benar-benar bisa menerima ketikan
-  input.removeAttribute('readonly');
-  input.disabled = false;
-  input.value = '';
-
   promptCallback = callback;
+
+  // Pastikan input aktif
+  input.disabled = false;
+  input.readOnly = false;
+  input.value = '';
 
   // Tampilkan popup
   modal.style.display = 'flex';
 
-  // Fokus setelah popup benar-benar tampil
-  setTimeout(() => {
+  // Berikan fokus langsung
+  input.focus();
+
+  // STB Android/TV
+  try {
+    input.select();
+  } catch (e) {}
+
+  // Coba fokus ulang setelah popup aktif
+  setTimeout(function () {
     input.focus();
 
-    // Untuk STB/Android TV, klik programatik kadang membantu
     try {
       input.click();
     } catch (e) {}
 
-    // Pastikan cursor berada di input
-    try {
-      input.setSelectionRange(input.value.length, input.value.length);
-    } catch (e) {}
-  }, 100);
+  }, 300);
 }
 
   function closePromptModal(isConfirm) {
