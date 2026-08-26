@@ -418,7 +418,7 @@
           <span class="signal-meter" id="rssiMeter">SIG: ▂▄▆█</span>
           <span id="batDisplay">BAT: --% 🔋</span>
         </div>
-        <div class="freq" id="freqDisplay">666.666</div>
+        <div class="freq" id="freqDisplay">222.222</div>
         <div id="privateBadge" class="private-badge"></div>
       </div>
 
@@ -459,7 +459,7 @@
 
       <div class="input-group">
         <select id="groupSelect" onchange="switchGroupFromDropdown()">
-          <option value="666.666||">mrzyb aplikasi (666.666)</option>
+          <option value="222.222||">mrzyb tv (222.222)</option>
           <option value="111.111||">mrzyb family (111.111)</option>
           <option value="999.999||">mrzyb random (999.999)</option>
         </select>
@@ -503,7 +503,7 @@
   <div class="fs-header">
     <div class="fs-header-title">
       <button onclick="closeFullscreenChat()" style="background:transparent; border:none; font-size:18px; padding:0; cursor:pointer; color:#fff;">←</button>
-      <span>💬 Chat Frekuensi <span id="fsFreqTitle">666.666</span></span>
+      <span>💬 Chat Frekuensi <span id="fsFreqTitle">222.222</span></span>
     </div>
     <button onclick="closeFullscreenChat()" style="font-size:11px; padding:5px 10px; border-radius:4px;">TUTUP</button>
   </div>
@@ -749,7 +749,7 @@
   let wsReconnectTimer = null;
   let reconnectDelay = 8000;
   
-  let currentFreq = "666.666";
+  let currentFreq = "222.222";
   window.currentFreq = currentFreq;
   window.myFcmToken = "";
 
@@ -768,7 +768,7 @@
   const renderedMsgIds = new Set();
 
   const PRIVATE_CHANNELS = {
-    "666.666": "",
+    "222.222": "",
     "111.111": "150307",
     "999.999": "230887"
   };
@@ -1134,7 +1134,7 @@
     }
 
     const savedNick = localStorage.getItem('ht_nick');
-    const savedFreq = localStorage.getItem('ht_freq') || "666.666";
+    const savedFreq = localStorage.getItem('ht_freq') || "222.222";
     const savedPass = localStorage.getItem('ht_pass') || "";
 
     if (savedNick) document.getElementById('nickInput').value = savedNick;
@@ -1163,7 +1163,7 @@
   async function loadSavedGroupsUI() {
     const groupSelect = document.getElementById('groupSelect');
     groupSelect.innerHTML = `
-      <option value="666.666||">mrzyb aplikasi (666.666)</option>
+      <option value="222.222||">mrzyb tv (222.222)</option>
       <option value="111.111||">mrzyb family (111.111)</option>
       <option value="999.999||">mrzyb random (999.999)</option>
     `;
@@ -1202,7 +1202,7 @@
       return;
     }
 
-    if (["666.666", "111.111", "999.999"].includes(freq)) {
+    if (["222.222", "111.111", "999.999"].includes(freq)) {
       showAlert("ID Frekuensi ini dilindungi sistem bawaan!");
       return;
     }
@@ -1226,7 +1226,7 @@
     const select = document.getElementById('groupSelect');
     const selectedFreq = select.value.split('||')[0];
 
-    if (["666.666", "111.111", "999.999"].includes(selectedFreq)) {
+    if (["222.222", "111.111", "999.999"].includes(selectedFreq)) {
       showAlert("Grup bawaan sistem tidak dapat dihapus!");
       return;
     }
@@ -1242,7 +1242,7 @@
         if (isConfirmed) {
           await dbDeleteGroup(selectedFreq);
           await loadSavedGroupsUI();
-          document.getElementById('groupSelect').value = "666.666||";
+          document.getElementById('groupSelect').value = "222.222||";
           switchGroupFromDropdown();
           showAlert("Grup berhasil dihapus.");
         }
@@ -1734,7 +1734,7 @@
           if (currentToken) {
             window.myFcmToken = currentToken;
             if (typeof window.kirimTokenKeWorker === 'function') {
-              window.kirimTokenKeWorker(window.currentFreq || "666.666");
+              window.kirimTokenKeWorker(window.currentFreq || "222.222");
             }
           }
         });
