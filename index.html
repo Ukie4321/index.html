@@ -111,6 +111,41 @@
       transition: all 0.3s; 
     }
 
+    .main-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    /* --- DUKUNGAN LAYAR LANDSCAPE / TV (2 KOLOM) --- */
+    @media screen and (orientation: landscape) and (min-width: 600px) {
+      body {
+        padding: 15px;
+      }
+      .ht-body {
+        max-width: 95vw !important; /* Memenuhi layar TV/Landscape */
+        width: 1000px;
+        max-height: 94vh !important;
+      }
+      .main-grid {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        align-items: start;
+      }
+      .chat-box {
+        height: 32vh !important;
+        max-height: none !important;
+      }
+    }
+
+    /* --- EFEK SOROTAN NAVIGASI REMOTE TV --- */
+    button:focus, input:focus, select:focus, .ptt-btn:focus {
+      outline: 3px solid #ffffff !important;
+      box-shadow: 0 0 15px var(--ht-neon) !important;
+      transform: scale(1.03);
+    }
+
     .ht-body::-webkit-scrollbar {
       width: 4px;
     }
@@ -267,25 +302,7 @@
     .error-msg { color: #ef4444 !important; font-size: 11px; text-align: center; margin-bottom: 10px; display: none; }
     .status { text-align: center; font-size: 11px; margin-top: 5px; color: #aaa; }
     .private-badge { font-size: 10px; color: #f59e0b !important; margin-top: 2px; }
-    .radio-panel { 
-      border: 1px dashed #ffffff; 
-      box-shadow: 0 0 6px var(--ht-neon);
-      padding: 8px; 
-      border-radius: 5px; 
-      margin-bottom: 10px; 
-      background: var(--panel-bg); 
-      color: var(--text-color); 
-    }
-    .radio-header {
-      font-size: 9px;
-      color: #aaa;
-      margin-bottom: 4px;
-      text-align: center;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 5px;
-    }
+    
     .svg-icon {
       width: 14px;
       height: 14px;
@@ -305,7 +322,7 @@
 
     .extra-tools { 
       display: grid; 
-      grid-template-columns: repeat(4, 1fr); 
+      grid-template-columns: repeat(3, 1fr); 
       gap: 4px; 
       margin-bottom: 10px; 
       font-size: 10px; 
@@ -316,11 +333,7 @@
       box-shadow: 0 0 6px var(--ht-neon);
       color: var(--text-color); 
     }
-    .extra-tools button { padding: 5px 2px; font-size: 9px; text-align: center; }
-
-    .modern-slider { -webkit-appearance: none; width: 100%; background: transparent; cursor: pointer; }
-    .modern-slider::-webkit-slider-runnable-track { width: 100%; height: 6px; background: #222; border-radius: 5px; border: 1px solid #ffffff; }
-    .modern-slider::-webkit-slider-thumb { -webkit-appearance: none; height: 16px; width: 16px; border-radius: 50%; background: var(--slider-thumb); margin-top: -5px; box-shadow: 0 0 8px var(--ht-neon); }
+    .extra-tools button { padding: 6px 2px; font-size: 9px; text-align: center; }
 
     .modal-overlay { 
       display: none; 
@@ -349,15 +362,6 @@
     .modal-btns { display: flex; gap: 10px; justify-content: center; }
     .modal-btn-ok { background: #b91c1c; color: #fff !important; border: 1px solid #ffffff; padding: 6px 15px; font-size: 11px; cursor: pointer; }
     .modal-btn-cancel { background: #222; color: #888 !important; border: 1px solid #ffffff; padding: 6px 15px; font-size: 11px; cursor: pointer; }
-
-    .close-x-btn { position: absolute; top: 8px; right: 12px; background: transparent; border: none; color: #ef4444 !important; font-size: 18px; font-weight: bold; cursor: pointer; padding: 0; }
-    .compass-circle-outer { width: 130px; height: 130px; border: 3px solid #f59e0b; border-radius: 50%; margin: 10px auto; position: relative; display: flex; justify-content: center; align-items: center; background: radial-gradient(circle, #1a1a1a 0%, #050505 100%); box-shadow: 0 0 15px rgba(245, 158, 11, 0.4); }
-    .compass-dial { position: absolute; width: 100%; height: 100%; border-radius: 50%; transition: transform 0.1s ease-out; }
-    .compass-mark-u { position: absolute; top: 4px; left: 50%; transform: translateX(-50%); color: #ef4444 !important; font-weight: bold; font-size: 12px; }
-    .compass-mark-s { position: absolute; bottom: 4px; left: 50%; transform: translateX(-50%); color: #fff !important; font-size: 10px; }
-    .compass-mark-t { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); color: #fff !important; font-size: 10px; }
-    .compass-mark-b { position: absolute; left: 6px; top: 50%; transform: translateY(-50%); color: #fff !important; font-size: 10px; }
-    .compass-pointer { width: 4px; height: 45px; background: linear-gradient(to bottom, #ef4444 50%, #ffffff 50%); position: absolute; border-radius: 2px; }
 
     .fullscreen-chat-overlay {
       display: none;
@@ -429,114 +433,92 @@
   <div style="text-align: center; margin-bottom: 8px;">
     <img src="logo.png" alt="Logo" style="width: 45px; height: 45px; border-radius: 50%; border: 1px solid #ffffff;" onerror="this.style.display='none'">
   </div>
-
   <h2 style="text-align: center; margin-top: 0; font-size: 16px; letter-spacing: 2px; margin-bottom: 10px; color: var(--text-color);">MRZYB-HT</h2>
 
-  <div class="screen">
-    <div class="status-bar">
-      <span class="signal-meter" id="rssiMeter">SIG: ▂▄▆█</span>
-      <span id="batDisplay">BAT: --% 🔋</span>
+  <div class="main-grid">
+    <!-- PANEL KIRI -->
+    <div class="left-panel">
+      <div class="screen">
+        <div class="status-bar">
+          <span class="signal-meter" id="rssiMeter">SIG: ▂▄▆█</span>
+          <span id="batDisplay">BAT: --% 🔋</span>
+        </div>
+        <div class="freq" id="freqDisplay">888.888</div>
+        <div id="privateBadge" class="private-badge"></div>
+      </div>
+
+      <div class="extra-tools">
+        <button onclick="triggerCamera()" style="background: #0284c7; color: #fff !important;">📷 FOTO</button>
+        <button onclick="triggerGallery()" style="background: #059669; color: #fff !important;">🖼️ GALERI</button>
+        <button onclick="sendGPSLocation()">📍 GPS</button>
+        <button onclick="toggleTheme()">🎨 TEMA</button>
+        <button onclick="openSosConfirm()" style="background: #991b1b; color: #fff !important; font-weight: bold; grid-column: span 2;">🚨 SOS</button>
+      </div>
+
+      <div id="errorAlert" class="error-msg"></div>
+
+      <div class="user-list">
+        <span>Online: </span><span class="user-count" id="onlineCount">0</span>
+        <div class="user-names" id="namesList">Belum ada user</div>
+      </div>
+
+      <div class="ptt-container">
+        <button class="ptt-btn" id="pttBtn" tabindex="0">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/>
+            <path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/>
+          </svg>
+          <span style="font-size: 9px;" id="pttLabel">PUSH TO TALK</span>
+        </button>
+        <button class="lock-btn" id="lockPttBtn" onclick="togglePttLock()">🔓 KUNCI PTT (HANDS-FREE)</button>
+      </div>
+      <div class="status" id="micStatus">Mikrofon Siap</div>
     </div>
-    <div class="freq" id="freqDisplay">888.888</div>
-    <div id="privateBadge" class="private-badge"></div>
-  </div>
 
-  <div class="extra-tools">
-    <button onclick="triggerCamera()" style="background: #0284c7; color: #fff !important;">📷 FOTO</button>
-    <button onclick="triggerGallery()" style="background: #059669; color: #fff !important;">🖼️ GALERI</button>
-    <button onclick="openCompassModal()">🧭 KOMPAS</button>
-    <button onclick="openMoviePlayer()" style="background: #7c3aed; color: #fff !important;">🎬 NONTON</button>
-    <button onclick="openMusicPlayer()" style="background: #0284c7; color: #fff !important;">🎵 MUSIK</button>
-    <button onclick="sendGPSLocation()">📍 GPS</button>
-    <button onclick="toggleTheme()">🎨 TEMA</button>
-    <button onclick="openSosConfirm()" style="background: #991b1b; color: #fff !important; font-weight: bold;">🚨 SOS</button>
-  </div>
+    <!-- PANEL KANAN -->
+    <div class="right-panel">
+      <div class="input-group">
+        <input type="text" id="nickInput" placeholder="Callsign/Nama...">
+      </div>
 
-  <div class="radio-panel">
-    <div class="radio-header">
-      <svg class="svg-icon" viewBox="0 0 24 24">
-        <path d="M3.24 6.15C2.51 6.43 2 7.17 2 8v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2H8.3l7.43-3.71c.45-.23.64-.78.41-1.24-.23-.45-.78-.64-1.24-.41L6.1 6.15zM12 18c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm8-6h-2v-2h2v2z"/>
-      </svg>
-      <span>MONITORING RADIO FM</span>
-    </div>
-    <div class="input-group" style="margin-bottom: 4px;">
-      <select id="radioSelect" onchange="changeRadioChannel()">
-        <option value="https://n08.radiojar.com/7csmg90fuqruv.mp3?1673348819=&rj-tok=AAABhZtmUCUAwkYyBBgriH-X9g&rj-ttl=5">HardRock</option>
-        <option value="https://n0a.radiojar.com/4ywdgup3bnzuv?1673348637=&rj-tok=AAABhZtjYesAbqf2VnMskbfVxQ&rj-ttl=5">Iswara</option>
-        <option value="https://stream.denger.in/">Dmi</option>
-        <option value="https://stream.rcs.revma.com/ugpyzu9n5k3vv">Musik Indonesia</option>
-      </select>
-      <button id="radioBtn" onclick="toggleRadio()" style="padding: 4px 10px; font-size: 11px; display: flex; align-items: center; gap: 4px;">
-        <svg class="svg-icon" id="radioBtnIcon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-        <span id="radioBtnText">PLAY</span>
-      </button>
-    </div>
-    <div style="display: flex; align-items: center; gap: 5px; font-size: 9px; color: #aaa;">
-      <span>VOL:</span>
-      <input type="range" id="radioVol" class="modern-slider" min="0" max="1" step="0.05" value="0.8" oninput="adjustRadioVolume(this.value)">
-    </div>
-  </div>
-  <audio id="radioPlayer" crossorigin="anonymous"></audio>
+      <div class="input-group">
+        <select id="groupSelect" onchange="switchGroupFromDropdown()">
+          <option value="888.888||">mrzyb aplikasi (888.888)</option>
+          <option value="111.111||">mrzyb family (111.111)</option>
+          <option value="999.999||">mrzyb random (999.999)</option>
+        </select>
+        <button onclick="openCreateGroupModal()" style="font-size: 10px; background: #065f46; color: #fff !important;">
+          <svg class="svg-icon" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg> GRUP
+        </button>
+        <button onclick="deleteSelectedGroup()" style="font-size: 10px; background: #991b1b; color: #fff !important;">
+          <svg class="svg-icon" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg> HAPUS
+        </button>
+      </div>
 
-  <div id="errorAlert" class="error-msg"></div>
+      <div class="input-group">
+        <input type="text" id="freqInput" placeholder="Freq/Grup ID" readonly style="background: #181818; color: #888 !important; cursor: not-allowed;">
+      </div>
+      <div class="input-group">
+        <input type="password" id="passInput" placeholder="Password PIN Akses">
+        <button onclick="changeFreq()">MASUK</button>
+      </div>
 
-  <div class="user-list">
-    <span>Online: </span><span class="user-count" id="onlineCount">0</span>
-    <div class="user-names" id="namesList">Belum ada user</div>
-  </div>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+        <span style="font-size: 10px; color: #aaa;">RIWAYAT CHAT:</span>
+        <div style="display: flex; gap: 4px;">
+          <button onclick="openFullscreenChat()" style="font-size: 9px; padding: 2px 6px; background: #181818; color: #60a5fa !important;">⛶ FULLSCREEN</button>
+          <button onclick="openClearModal()" style="font-size: 9px; padding: 2px 6px; background: #181818; color: #ef4444 !important;">HAPUS CHAT</button>
+        </div>
+      </div>
 
-  <div class="input-group">
-    <input type="text" id="nickInput" placeholder="Callsign/Nama...">
-  </div>
+      <div class="chat-box" id="chatBox"></div>
 
-  <div class="input-group">
-    <select id="groupSelect" onchange="switchGroupFromDropdown()">
-      <option value="888.888||">mrzyb aplikasi (888.888)</option>
-      <option value="111.111||">mrzyb family (111.111)</option>
-      <option value="999.999||">mrzyb random (999.999)</option>
-    </select>
-    <button onclick="openCreateGroupModal()" style="font-size: 10px; background: #065f46; color: #fff !important;">
-      <svg class="svg-icon" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg> GRUP
-    </button>
-    <button onclick="deleteSelectedGroup()" style="font-size: 10px; background: #991b1b; color: #fff !important;">
-      <svg class="svg-icon" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg> HAPUS
-    </button>
-  </div>
-
-  <div class="input-group">
-    <input type="text" id="freqInput" placeholder="Freq/Grup ID" readonly style="background: #181818; color: #888 !important; cursor: not-allowed;">
-  </div>
-  <div class="input-group">
-    <input type="password" id="passInput" placeholder="Password PIN Akses">
-    <button onclick="changeFreq()">MASUK</button>
-  </div>
-
-  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-    <span style="font-size: 10px; color: #aaa;">RIWAYAT CHAT:</span>
-    <div style="display: flex; gap: 4px;">
-      <button onclick="openFullscreenChat()" style="font-size: 9px; padding: 2px 6px; background: #181818; color: #60a5fa !important;">⛶ FULLSCREEN</button>
-      <button onclick="openClearModal()" style="font-size: 9px; padding: 2px 6px; background: #181818; color: #ef4444 !important;">HAPUS CHAT</button>
+      <div class="input-group">
+        <input type="text" id="msgInput" placeholder="Ketik pesan..." onkeypress="handleKeyPress(event)">
+        <button onclick="sendText()">KIRIM</button>
+      </div>
     </div>
   </div>
-
-  <div class="chat-box" id="chatBox"></div>
-
-  <div class="input-group">
-    <input type="text" id="msgInput" placeholder="Ketik pesan..." onkeypress="handleKeyPress(event)">
-    <button onclick="sendText()">KIRIM</button>
-  </div>
-
-  <div class="ptt-container">
-    <button class="ptt-btn" id="pttBtn">
-      <svg viewBox="0 0 24 24">
-        <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/>
-        <path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/>
-      </svg>
-      <span style="font-size: 9px;" id="pttLabel">PUSH TO TALK</span>
-    </button>
-    <button class="lock-btn" id="lockPttBtn" onclick="togglePttLock()">🔓 KUNCI PTT (HANDS-FREE)</button>
-  </div>
-  <div class="status" id="micStatus">Mikrofon Siap</div>
 </div>
 
 <div class="fullscreen-chat-overlay" id="fullscreenChat">
@@ -562,70 +544,6 @@
         <path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/>
       </svg>
     </button>
-  </div>
-</div>
-
-<!-- MOVIE PLAYER MODAL -->
-<div id="movieModal" class="modal-overlay">
-  <div class="modal-box" style="max-width: 380px; width: 92%; padding: 12px; background: #0c0a09; text-align: left;">
-    <button class="close-x-btn" onclick="closeMoviePlayer()">✕</button>
-    <div style="color: #a78bfa !important; font-weight: bold; font-size: 13px; margin-bottom: 8px; text-align: center;">🎬 MOVIE PLAYER</div>
-    
-    <div id="posterContainer" style="width: 100%; height: 160px; background: #18181b; border-radius: 6px; overflow: hidden; margin-bottom: 8px; border: 1px solid #ffffff; display: flex; justify-content: center; align-items: center;">
-      <img id="moviePoster" src="" alt="Poster Film" style="max-height: 100%; max-width: 100%; object-fit: contain; display: none;">
-      <span id="posterPlaceholder" style="font-size: 10px; color: #71717a;">Poster Tidak Tersedia</span>
-    </div>
-
-    <div style="width: 100%; height: 180px; background: #000; border-radius: 6px; overflow: hidden; margin-bottom: 8px; border: 1px solid #ffffff;">
-      <video id="movieVideoPlayer" controls autoplay controlsList="nodownload" oncontextmenu="return false;" style="width: 100%; height: 100%; background: #000; object-fit: contain;"></video>
-    </div>
-
-    <div style="display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px;">
-      <select id="movieCategorySelect" onchange="filterMoviesByCategory()" style="background: #1c1917; color: #fff; font-size: 11px; padding: 6px;">
-        <option value="all">📁 Mengunduh Kategori...</option>
-      </select>
-      <select id="moviePlaylistSelect" onchange="playSelectedMovie()" style="background: #1c1917; color: #fff; font-size: 11px; padding: 6px;">
-        <option value="">-- Memuat Playlist... --</option>
-      </select>
-    </div>
-
-    <div style="font-size: 9px; color: #aaa; text-align: center; margin-bottom: 8px;" id="playlistStatus">Memuat playlist otomatis...</div>
-
-    <div class="modal-btns">
-      <button class="modal-btn-cancel" onclick="closeMoviePlayer()" style="width: 100%; color: #a78bfa !important;">TUTUP</button>
-    </div>
-  </div>
-</div>
-
-<!-- MUSIC PLAYER MODAL -->
-<div id="musicModal" class="modal-overlay">
-  <div class="modal-box" style="max-width: 380px; width: 92%; padding: 12px; background: #0c0a09; text-align: left;">
-    <button class="close-x-btn" onclick="closeMusicPlayer()">✕</button>
-    <div style="color: #38bdf8 !important; font-weight: bold; font-size: 13px; margin-bottom: 8px; text-align: center;">🎵 MUSIC PLAYER</div>
-    
-    <div id="musicCoverContainer" style="width: 100%; height: 160px; background: #18181b; border-radius: 6px; overflow: hidden; margin-bottom: 8px; border: 1px solid #ffffff; display: flex; justify-content: center; align-items: center;">
-      <img id="musicCover" src="" alt="Cover Musik" style="max-height: 100%; max-width: 100%; object-fit: contain; display: none;">
-      <span id="musicCoverPlaceholder" style="font-size: 10px; color: #71717a;">Cover Tidak Tersedia</span>
-    </div>
-
-    <div style="width: 100%; background: #000; border-radius: 6px; overflow: hidden; margin-bottom: 8px; border: 1px solid #ffffff; padding: 5px;">
-      <audio id="audioPlayerControl" controls style="width: 100%; filter: invert(0.8);"></audio>
-    </div>
-
-    <div style="display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px;">
-      <select id="musicCategorySelect" onchange="filterMusicByCategory()" style="background: #1c1917; color: #fff; font-size: 11px; padding: 6px;">
-        <option value="all">📁 Mengunduh Kategori...</option>
-      </select>
-      <select id="musicPlaylistSelect" onchange="playSelectedMusic()" style="background: #1c1917; color: #fff; font-size: 11px; padding: 6px;">
-        <option value="">-- Memuat Playlist... --</option>
-      </select>
-    </div>
-
-    <div style="font-size: 9px; color: #aaa; text-align: center; margin-bottom: 8px;" id="musicPlaylistStatus">Memuat playlist otomatis...</div>
-
-    <div class="modal-btns">
-      <button class="modal-btn-cancel" onclick="closeMusicPlayer()" style="width: 100%; color: #38bdf8 !important;">TUTUP</button>
-    </div>
   </div>
 </div>
 
@@ -659,28 +577,6 @@
       <button class="modal-btn-cancel" onclick="closeCreateGroupModal()">BATAL</button>
       <button class="modal-btn-ok" style="background: #065f46;" onclick="confirmCreateGroup()">SIMPAN & JOIN</button>
     </div>
-  </div>
-</div>
-
-<div id="compassModal" class="modal-overlay">
-  <div class="modal-box">
-    <button class="close-x-btn" onclick="closeCompassModal()">✕</button>
-    <div style="color: #f59e0b !important; font-weight: bold; font-size: 14px; margin-bottom: 5px;">🧭 KOMPAS HARDWARE</div>
-    
-    <div class="compass-circle-outer">
-      <div class="compass-dial" id="compassDial">
-        <span class="compass-mark-u">U</span>
-        <span class="compass-mark-t">T</span>
-        <span class="compass-mark-s">S</span>
-        <span class="compass-mark-b">B</span>
-      </div>
-      <div class="compass-pointer"></div>
-    </div>
-
-    <div style="font-size: 20px; font-weight: bold; color: #fff !important; margin-top: 5px;" id="popupCompassDeg">0°</div>
-    <div style="font-size: 13px; color: #f59e0b !important; font-weight: bold; margin-bottom: 12px;" id="popupCompassDir">UTARA</div>
-    
-    <button class="modal-btn-cancel" onclick="closeCompassModal()" style="width: 100%; color: #f59e0b !important;">TUTUP</button>
   </div>
 </div>
 
@@ -796,12 +692,6 @@
 
   const WORKER_URL = "wss://my-ht-project.ukielaki8387.workers.dev";
   const HTTP_WORKER_URL = "https://my-ht-project.ukielaki8387.workers.dev";
-  const PLAYLIST_URL = "https://raw.githubusercontent.com/Mutia4321/index_film/refs/heads/main/movie.m3u"; 
-  let parsedPlaylistData = [];
-
-  // --- PLAYLIST MUSIK URL ---
-  const MUSIC_PLAYLIST_URL = "https://raw.githubusercontent.com/ukie432/mrzybfilm/refs/heads/main/musikku.m3u"; 
-  let parsedMusicPlaylistData = [];
 
   let ws = null;
   let wsReconnectTimer = null;
@@ -818,8 +708,6 @@
   let audioChunks = [];
   let micStream = null;
   let activePttSource = 'main';
-  let isRadioPlaying = false;
-  let customRadioVolume = 0.8;
   let pttMaxTimer = null;
 
   let isPttLocked = false;
@@ -843,262 +731,6 @@
       return (inputPass === PRIVATE_CHANNELS[currentFreq] || savedPass === PRIVATE_CHANNELS[currentFreq]);
     }
     return true; 
-  }
-
-  /* --- LOGIKA MOVIE PLAYER --- */
-  async function openMoviePlayer() {
-    initAudioContext();
-    document.getElementById('movieModal').style.display = 'flex';
-    if (parsedPlaylistData.length === 0) await autoLoadDirectPlaylist();
-  }
-
-  function closeMoviePlayer() {
-    const video = document.getElementById('movieVideoPlayer');
-    const imgPoster = document.getElementById('moviePoster');
-    video.pause();
-    video.src = "";
-    video.removeAttribute('poster');
-    if (imgPoster) imgPoster.src = "";
-    document.getElementById('movieModal').style.display = 'none';
-  }
-
-  async function autoLoadDirectPlaylist() {
-    const statusEl = document.getElementById('playlistStatus');
-    statusEl.innerText = "⏳ Memuat playlist dari server...";
-
-    try {
-      const response = await fetch(PLAYLIST_URL);
-      if (!response.ok) throw new Error("Gagal mengambil data playlist.");
-      const m3uText = await response.text();
-      parsedPlaylistData = parseM3U(m3uText);
-
-      if (parsedPlaylistData.length === 0) {
-        statusEl.innerText = "❌ Playlist kosong atau format salah.";
-        return;
-      }
-
-      statusEl.innerText = `Total ${parsedPlaylistData.length} Video.`;
-      populateCategoriesUI();
-      filterMoviesByCategory();
-    } catch (err) {
-      statusEl.innerText = "❌ Gagal memuat playlist otomatis.";
-    }
-  }
-
-  function parseM3U(content) {
-    const lines = content.split('\n');
-    const result = [];
-    let currentItem = null;
-
-    for (let i = 0; i < lines.length; i++) {
-      let line = lines[i].trim();
-      if (line.startsWith('#EXTINF:')) {
-        currentItem = { title: 'Tanpa Judul', category: 'Umum', url: '', poster: '' };
-        
-        const groupMatch = line.match(/group-title="([^"]+)"/i);
-        if (groupMatch) currentItem.category = groupMatch[1];
-        
-        const logoMatch = line.match(/tvg-logo="([^"]+)"/i);
-        if (logoMatch) currentItem.poster = logoMatch[1];
-
-        const commaIdx = line.lastIndexOf(',');
-        if (commaIdx !== -1) currentItem.title = line.substring(commaIdx + 1).trim();
-      } 
-      else if (line.startsWith('#EXTIMG:') && currentItem) {
-        currentItem.poster = line.replace('#EXTIMG:', '').trim();
-      }
-      else if (line && !line.startsWith('#') && currentItem) {
-        currentItem.url = line;
-        result.push(currentItem);
-        currentItem = null;
-      }
-    }
-    return result;
-  }
-
-  function populateCategoriesUI() {
-    const categorySelect = document.getElementById('movieCategorySelect');
-    categorySelect.innerHTML = '';
-    const categories = [...new Set(parsedPlaylistData.map(item => item.category))];
-    
-    const allOption = document.createElement('option');
-    allOption.value = 'all';
-    allOption.innerText = `📁 Semua Kategori (${parsedPlaylistData.length})`;
-    categorySelect.appendChild(allOption);
-
-    categories.forEach(cat => {
-      const count = parsedPlaylistData.filter(i => i.category === cat).length;
-      const opt = document.createElement('option');
-      opt.value = cat;
-      opt.innerText = `📁 ${cat} (${count})`;
-      categorySelect.appendChild(opt);
-    });
-  }
-
-  function filterMoviesByCategory() {
-    const selectedCat = document.getElementById('movieCategorySelect').value;
-    const playlistSelect = document.getElementById('moviePlaylistSelect');
-    playlistSelect.innerHTML = '';
-
-    const filtered = selectedCat === 'all' 
-      ? parsedPlaylistData 
-      : parsedPlaylistData.filter(item => item.category === selectedCat);
-
-    filtered.forEach(item => {
-      const opt = document.createElement('option');
-      opt.value = item.url;
-      opt.innerText = `▶ ${item.title}`;
-      playlistSelect.appendChild(opt);
-    });
-
-    if (filtered.length > 0) {
-      playlistSelect.value = filtered[0].url;
-      playSelectedMovie();
-    }
-  }
-
-  function playSelectedMovie() {
-    const playlistSelect = document.getElementById('moviePlaylistSelect');
-    const selectedUrl = playlistSelect.value;
-    const video = document.getElementById('movieVideoPlayer');
-    const imgPoster = document.getElementById('moviePoster');
-    const placeholder = document.getElementById('posterPlaceholder');
-
-    const activeMovie = parsedPlaylistData.find(item => item.url === selectedUrl);
-
-    if (activeMovie && activeMovie.poster) {
-      imgPoster.src = activeMovie.poster;
-      imgPoster.style.display = 'block';
-      if (placeholder) placeholder.style.display = 'none';
-      video.poster = activeMovie.poster;
-    } else {
-      imgPoster.src = '';
-      imgPoster.style.display = 'none';
-      if (placeholder) placeholder.style.display = 'block';
-      video.removeAttribute('poster');
-    }
-
-    if (selectedUrl) {
-      video.src = selectedUrl;
-      video.play().catch(e => console.log("Autoplay dibatasi browser."));
-    }
-  }
-
-  /* --- LOGIKA MUSIC PLAYER --- */
-  async function openMusicPlayer() {
-    initAudioContext();
-    document.getElementById('musicModal').style.display = 'flex';
-    if (parsedMusicPlaylistData.length === 0) await autoLoadDirectMusicPlaylist();
-  }
-
-  function closeMusicPlayer() {
-    const audio = document.getElementById('audioPlayerControl');
-    const imgCover = document.getElementById('musicCover');
-    audio.pause();
-    audio.src = "";
-    if (imgCover) imgCover.src = "";
-    document.getElementById('musicModal').style.display = 'none';
-  }
-
-  async function autoLoadDirectMusicPlaylist() {
-    const statusEl = document.getElementById('musicPlaylistStatus');
-    statusEl.innerText = "⏳ Memuat playlist musik...";
-
-    try {
-      const response = await fetch(MUSIC_PLAYLIST_URL);
-      if (!response.ok) throw new Error("Gagal mengambil data playlist musik.");
-      const m3uText = await response.text();
-      parsedMusicPlaylistData = parseM3U(m3uText);
-
-      if (parsedMusicPlaylistData.length === 0) {
-        statusEl.innerText = "❌ Playlist musik kosong atau format salah.";
-        return;
-      }
-
-      statusEl.innerText = `Total ${parsedMusicPlaylistData.length} Lagu.`;
-      populateMusicCategoriesUI();
-      filterMusicByCategory();
-    } catch (err) {
-      statusEl.innerText = "❌ Gagal memuat playlist musik.";
-    }
-  }
-
-  function populateMusicCategoriesUI() {
-    const categorySelect = document.getElementById('musicCategorySelect');
-    categorySelect.innerHTML = '';
-    const categories = [...new Set(parsedMusicPlaylistData.map(item => item.category))];
-    
-    const allOption = document.createElement('option');
-    allOption.value = 'all';
-    allOption.innerText = `📁 Semua Kategori (${parsedMusicPlaylistData.length})`;
-    categorySelect.appendChild(allOption);
-
-    categories.forEach(cat => {
-      const count = parsedMusicPlaylistData.filter(i => i.category === cat).length;
-      const opt = document.createElement('option');
-      opt.value = cat;
-      opt.innerText = `📁 ${cat} (${count})`;
-      categorySelect.appendChild(opt);
-    });
-  }
-
-  function filterMusicByCategory() {
-    const selectedCat = document.getElementById('musicCategorySelect').value;
-    const playlistSelect = document.getElementById('musicPlaylistSelect');
-    playlistSelect.innerHTML = '';
-
-    const filtered = selectedCat === 'all' 
-      ? parsedMusicPlaylistData 
-      : parsedMusicPlaylistData.filter(item => item.category === selectedCat);
-
-    filtered.forEach(item => {
-      const opt = document.createElement('option');
-      opt.value = item.url;
-      opt.innerText = `🎵 ${item.title}`;
-      playlistSelect.appendChild(opt);
-    });
-
-    if (filtered.length > 0) {
-      playlistSelect.value = filtered[0].url;
-      playSelectedMusic();
-    }
-  }
-
-  function playSelectedMusic() {
-    const playlistSelect = document.getElementById('musicPlaylistSelect');
-    const selectedUrl = playlistSelect.value;
-    const audio = document.getElementById('audioPlayerControl');
-    const imgCover = document.getElementById('musicCover');
-    const placeholder = document.getElementById('musicCoverPlaceholder');
-
-    const activeMusic = parsedMusicPlaylistData.find(item => item.url === selectedUrl);
-
-    if (activeMusic && activeMusic.poster) {
-      imgCover.src = activeMusic.poster;
-      imgCover.style.display = 'block';
-      if (placeholder) placeholder.style.display = 'none';
-    } else {
-      imgCover.src = '';
-      imgCover.style.display = 'none';
-      if (placeholder) placeholder.style.display = 'block';
-    }
-
-    if (selectedUrl) {
-      audio.src = selectedUrl;
-      audio.play().catch(e => console.log("Autoplay dibatasi browser."));
-    }
-  }
-
-  /* --- FUNGSI OTOMATIS LANJUT MUSIK SELANJUTNYA --- */
-  function playNextMusic() {
-    const playlistSelect = document.getElementById('musicPlaylistSelect');
-    if (!playlistSelect || playlistSelect.options.length === 0) return;
-
-    let currentIndex = playlistSelect.selectedIndex;
-    let nextIndex = (currentIndex + 1) % playlistSelect.options.length;
-    
-    playlistSelect.selectedIndex = nextIndex;
-    playSelectedMusic();
   }
 
   function toggleTheme() {
@@ -1175,7 +807,9 @@
         localCamStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" }, audio: false });
         video.srcObject = localCamStream;
         modal.style.display = 'flex';
-      } catch (err2) { alert("Gagal membuka kamera direct: " + err2.message); }
+      } catch (err2) { 
+        showAlert("Gagal membuka kamera direct: " + err2.message); 
+      }
     }
   }
 
@@ -1363,11 +997,13 @@
     document.body.addEventListener('touchstart', initAudioContext, { once: true });
     document.body.addEventListener('click', initAudioContext, { once: true });
 
-    // Event listener untuk otomatis lanjut musik saat lagu selesai diputar
-    const musicAudio = document.getElementById('audioPlayerControl');
-    if (musicAudio) {
-      musicAudio.addEventListener('ended', playNextMusic);
-    }
+    // Dukungan Tombol OK / Enter Remote TV untuk PTT
+    document.addEventListener('keydown', (e) => {
+      if (document.activeElement.id === 'pttBtn' && (e.key === 'Enter' || e.keyCode === 13)) {
+        e.preventDefault();
+        togglePttLock();
+      }
+    });
 
     setInterval(() => {
       const bars = ["SIG: ▂", "SIG: ▂▄", "SIG: ▂▄▆", "SIG: ▂▄▆█"];
@@ -1592,60 +1228,6 @@
       }, reconnectDelay);
     };
     ws.onerror = () => { if (ws) ws.close(); };
-  }
-
-  function toggleRadio() {
-    initAudioContext();
-    const player = document.getElementById('radioPlayer');
-    const textEl = document.getElementById('radioBtnText');
-    const iconEl = document.getElementById('radioBtnIcon');
-    const btn = document.getElementById('radioBtn');
-
-    if (!isRadioPlaying) {
-      player.src = document.getElementById('radioSelect').value;
-      player.volume = customRadioVolume;
-      player.play().catch(() => {
-        showAlert("Gagal memutar Radio.");
-        textEl.innerText = "PLAY";
-        iconEl.innerHTML = `<path d="M8 5v14l11-7z"/>`;
-        btn.style.background = "#222";
-        isRadioPlaying = false;
-      });
-      textEl.innerText = "STOP";
-      iconEl.innerHTML = `<path d="M6 6h12v12H6z"/>`;
-      btn.style.background = "#b91c1c";
-      isRadioPlaying = true;
-    } else {
-      player.pause();
-      player.src = "";
-      textEl.innerText = "PLAY";
-      iconEl.innerHTML = `<path d="M8 5v14l11-7z"/>`;
-      btn.style.background = "#222";
-      isRadioPlaying = false;
-    }
-  }
-
-  function changeRadioChannel() {
-    const player = document.getElementById('radioPlayer');
-    if (isRadioPlaying) {
-      player.pause();
-      player.src = document.getElementById('radioSelect').value;
-      player.load();
-      player.play().catch(() => {});
-    }
-  }
-
-  function adjustRadioVolume(val) {
-    customRadioVolume = parseFloat(val);
-    restoreRadioVolume();
-  }
-
-  function duckRadioVolume() {
-    if (isRadioPlaying) document.getElementById('radioPlayer').volume = customRadioVolume * 0.1;
-  }
-
-  function restoreRadioVolume() {
-    if (isRadioPlaying) document.getElementById('radioPlayer').volume = customRadioVolume;
   }
 
   async function joinFrequency(freq, password = '') {
@@ -1911,7 +1493,6 @@
       };
 
       playSquelchNoise(0.1);
-      duckRadioVolume();
       mediaRecorder.start();
       document.getElementById('micStatus').innerText = "🎙️ MEREKAM (TRANSMIT)...";
 
@@ -1933,7 +1514,6 @@
       mediaRecorder.stop();
       playRogerBeep();
       document.getElementById('micStatus').innerText = "Mikrofon Siap";
-      restoreRadioVolume();
     }
   }
 
@@ -1985,13 +1565,12 @@
   function playAudio(base64Data) {
     initAudioContext();
     playSquelchNoise(0.1);
-    duckRadioVolume();
 
     const audio = new Audio(base64Data);
     audio.play();
 
-    audio.onended = () => { playRogerBeep(); restoreRadioVolume(); };
-    audio.onerror = () => { restoreRadioVolume(); };
+    audio.onended = () => { playRogerBeep(); };
+    audio.onerror = () => {};
   }
 
   function showError(msg) {
@@ -2001,38 +1580,6 @@
   }
 
   function hideError() { document.getElementById('errorAlert').style.display = 'none'; }
-
-  function openCompassModal() {
-    initAudioContext();
-    if (typeof DeviceOrientationEvent === 'undefined') return alert("Sensor tidak didukung.");
-    if (typeof DeviceOrientationEvent.requestPermission === 'function') {
-      DeviceOrientationEvent.requestPermission().then(response => {
-        if (response === 'granted') {
-          window.addEventListener('deviceorientation', handlePopupCompass);
-          document.getElementById('compassModal').style.display = 'flex';
-        } else alert("Izin sensor ditolak.");
-      });
-    } else {
-      window.addEventListener('deviceorientation', handlePopupCompass);
-      document.getElementById('compassModal').style.display = 'flex';
-    }
-  }
-
-  function closeCompassModal() {
-    window.removeEventListener('deviceorientation', handlePopupCompass);
-    document.getElementById('compassModal').style.display = 'none';
-  }
-
-  function handlePopupCompass(event) {
-    let heading = event.webkitCompassHeading !== undefined ? event.webkitCompassHeading : (event.alpha !== null ? 360 - event.alpha : 0);
-    const degrees = Math.round(heading);
-    const directions = ['UTARA', 'TIMUR LAUT', 'TIMUR', 'TENGGARA', 'SELATAN', 'BARAT DAYA', 'BARAT', 'BARAT LAUT'];
-    document.getElementById('popupCompassDeg').innerText = degrees + '°';
-    document.getElementById('popupCompassDir').innerText = directions[Math.round(degrees / 45) % 8];
-
-    const dial = document.getElementById('compassDial');
-    if (dial) dial.style.transform = `rotate(${-degrees}deg)`;
-  }
 </script>
 
 <script type="module">
