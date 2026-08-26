@@ -452,7 +452,7 @@
 
     <!-- PANEL KANAN -->
     <div class="right-panel">
-      <!-- PERBAIKAN: Atribut 'readonly' Dihapus Agar Keyboard STB Langsung Muncul -->
+      <!-- DITINGKATKAN AGAR RESPONSIF DI HP & REMOTE STB -->
       <div class="input-group">
         <input type="text" id="nickInput" placeholder="Callsign/Nama..." onchange="saveNickFromInput()">
       </div>
@@ -475,7 +475,7 @@
         <input type="text" id="freqInput" placeholder="Freq/Grup ID" readonly style="background: #181818; color: #888 !important; cursor: not-allowed;">
       </div>
       
-      <!-- PERBAIKAN: Atribut 'readonly' Dihapus Agar Keyboard STB Langsung Muncul -->
+      <!-- DITINGKATKAN AGAR RESPONSIF DI HP & REMOTE STB -->
       <div class="input-group">
         <input type="password" id="passInput" placeholder="Password PIN Akses">
         <button onclick="changeFreq()">MASUK</button>
@@ -610,7 +610,6 @@
     document.getElementById('promptInputValue').value = '';
     document.getElementById('promptModal').style.display = 'flex';
     
-    /* Auto Fokus Input Pop-up untuk Remote STB */
     setTimeout(() => { document.getElementById('promptInputValue').focus(); }, 100);
     promptCallback = callback;
   }
@@ -1065,11 +1064,50 @@
     } catch(e) {}
   }
 
+  /* SISTEM SMART FOCUS & HYBRID INPUT (Sangat Responsif di HP & Remote STB) */
+  function setupHybridInput(inputId) {
+    const inputEl = document.getElementById(inputId);
+    if (!inputEl) return;
+
+    // Kunci saat navigasi Remote STB agar keyboard tidak kaget muncul
+    inputEl.addEventListener('focus', () => {
+      inputEl.readOnly = true;
+    });
+
+    // Buka kunci secara fleksibel saat layar ditap (HP) atau diklik
+    inputEl.addEventListener('click', () => {
+      inputEl.readOnly = false;
+      inputEl.focus();
+    });
+
+    // Buka kunci jika tombol OK/Enter ditekan via Remote STB
+    inputEl.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.keyCode === 13) {
+        if (inputEl.readOnly) {
+          e.preventDefault();
+          inputEl.readOnly = false;
+          inputEl.focus();
+        }
+      }
+    });
+
+    // Otomatis kembalikan ke posisi normal saat fokus dilepas
+    inputEl.addEventListener('blur', () => {
+      inputEl.readOnly = false;
+    });
+  }
+
   window.addEventListener('DOMContentLoaded', async () => {
     document.body.addEventListener('touchstart', initAudioContext, { once: true });
     document.body.addEventListener('click', initAudioContext, { once: true });
 
-    /* Penangan Tombol Remote STB (OK / Enter untuk PTT) */
+    /* Hubungkan handler hybrid ke input HP dan Remote STB */
+    setupHybridInput('nickInput');
+    setupHybridInput('passInput');
+    setupHybridInput('msgInput');
+    setupHybridInput('fsMsgInput');
+
+    /* Handler tombol PTT khusus Remote STB */
     document.addEventListener('keydown', (e) => {
       if (document.activeElement.id === 'pttBtn' && (e.key === 'Enter' || e.keyCode === 13)) {
         e.preventDefault();
@@ -1120,9 +1158,6 @@
     await loadLocalHistory(currentFreq);
     connect();
     setupPTT();
-
-    // Auto-fokus kolom pertama saat dibuka di STB
-    document.getElementById('nickInput').focus();
   });
 
   async function loadSavedGroupsUI() {
