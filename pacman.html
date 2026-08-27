@@ -70,7 +70,7 @@
         .AK-btn {
           position: relative;
           width: 60%;
-          margin: 1vh auto;
+          margin: 1.5vh auto;
         }
         .AK-btn button, .AK-btn input {
           box-shadow: -2px 7px 20px 2px rgba(46, 61, 73, 0.35);
@@ -84,9 +84,6 @@
           width: 100%;
           transition: all 0.3s ease-in-out;
           background-color: #2e3d49;
-        }
-        .AK-btn button[type=text], .AK-btn input[type=text] {
-          text-align: center;
         }
         .AK-btn button, .AK-btn input[type=submit] {
           cursor: pointer;
@@ -301,7 +298,7 @@
           justify-content: space-between;
           align-items: center;
           width: 100%;
-          margin: 1vh auto;
+          margin: 2vh auto;
         }
         #gamestarting .callToAction .chose .chose-item {
           position: relative;
@@ -426,7 +423,7 @@
         </section>
     </main>
 
-    <!-- Game Starter Screen -->
+    <!-- Game Starter Screen (Tanpa Fitur Nama) -->
     <section id="gamestarting">
         <div class="container">
             <div class="row">
@@ -436,12 +433,8 @@
                             <img src="//ahmedkorim.github.io/udamemoerygame/img/loading.gif" alt="loading">
                         </div>
                         <h1>Matching Card Game</h1>
-                        <p>Enter name, choose card set, & press start</p>
+                        <p>Select Card Category & Press Start</p>
                         <div class="callToAction" id="newplayer">
-                            <div class="AK-btn">
-                                <input type="text" id="palyername" value="Player 1" placeholder="Enter your name" tabindex="0">
-                            </div>
-                            <p>Select Card Category:</p>
                             <div class="chose">
                                 <div class="chose-item active" data-type="pakemonGo" title="pakemonGo cards" tabindex="0">
                                     <span class="chose-icon"><i class="fa fa-check-square"></i></span>
@@ -478,7 +471,7 @@
                     <div class="col">
                         <div class="modal-body">
                             <div class="modal-content text-center">
-                                <p>Congratulations <span id="playername"></span>, you won!</p>
+                                <p>Congratulations, You Won!</p>
                                 <ul class="stars" style="justify-content: center; margin-bottom: 2vh;">
                                     <li><i class="fa fa-star"></i></li>
                                     <li><i class="fa fa-star"></i></li>
@@ -541,11 +534,10 @@
             };
         })();
 
-        function creatProfile(playerName, gameType, cards) {
-            const data = (function (playerName, gameType, cards) {
+        function creatProfile(gameType, cards) {
+            const data = (function (gameType, cards) {
                 class gameState {
                     constructor() {
-                        this.playerName = playerName;
                         this.moves = 0;
                         this.level = 0;
                         this.gameType = gameType;
@@ -631,7 +623,7 @@
                 }
 
                 return { gameState };
-            })(playerName, gameType, cards);
+            })(gameType, cards);
 
             return { data, current: null };
         }
@@ -813,7 +805,6 @@
                 window.current.plusTry();
                 window.current.addMatched();
                 if (window.current.matched === 8) {
-                    document.querySelector('#playername').innerHTML = window.current.playerName;
                     ui.updateRate();
                     ui.showNow();
                 }
@@ -873,12 +864,11 @@
             });
 
             document.querySelector("#startTheGame").addEventListener('click', function (e) {
-                let playername = document.getElementById("palyername");
-                if (playername.value !== "" && gameStarter.querySelector(".active")) {
+                if (gameStarter.querySelector(".active")) {
                     let gameType = gameStarter.querySelector(".active").getAttribute("data-type");
                     let data = featch.getData();
                     data.then(function (data) {
-                        const gameObject = creatProfile(playername.value, gameType, data);
+                        const gameObject = creatProfile(gameType, data);
                         gameObject.current = new gameObject.data.gameState();
                         const current = gameObject.current;
                         window.current = current;
@@ -896,7 +886,7 @@
                         exe();
                     });
                 } else {
-                    alert("Pastikan nama sudah diisi dan kategori kartu telah dipilih!");
+                    alert("Silakan pilih kategori kartu terlebih dahulu!");
                 }
             });
         }
@@ -923,7 +913,7 @@
                 return Array.from(document.querySelectorAll("#play-again, #btn-result-menu"));
             }
             if (document.querySelector("#gamestarting").style.display !== "none") {
-                return Array.from(document.querySelectorAll("#palyername, .chose-item, #startTheGame"));
+                return Array.from(document.querySelectorAll(".chose-item, #startTheGame"));
             }
             if (document.querySelector("main").style.display === "block") {
                 return Array.from(document.querySelectorAll("#btn-back-menu, #btn-restart-game, .deck .card"));
