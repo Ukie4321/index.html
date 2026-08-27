@@ -1,995 +1,966 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
-	<title>Maintenance - Moota.co</title>
-	<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Permanent+Marker">
-	<style type="text/css">
-		* {
-			box-sizing: border-box;
-		}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matching Card Game - STB Compatible</title>
+    
+    <!-- External Dependencies: Font Awesome & Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
 
-		html, body {
-			width: 100vw;
-			height: 100vh;
-			margin: 0;
-			padding: 0;
-			background-color: black;
-			overflow: hidden;
-			display: flex;
-			flex-direction: column;
-			align-items: center;
-			justify-content: space-around;
-			font-family: sans-serif;
-		}
+    <style>
+        /* CSS & Layout */
+        :root {
+          font-size: 14px;
+        }
+        @media (max-width: 400px) {
+          :root {
+            font-size: 12px;
+          }
+        }
 
-		#shim {
-			font-family: 'Permanent Marker', cursive;
-			position: absolute;
-			visibility: hidden;
-		}
+        * {
+          box-sizing: border-box;
+        }
 
-		.header-container {
-			text-align: center;
-			margin-top: 5px;
-		}
+        body {
+          font-family: Arial, sans-serif;
+          background-image: url("//ahmedkorim.github.io/udamemoerygame/img/geometry2.png"), linear-gradient(45deg, rgba(46, 61, 73, 0.6), rgba(46, 61, 73, 0.5));
+          background-blend-mode: overlay;
+          height: 100vh;
+          margin: 0;
+        }
 
-		h1 {
-			font-family: 'Permanent Marker', cursive;
-			text-align: center;
-			color: yellow;
-			margin: 0;
-			font-size: 5vh;
-		}
+        main {
+          display: none;
+        }
 
-		p.sub-title {
-			color: #4D90FE;
-			text-align: center;
-			margin: 5px 0 0 0;
-			font-size: 2.5vh;
-		}
+        .container {
+          margin: auto;
+          padding: 0 15px;
+        }
+        @media (min-width: 320px) {
+          .container {
+            width: 100%;
+          }
+        }
+        @media (min-width: 720px) {
+          .container {
+            width: 720px;
+          }
+        }
+        @media (min-width: 920px) {
+          .container {
+            width: 920px;
+          }
+        }
+        @media (min-width: 1200px) {
+          .container {
+            width: 1200px;
+          }
+        }
 
-		p.instruction {
-			color: #00FF00;
-			font-size: 2.2vh;
-			margin: 5px 0 0 0;
-			font-weight: bold;
-		}
+        .row {
+          display: flex;
+          margin: 0 -15px;
+          align-items: center;
+          align-content: center;
+        }
 
-		#pacman {
-			display: flex;
-			justify-content: center;
-			align-items: center;
-			width: 100%;
-			height: 78vh; /* Menggunakan mayoritas tinggi layar TV */
-		}
+        .AK-btn {
+          position: relative;
+          width: 50%;
+          margin: auto;
+        }
+        .AK-btn button, .AK-btn input {
+          box-shadow: -2px 7px 20px 2px rgba(46, 61, 73, 0.35);
+          border-radius: 20px;
+          color: #FFFFFF;
+          outline: none;
+          border: none;
+          display: block;
+          font-size: 1.5rem;
+          padding: 0.5rem 0.25rem;
+          width: 100%;
+          transition: all 0.6s ease-in-out;
+          background-color: #2e3d49;
+        }
+        .AK-btn button[type=text], .AK-btn input[type=text] {
+          text-align: center;
+        }
+        .AK-btn button, .AK-btn input[type=submit] {
+          cursor: pointer;
+        }
+        .AK-btn button:hover, .AK-btn button:focus, .AK-btn button:active, 
+        .AK-btn input[type=submit]:hover, .AK-btn input[type=submit]:focus, .AK-btn input[type=submit]:active {
+          box-shadow: -2px 7px 20px 2px rgba(255, 255, 255, 0.05);
+          background-color: #e3e3e3;
+          color: #2e3d49;
+        }
 
-		canvas {
-			height: 100% !important; /* Memaksa Canvas memenuhi area 78vh */
-			width: auto !important;   /* Menjaga proporsi (rasio) game agar tidak terdistorsi */
-			box-shadow: 0 0 20px rgba(255, 255, 0, 0.2);
-		}
-	</style>
+        .stars {
+          padding: 0;
+          margin-right: auto;
+          display: block;
+          list-style: none;
+          flex-wrap: nowrap;
+        }
+        .stars li {
+          color: gold;
+          display: inline-block;
+        }
+
+        .text-center {
+          text-align: center;
+        }
+
+        .img-resposive {
+          max-width: 90%;
+          pointer-events: none; /* Mencegah gambar mengganggu event click */
+        }
+
+        header .col {
+          width: 100%;
+        }
+        header h1 {
+          text-align: center;
+          color: #fff;
+        }
+
+        .score-panel .wraper, #result .modal-body, #gamestarting .wraper {
+          justify-content: center;
+          align-items: center;
+          margin: auto;
+          display: flex;
+          width: 100%;
+        }
+        @media (min-width: 520px) {
+          .score-panel .wraper, #result .modal-body, #gamestarting .wraper {
+            width: 80%;
+          }
+        }
+        @media (min-width: 680px) {
+          .score-panel .wraper, #result .modal-body, #gamestarting .wraper {
+            width: 70%;
+          }
+        }
+        @media (min-width: 950px) {
+          .score-panel .wraper, #result .modal-body, #gamestarting .wraper {
+            width: 60%;
+          }
+        }
+        @media (min-width: 1200px) {
+          .score-panel .wraper, #result .modal-body, #gamestarting .wraper {
+            width: 50%;
+          }
+        }
+
+        .score-panel .col {
+          padding: 1%;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          color: #fff;
+        }
+        @media (max-width: 400px) {
+          .score-panel .col {
+            font-size: 0.7rem;
+          }
+        }
+        .score-panel .col:first-of-type, .score-panel .col:nth-of-type(2) {
+          width: 50%;
+        }
+        .score-panel .restart {
+          overflow: hidden;
+          margin-left: 3rem;
+          cursor: pointer;
+          padding: 5px 10px;
+          border-radius: 8px;
+        }
+        .score-panel .moves {
+          margin: auto;
+        }
+
+        .card-home {
+          padding-bottom: 50px;
+        }
+        .card-home .col {
+          width: 50%;
+        }
+        .card-home .deck, #gamestarting .wraper, #result .modal-content {
+          background: linear-gradient(160deg, #02ccba 0%, #aa7ecd 100%);
+          border-radius: 10px;
+          box-shadow: 12px 15px 20px 0 rgba(46, 61, 73, 0.5);
+          padding: 2%;
+          width: 100%;
+          margin: auto;
+        }
+        @media (min-width: 520px) {
+          .card-home .deck, #gamestarting .wraper, #result .modal-content { width: 80%; }
+        }
+        @media (min-width: 680px) {
+          .card-home .deck, #gamestarting .wraper, #result .modal-content { width: 70%; }
+        }
+        @media (min-width: 950px) {
+          .card-home .deck, #gamestarting .wraper, #result .modal-content { width: 60%; }
+        }
+        @media (min-width: 1200px) {
+          .card-home .deck, #gamestarting .wraper, #result .modal-content { width: 50%; }
+        }
+
+        .card-home .deck {
+          display: flex;
+          flex-wrap: wrap;
+          justify-content: space-between;
+          align-items: center;
+          list-style: none;
+        }
+        .card-home .deck li.card, #gamestarting .callToAction .chose .chose-item {
+          background: #2e3d49;
+          color: #2e3d49;
+          border-radius: 8px;
+          cursor: pointer;
+          box-shadow: 5px 2px 20px 0 rgba(46, 61, 73, 0.5);
+        }
+        .card-home .deck li.card {
+          font-size: 0;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          padding: 2%;
+          width: 20%;
+          margin: 1.66667%;
+        }
+        .card-home .deck li.card .img-resposive {
+          visibility: hidden;
+        }
+        .card-home .deck li.card.open {
+          transform: rotateY(0);
+          background: #ffffff;
+          cursor: default;
+        }
+        .card-home .deck li.card.show {
+          font-size: 33px;
+        }
+        .card-home .deck li.card.show .img-resposive {
+          visibility: visible;
+        }
+        .card-home .deck li.card.match {
+          cursor: default;
+          background: #02ccba;
+          font-size: 33px;
+        }
+        .card-home .deck li.card.wrong {
+          background: #e5534d;
+        }
+
+        #gamestarting {
+          text-align: center;
+        }
+        #gamestarting .row {
+          justify-content: center;
+          align-items: center;
+        }
+        #gamestarting p {
+          text-align: center;
+          font-size: 1.4rem;
+        }
+        #gamestarting .col {
+          width: 100%;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          height: 100vh;
+        }
+        #gamestarting .wraper {
+          position: relative;
+          padding: 2rem 1rem;
+          flex-direction: column;
+        }
+        #gamestarting .loading {
+          position: absolute;
+          width: 100%;
+          height: 100%;
+          border-radius: 12px;
+          top: 0;
+          left: 0;
+          background-color: #fff;
+          overflow: hidden;
+          z-index: -1;
+        }
+        #gamestarting .loading img {
+          display: block;
+          width: 100%;
+        }
+        #gamestarting .callToAction {
+          margin: auto;
+          width: 100%;
+        }
+        @media (min-width: 450px) {
+          #gamestarting .callToAction {
+            width: 70%;
+          }
+        }
+        #gamestarting .callToAction .chose {
+          display: flex;
+          flex-wrap: wrap;
+          justify-content: space-between;
+          align-items: center;
+          width: 90%;
+          margin: auto;
+        }
+        #gamestarting .callToAction .chose .chose-item {
+          position: relative;
+          width: 40%;
+          margin: 5%;
+          padding: 5%;
+          display: block;
+        }
+        #gamestarting .callToAction .chose .chose-item.active .chose-icon {
+          opacity: 1;
+        }
+        #gamestarting .callToAction .chose .chose-item .chose-icon {
+          transition: all 0.3s ease-in-out;
+          position: absolute;
+          top: 0.1rem;
+          left: 0.3rem;
+          font-size: 1.5rem;
+          opacity: 0;
+          color: #1aee1a;
+        }
+
+        #result {
+          overflow: hidden;
+          background-color: rgba(0, 0, 0, 0.7);
+          height: 100vh;
+          width: 100%;
+          position: fixed;
+          top: 0;
+          left: 0;
+          display: none;
+        }
+        #result.active {
+          display: block;
+        }
+        #result .col {
+          width: 100%;
+        }
+        #result .modal {
+          transition: all 1s ease-in-out;
+          transform: translate(2000px);
+          height: 100vh;
+          display: flex;
+          align-items: center;
+        }
+        #result p {
+          font-size: 1.5rem;
+        }
+        #result ul {
+          font-size: 1.8rem;
+        }
+        #result .modal-content {
+          padding-top: 10%;
+          padding-bottom: 10%;
+          width: 100%;
+        }
+
+        /* STB Focus Outline Styling */
+        .stb-focused {
+          outline: 5px solid #FFD700 !important;
+          outline-offset: 3px !important;
+          box-shadow: 0 0 20px #FFD700 !important;
+        }
+    </style>
 </head>
 <body>
-	<div id="shim">shim for font face</div>
-	<div class="header-container">
-		<h1>PAC-MAN</h1>
-		<p class="sub-title"></p>
-		<p class="instruction"></p>
-	</div>
-	
-	<div id="pacman"></div>
 
-	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js"></script>
-	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
-	<script type="text/javascript">
-/*jslint browser: true, undef: true, eqeqeq: true, nomen: true, white: true */
-/*global window: false, document: false */
+    <!-- Main Game Section -->
+    <main>
+        <header>
+            <div class="container">
+                <div class="row">
+                    <div class="col">
+                        <h1 id="player-name"></h1>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <section class="score-panel">
+            <div class="container">
+                <div class="row">
+                    <div class="wraper">
+                        <div class="col">
+                            <ul class="stars">
+                                <li><i class="fa fa-star"></i></li>
+                                <li><i class="fa fa-star"></i></li>
+                                <li><i class="fa fa-star"></i></li>
+                                <li><i class="fa fa-star"></i></li>
+                                <li><i class="fa fa-star"></i></li>
+                                <li><i class="fa fa-star"></i></li>
+                                <li><i class="fa fa-star"></i></li>
+                            </ul>
+                            <div class="timer">
+                                <span>00 : 00 : 00</span>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="restart" tabindex="0">
+                                <i class="fa fa-rotate-right"></i>
+                            </div>
+                            <div class="moves"> Moves : 0</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section class="card-home">
+            <div class="container game-body">
+                <div class="row game-wraper">
+                    <ul class="deck">
+                    </ul>
+                </div>
+            </div>
+        </section>
+    </main>
 
-var NONE        = 4,
-    UP          = 3,
-    LEFT        = 2,
-    DOWN        = 1,
-    RIGHT       = 11,
-    WAITING     = 5,
-    PAUSE       = 6,
-    PLAYING     = 7,
-    COUNTDOWN   = 8,
-    EATEN_PAUSE = 9,
-    DYING       = 10,
-    Pacman      = {};
+    <!-- Game Starter Screen -->
+    <section id="gamestarting">
+        <div class="container">
+            <div class="row">
+                <div class="col">
+                    <div class="wraper">
+                        <div class="loading">
+                            <img src="//ahmedkorim.github.io/udamemoerygame/img/loading.gif" alt="loading">
+                        </div>
+                        <h1>Welcome to Matching Card Game</h1>
+                        <p>Enter your name, choose game type and click start to play</p>
+                        <div class="callToAction" id="newplayer">
+                            <div class="AK-btn">
+                                <input type="text" id="palyername" value="skip" placeholder="Enter your name" tabindex="0">
+                            </div>
+                            <p>Now choose game cards you like</p>
+                            <div class="chose">
+                                <div class="chose-item active" data-type="pakemonGo" title="pakemonGo cards" tabindex="0">
+                                    <span class="chose-icon"><i class="fa fa-check-square"></i></span>
+                                    <img class="img-resposive" src="//ahmedkorim.github.io/udamemoerygame/img/pakemonGo/pikachu-2.svg" alt="pokemon">
+                                </div>
+                                <div class="chose-item" data-type="eduction" title="eduction cards" tabindex="0">
+                                    <span class="chose-icon"><i class="fa fa-check-square"></i></span>
+                                    <img class="img-resposive" src="//ahmedkorim.github.io/udamemoerygame/img/eduction/eraser.svg" alt="education">
+                                </div>
+                                <div class="chose-item" data-type="socialicons" title="socialicons cards" tabindex="0">
+                                    <span class="chose-icon"><i class="fa fa-check-square"></i></span>
+                                    <img class="img-resposive" src="//ahmedkorim.github.io/udamemoerygame/img/socialicons/008-twitter.svg" alt="twitter">
+                                </div>
+                                <div class="chose-item" data-type="icons" title="icons cards" tabindex="0">
+                                    <span class="chose-icon"><i class="fa fa-check-square"></i></span>
+                                    <img class="img-resposive" src="//ahmedkorim.github.io/udamemoerygame/img/socialicons/012-spotify.svg" alt="spotify">
+                                </div>
+                            </div>
+                            <div class="AK-btn">
+                                <input type="submit" value="start" class="AK-btn" id="startTheGame" tabindex="0">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-Pacman.FPS = 30;
+    <!-- Game Result Modal Screen -->
+    <section id="result">
+        <div class="modal">
+            <div class="container">
+                <div class="row">
+                    <div class="col">
+                        <div class="modal-body">
+                            <div class="modal-content text-center">
+                                <p>Congratulations <span id="playername"></span>, you made it!</p>
+                                <ul class="stars">
+                                    <li><i class="fa fa-star"></i></li>
+                                    <li><i class="fa fa-star"></i></li>
+                                    <li><i class="fa fa-star"></i></li>
+                                    <li><i class="fa fa-star"></i></li>
+                                    <li><i class="fa fa-star"></i></li>
+                                    <li><i class="fa fa-star"></i></li>
+                                    <li><i class="fa fa-star"></i></li>
+                                </ul>
+                                <div class="AK-btn"><button id="play-again" tabindex="0">Play Again</button></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-Pacman.Ghost = function (game, map, colour) {
-    var position  = null,
-        direction = null,
-        eatable   = null,
-        eaten     = null,
-        due       = null;
-    
-    function getNewCoord(dir, current) { 
-        var speed  = isVunerable() ? 1 : isHidden() ? 4 : 2,
-            xSpeed = (dir === LEFT && -speed || dir === RIGHT && speed || 0),
-            ySpeed = (dir === DOWN && speed || dir === UP && -speed || 0);
-    
-        return {
-            "x": addBounded(current.x, xSpeed),
-            "y": addBounded(current.y, ySpeed)
-        };
-    };
+    <!-- JavaScript Engine -->
+    <script>
+        let lock = 0, star;
 
-    function addBounded(x1, x2) { 
-        var rem    = x1 % 10, 
-            result = rem + x2;
-        if (rem !== 0 && result > 10) {
-            return x1 + (10 - rem);
-        } else if(rem > 0 && result < 0) { 
-            return x1 - rem;
-        }
-        return x1 + x2;
-    };
-    
-    function isVunerable() { return eatable !== null; };
-    function isDangerous() { return eaten === null; };
-    function isHidden() { return eatable === null && eaten !== null; };
-    
-    function getRandomDirection() {
-        var moves = (direction === LEFT || direction === RIGHT) 
-            ? [UP, DOWN] : [LEFT, RIGHT];
-        return moves[Math.floor(Math.random() * 2)];
-    };
-    
-    function reset() {
-        eaten = null;
-        eatable = null;
-        position = {"x": 90, "y": 80};
-        direction = getRandomDirection();
-        due = getRandomDirection();
-    };
-    
-    function onWholeSquare(x) { return x % 10 === 0; };
-    
-    function oppositeDirection(dir) { 
-        return dir === LEFT && RIGHT ||
-            dir === RIGHT && LEFT ||
-            dir === UP && DOWN || UP;
-    };
-
-    function makeEatable() {
-        direction = oppositeDirection(direction);
-        eatable = game.getTick();
-    };
-
-    function eat() { 
-        eatable = null;
-        eaten = game.getTick();
-    };
-
-    function pointToCoord(x) { return Math.round(x / 10); };
-
-    function nextSquare(x, dir) {
-        var rem = x % 10;
-        if (rem === 0) { 
-            return x; 
-        } else if (dir === RIGHT || dir === DOWN) { 
-            return x + (10 - rem);
-        } else {
-            return x - rem;
-        }
-    };
-
-    function onGridSquare(pos) { return onWholeSquare(pos.y) && onWholeSquare(pos.x); };
-    function secondsAgo(tick) { return (game.getTick() - tick) / Pacman.FPS; };
-
-    function getColour() { 
-        if (eatable) { 
-            if (secondsAgo(eatable) > 5) { 
-                return game.getTick() % 20 > 10 ? "#FFFFFF" : "#0000BB";
-            } else { 
-                return "#0000BB";
+        const featch = (function () {
+            async function getData() {
+                const data = await fetch("https://ahmedkorim.github.io/udamemoerygame/remotedata.json");
+                const list = await data.json();
+                return list;
             }
-        } else if(eaten) { 
-            return "#222";
-        } 
-        return colour;
-    };
+            return { getData };
+        })();
 
-    function draw(ctx) {
-        var s    = map.blockSize, 
-            top  = (position.y/10) * s,
-            left = (position.x/10) * s;
-    
-        if (eatable && secondsAgo(eatable) > 8) { eatable = null; }
-        if (eaten && secondsAgo(eaten) > 3) { eaten = null; }
-        
-        var tl = left + s;
-        var base = top + s - 3;
-        var inc = s / 10;
-        var high = game.getTick() % 10 > 5 ? 3  : -3;
-        var low  = game.getTick() % 10 > 5 ? -3 : 3;
-
-        ctx.fillStyle = getColour();
-        ctx.beginPath();
-        ctx.moveTo(left, base);
-        ctx.quadraticCurveTo(left, top, left + (s/2),  top);
-        ctx.quadraticCurveTo(left + s, top, left+s,  base);
-        ctx.quadraticCurveTo(tl-(inc*1), base+high, tl - (inc * 2),  base);
-        ctx.quadraticCurveTo(tl-(inc*3), base+low, tl - (inc * 4),  base);
-        ctx.quadraticCurveTo(tl-(inc*5), base+high, tl - (inc * 6),  base);
-        ctx.quadraticCurveTo(tl-(inc*7), base+low, tl - (inc * 8),  base); 
-        ctx.quadraticCurveTo(tl-(inc*9), base+high, tl - (inc * 10), base); 
-        ctx.closePath();
-        ctx.fill();
-
-        ctx.beginPath();
-        ctx.fillStyle = "#FFF";
-        ctx.arc(left + (s/3), top + (s/3), s / 6, 0, Math.PI * 2, false);
-        ctx.arc((left + s) - (s/3), top + (s/3), s / 6, 0, Math.PI * 2, false);
-        ctx.closePath();
-        ctx.fill();
-
-        var f = s / 12;
-        var off = {};
-        off[RIGHT] = [f, 0];
-        off[LEFT]  = [-f, 0];
-        off[UP]    = [0, -f];
-        off[DOWN]  = [0, f];
-
-        ctx.beginPath();
-        ctx.fillStyle = "#000";
-        ctx.arc(left+(s/3)+off[direction][0], top+(s/3)+off[direction][1], s / 15, 0, Math.PI * 2, false);
-        ctx.arc((left+s)-(s/3)+off[direction][0], top+(s/3)+off[direction][1], s / 15, 0, Math.PI * 2, false);
-        ctx.closePath();
-        ctx.fill();
-    };
-
-    function pane(pos) {
-        if (pos.y === 100 && pos.x >= 190 && direction === RIGHT) { return {"y": 100, "x": -10}; }
-        if (pos.y === 100 && pos.x <= -10 && direction === LEFT) { return position = {"y": 100, "x": 190}; }
-        return false;
-    };
-    
-    function move(ctx) {
-        var oldPos = position,
-            onGrid = onGridSquare(position),
-            npos   = null;
-        
-        if (due !== direction) {
-            npos = getNewCoord(due, position);
-            if (onGrid && map.isFloorSpace({"y":pointToCoord(nextSquare(npos.y, due)), "x":pointToCoord(nextSquare(npos.x, due))})) {
-                direction = due;
-            } else {
-                npos = null;
+        const cardsCreartor = (function () {
+            function getCareds(cards) {
+                let number = cards.length,
+                    randomCards = [],
+                    indexes = [],
+                    rand;
+                for (let i = 0; i < number; i++) {
+                    rand = Math.floor(Math.random() * number);
+                    if (!indexes.includes(rand) && randomCards.length <= cards.length) {
+                        indexes.push(rand);
+                        randomCards[i] = cards[rand];
+                    } else {
+                        i--;
+                    }
+                }
+                return randomCards;
             }
-        }
-        
-        if (npos === null) { npos = getNewCoord(direction, position); }
-        
-        if (onGrid && map.isWallSpace({"y" : pointToCoord(nextSquare(npos.y, direction)), "x" : pointToCoord(nextSquare(npos.x, direction))})) {
-            due = getRandomDirection();            
-            return move(ctx);
-        }
 
-        position = npos;        
-        var tmp = pane(position);
-        if (tmp) { position = tmp; }
-        
-        due = getRandomDirection();
-        return {"new" : position, "old" : oldPos};
-    };
-    
-    return {
-        "eat": eat, "isVunerable": isVunerable, "isDangerous": isDangerous,
-        "makeEatable": makeEatable, "reset": reset, "move": move, "draw": draw
-    };
-};
-
-Pacman.User = function (game, map) {
-    var position  = null, direction = null, eaten = null, due = null, 
-        lives = null, score = 5, keyMap = {};
-    
-    keyMap[KEY.ARROW_LEFT]  = LEFT;
-    keyMap[KEY.ARROW_UP]    = UP;
-    keyMap[KEY.ARROW_RIGHT] = RIGHT;
-    keyMap[KEY.ARROW_DOWN]  = DOWN;
-    keyMap[KEY.DPAD_LEFT]   = LEFT;
-    keyMap[KEY.DPAD_UP]     = UP;
-    keyMap[KEY.DPAD_RIGHT]  = RIGHT;
-    keyMap[KEY.DPAD_DOWN]   = DOWN;
-
-    function addScore(nScore) { 
-        score += nScore;
-        if (score >= 10000 && score - nScore < 10000) { lives += 1; }
-    };
-    function theScore() { return score; };
-    function loseLife() { lives -= 1; };
-    function getLives() { return lives; };
-
-    function initUser() { score = 0; lives = 3; newLevel(); }
-    function newLevel() { resetPosition(); eaten = 0; };
-    function resetPosition() { position = {"x": 90, "y": 120}; direction = LEFT; due = LEFT; };
-    function reset() { initUser(); resetPosition(); };        
-    
-    function keyDown(e) {
-        if (typeof keyMap[e.keyCode] !== "undefined") { 
-            due = keyMap[e.keyCode];
-            e.preventDefault();
-            e.stopPropagation();
-            return false;
-        }
-        return true;
-	};
-
-    function getNewCoord(dir, current) {   
-        return {
-            "x": current.x + (dir === LEFT && -2 || dir === RIGHT && 2 || 0),
-            "y": current.y + (dir === DOWN && 2 || dir === UP    && -2 || 0)
-        };
-    };
-
-    function onWholeSquare(x) { return x % 10 === 0; };
-    function pointToCoord(x) { return Math.round(x/10); };
-    
-    function nextSquare(x, dir) {
-        var rem = x % 10;
-        if (rem === 0) { return x; }
-        else if (dir === RIGHT || dir === DOWN) { return x + (10 - rem); }
-        else { return x - rem; }
-    };
-
-    function next(pos, dir) {
-        return {
-            "y" : pointToCoord(nextSquare(pos.y, dir)),
-            "x" : pointToCoord(nextSquare(pos.x, dir)),
-        };                               
-    };
-
-    function onGridSquare(pos) { return onWholeSquare(pos.y) && onWholeSquare(pos.x); };
-
-    function isOnSamePlane(due, dir) { 
-        return ((due === LEFT || due === RIGHT) && (dir === LEFT || dir === RIGHT)) || 
-            ((due === UP || due === DOWN) && (dir === UP || dir === DOWN));
-    };
-
-    function move(ctx) {
-        var npos = null, nextWhole = null, oldPosition = position, block = null;
-        
-        if (due !== direction) {
-            npos = getNewCoord(due, position);
-            if (isOnSamePlane(due, direction) || (onGridSquare(position) && map.isFloorSpace(next(npos, due)))) {
-                direction = due;
-            } else {
-                npos = null;
+            function eventLoeder(deck) {
+                deck.addEventListener("click", function (e) {
+                    game.runer(e);
+                });
             }
+
+            return {
+                getCards: getCareds,
+                eventLoeder
+            };
+        })();
+
+        function creatProfile(playerName, gameType, cards) {
+            const data = (function (playerName, gameType, cards) {
+                class gameState {
+                    constructor() {
+                        this.playerName = playerName;
+                        this.moves = 0;
+                        this.level = 0;
+                        this.gameType = gameType;
+                        this.time = {seconds: 0, minutes: 0, hours: 0};
+                        this.interval = null;
+                        this.deck = ui.gttingDeck();
+                        this.gameData = null;
+                        this.intialHtml = null;
+                        this.initialRate = document.querySelector('.stars').innerHTML;
+                        this.curentRate = document.querySelector(".stars").children.length;
+                        this.matched = 0;
+                    }
+
+                    addMatched() {
+                        this.matched += 1;
+                    }
+
+                    levelUp() {
+                        this.level += 1;
+                    }
+
+                    addMove() {
+                        this.moves += 1;
+                        ui.moverUpdate();
+                    }
+
+                    timer() {
+                        const time = this.time;
+                        this.interval = setInterval(function () {
+                            if (time.seconds < 59) {
+                                time.seconds++;
+                            } else if (time.seconds === 59) {
+                                time.seconds = 0;
+                                if (time.minutes <= 59) {
+                                    time.minutes++;
+                                } else {
+                                    time.minutes = 0;
+                                    time.hours++;
+                                }
+                            }
+                            ui.timerUpdate(time);
+                        }, 1000);
+                    }
+
+                    gameHtml() {
+                        this.gameData = this.deck.innerHTML;
+                    }
+
+                    sethtml(cardsData) {
+                        this.gameData = cardsData;
+                        let cardsArr = cardsData[this.gameType];
+                        cardsArr = cardsCreartor.getCards(cardsArr);
+                        
+                        // Buat elemen parser untuk menambahkan tabindex pada string HTML kartu
+                        let tempDiv = document.createElement('div');
+                        let placeHodlder = "";
+                        cardsArr.forEach(function (i) {
+                            placeHodlder += i;
+                        });
+                        tempDiv.innerHTML = placeHodlder;
+                        
+                        // Memastikan setiap elemen kartu memiliki atribut tabindex="0"
+                        tempDiv.querySelectorAll('li').forEach(li => {
+                            li.setAttribute('tabindex', '0');
+                        });
+                        
+                        this.intialHtml = tempDiv.innerHTML;
+                    }
+
+                    rating() {
+                        if (this.moves / 9 > 1 && this.curentRate > 1) {
+                            this.curentRate--;
+                            ui.rate(this.curentRate);
+                        }
+                    }
+
+                    plusTry() {
+                        if (this.moves / 9 > 1 && this.curentRate <= 8) {
+                            this.curentRate++;
+                            star = document.createElement("li");
+                            star.innerHTML = '<i class="fa fa-star"></i>';
+                            document.querySelector("ul.stars").appendChild(star);
+                        }
+                    }
+                }
+
+                return { gameState };
+            })(playerName, gameType, cards);
+
+            return { data, current: null };
         }
 
-        if (npos === null) { npos = getNewCoord(direction, position); }
-        if (onGridSquare(position) && map.isWallSpace(next(npos, direction))) { direction = NONE; }
-        if (direction === NONE) { return {"new" : position, "old" : position}; }
-        
-        if (npos.y === 100 && npos.x >= 190 && direction === RIGHT) { npos = {"y": 100, "x": -10}; }
-        if (npos.y === 100 && npos.x <= -12 && direction === LEFT) { npos = {"y": 100, "x": 190}; }
-        
-        position = npos;        
-        nextWhole = next(position, direction);
-        block = map.block(nextWhole);        
-        
-        if ((isMidSquare(position.y) || isMidSquare(position.x)) && (block === Pacman.BISCUIT || block === Pacman.PILL)) {
-            map.setBlock(nextWhole, Pacman.EMPTY);           
-            addScore((block === Pacman.BISCUIT) ? 10 : 50);
-            eaten += 1;
-            if (eaten === 182) { game.completedLevel(); }
-            if (block === Pacman.PILL) { game.eatenPill(); }
-        }   
+        const ui = (function () {
+            function updateRate() {
+                let data = document.querySelector('.stars').innerHTML;
+                if(window.current) window.current.initialRate = data;
+                document.querySelector('#result .stars').innerHTML = data;
+            }
+
+            document.querySelector('.restart').addEventListener('click', function () {
+                ui.playAgain();
+            });
+
+            function hideNow() {
+                document.querySelector('.modal').style.transform = "translate(2000px)";
+                setTimeout(function () {
+                    document.querySelector('#result').className = "";
+                }, 600);
+            }
+
+            function showNow() {
+                document.querySelector('#play-again').addEventListener('click', function () {
+                    ui.hideNow();
+                    ui.playAgain();
+                });
+
+                document.querySelector('#result').className = "active";
+                document.querySelector('.modal').style.transform = "translate(0px)";
+                setTimeout(() => {
+                    activeFocusIndex = 0;
+                    updateFocus(getFocusableElements());
+                }, 700);
+            }
+
+            function gameOver(state) {
+                ui.showNow();
+            }
+
+            function playAgain() {
+                document.querySelector(".stars").innerHTML = window.current.initialRate;
+                clearInterval(window.current.interval);
+                lock = 0;
+                window.current.moves = 0;
+                ui.moverUpdate();
+                window.current.level = 0;
+                window.current.time = {seconds: 0, minutes: 0, hours: 0};
+                ui.timerUpdate(window.current.time);
+                window.current.interval = void 0;
+                game.currentClicked = [];
+                window.current.matched = 0;
+                window.current.sethtml(window.current.gameData);
+                ui.drow(window.current.intialHtml);
+            }
+
+            function rate(starIndex) {
+                document.querySelector(".stars").children[starIndex]?.remove();
+            }
+
+            function gttingDeck() {
+                return document.querySelector(".deck");
+            }
+
+            function drow(html) {
+                let deck = gttingDeck();
+                deck.innerHTML = "";
+                deck.innerHTML = html;
+                document.querySelector("#player-name").innerHTML = `${window.current.gameType} Matching`;
                 
-        return {"new" : position, "old" : oldPosition};
-    };
-
-    function isMidSquare(x) { var rem = x % 10; return rem > 3 || rem < 7; };
-
-    function calcAngle(dir, pos) { 
-        if (dir == RIGHT && (pos.x % 10 < 5)) { return {"start":0.25, "end":1.75, "direction": false}; }
-        else if (dir === DOWN && (pos.y % 10 < 5)) { return {"start":0.75, "end":2.25, "direction": false}; }
-        else if (dir === UP && (pos.y % 10 < 5)) { return {"start":1.25, "end":1.75, "direction": true}; }
-        else if (dir === LEFT && (pos.x % 10 < 5)) { return {"start":0.75, "end":1.25, "direction": true}; }
-        return {"start":0, "end":2, "direction": false};
-    };
-
-    function drawDead(ctx, amount) { 
-        var size = map.blockSize, half = size / 2;
-        if (amount >= 1) { return; }
-
-        ctx.fillStyle = "#FFFF00";
-        ctx.beginPath();        
-        ctx.moveTo(((position.x/10) * size) + half, ((position.y/10) * size) + half);
-        ctx.arc(((position.x/10) * size) + half, ((position.y/10) * size) + half, half, 0, Math.PI * 2 * amount, true); 
-        ctx.fill();    
-    };
-
-    function draw(ctx) { 
-        var s = map.blockSize, angle = calcAngle(direction, position);
-        ctx.fillStyle = "#FFFF00";
-        ctx.beginPath();        
-        ctx.moveTo(((position.x/10) * s) + s / 2, ((position.y/10) * s) + s / 2);
-        ctx.arc(((position.x/10) * s) + s / 2, ((position.y/10) * s) + s / 2, s / 2, Math.PI * angle.start, Math.PI * angle.end, angle.direction); 
-        ctx.fill();    
-    };
-    
-    initUser();
-
-    return {
-        "draw": draw, "drawDead": drawDead, "loseLife": loseLife, "getLives": getLives,
-        "score": score, "addScore": addScore, "theScore": theScore, "keyDown": keyDown,
-        "move": move, "newLevel": newLevel, "reset": reset, "resetPosition": resetPosition
-    };
-};
-
-Pacman.Map = function (size) {
-    var height = null, width = null, blockSize = size, pillSize = 0, map = null;
-    
-    function withinBounds(y, x) { return y >= 0 && y < height && x >= 0 && x < width; }
-    function isWall(pos) { return withinBounds(pos.y, pos.x) && map[pos.y][pos.x] === Pacman.WALL; }
-    function isFloorSpace(pos) {
-        if (!withinBounds(pos.y, pos.x)) { return false; }
-        var peice = map[pos.y][pos.x];
-        return peice === Pacman.EMPTY || peice === Pacman.BISCUIT || peice === Pacman.PILL;
-    }
-    
-    function drawWall(ctx) {
-        var i, j, p, line;
-        ctx.strokeStyle = "#0000FF";
-        ctx.lineWidth   = Math.max(3, blockSize / 5);
-        ctx.lineCap     = "round";
-        
-        for (i = 0; i < Pacman.WALLS.length; i += 1) {
-            line = Pacman.WALLS[i];
-            ctx.beginPath();
-            for (j = 0; j < line.length; j += 1) {
-                p = line[j];
-                if (p.move) { ctx.moveTo(p.move[0] * blockSize, p.move[1] * blockSize); }
-                else if (p.line) { ctx.lineTo(p.line[0] * blockSize, p.line[1] * blockSize); }
-                else if (p.curve) { ctx.quadraticCurveTo(p.curve[0] * blockSize, p.curve[1] * blockSize, p.curve[2] * blockSize, p.curve[3] * blockSize); }
-            }
-            ctx.stroke();
-        }
-    }
-    
-    function reset() {       
-        map    = Pacman.MAP.clone();
-        height = map.length;
-        width  = map[0].length;        
-    };
-
-    function block(pos) { return map[pos.y][pos.x]; };
-    function setBlock(pos, type) { map[pos.y][pos.x] = type; };
-
-    function drawPills(ctx) { 
-        if (++pillSize > 30) { pillSize = 0; }
-        for (var i = 0; i < height; i += 1) {
-		    for (var j = 0; j < width; j += 1) {
-                if (map[i][j] === Pacman.PILL) {
-                    ctx.beginPath();
-                    ctx.fillStyle = "#000";
-		            ctx.fillRect((j * blockSize), (i * blockSize), blockSize, blockSize);
-                    ctx.fillStyle = "#FFF";
-                    ctx.arc((j * blockSize) + blockSize / 2, (i * blockSize) + blockSize / 2, Math.abs((blockSize/3) - (pillSize/6)), 0, Math.PI * 2, false); 
-                    ctx.fill();
-                    ctx.closePath();
+                const cardEl = document.querySelector('.card');
+                if (cardEl) {
+                    const height = parseInt(getComputedStyle(cardEl).width.slice(0, -2));
+                    deck.querySelectorAll('.card').forEach(function (i) {
+                        i.setAttribute('tabindex', '0');
+                        i.style.height = height + "px";
+                    });
                 }
-		    }
-	    }
-    };
-    
-    function draw(ctx) {
-        var i, j, size = blockSize;
-        ctx.fillStyle = "#000";
-	    ctx.fillRect(0, 0, width * size, height * size);
-        drawWall(ctx);
-        for (i = 0; i < height; i += 1) {
-		    for (j = 0; j < width; j += 1) { drawBlock(i, j, ctx); }
-	    }
-    };
-    
-    function drawBlock(y, x, ctx) {
-        var layout = map[y][x];
-        if (layout === Pacman.PILL) { return; }
-        ctx.beginPath();
-        if (layout === Pacman.EMPTY || layout === Pacman.BLOCK || layout === Pacman.BISCUIT) {
-            ctx.fillStyle = "#000";
-		    ctx.fillRect((x * blockSize), (y * blockSize), blockSize, blockSize);
+                
+                cardsCreartor.eventLoeder(deck);
+                
+                // Set fokus remote ke elemen kartu pertama
+                setTimeout(() => {
+                    activeFocusIndex = 0;
+                    updateFocus(getFocusableElements());
+                }, 100);
+            }
 
-            if (layout === Pacman.BISCUIT) {
-                ctx.fillStyle = "#FFF";
-		        ctx.fillRect((x * blockSize) + (blockSize / 2.5), (y * blockSize) + (blockSize / 2.5), blockSize / 5, blockSize / 5);
-	        }
-        }
-        ctx.closePath();	 
-    };
+            function moverUpdate() {
+                document.querySelector(".moves").innerHTML = `Moves : ${window.current.moves}`;
+            }
 
-    reset();
-    return {
-        "draw": draw, "drawBlock": drawBlock, "drawPills": drawPills, "block": block,
-        "setBlock": setBlock, "reset": reset, "isWallSpace": isWall, "isFloorSpace": isFloorSpace,
-        "height": height, "width": width, "blockSize": blockSize
-    };
-};
+            function timerUpdate(time) {
+                const timer = document.querySelector('.timer span');
+                let time0 = {};
 
-Pacman.Audio = function(game) {
-    var files = [], endEvents = [], progressEvents = [], playing = [];
-    
-    function load(name, path, cb) { 
-        var f = files[name] = document.createElement("audio");
-        progressEvents[name] = function(event) { progress(event, name, cb); };
-        f.addEventListener("canplaythrough", progressEvents[name], true);
-        f.setAttribute("preload", "true");
-        f.setAttribute("autobuffer", "true");
-        f.setAttribute("src", path);
-        f.pause();        
-    };
+                for (let i in time) {
+                    time0[i] = time[i] < 10 ? "0" + time[i] : time[i];
+                }
 
-    function progress(event, name, callback) { 
-        if (event.loaded === event.total && typeof callback === "function") {
-            callback();
-            files[name].removeEventListener("canplaythrough", progressEvents[name], true);
-        }
-    };
+                timer.innerHTML = `${time0.hours} : ${time0.minutes} : ${time0.seconds}`;
+            }
 
-    function disableSound() {
-        for (var i = 0; i < playing.length; i++) { if (files[playing[i]]) files[playing[i]].pause(); }
-        playing = [];
-    };
+            function clicked(i) {
+                i.classList.add("animated", "flipInY", "open", "show");
+            }
 
-    function ended(name) { 
-        var i, tmp = [], found = false;
-        if(files[name]) { files[name].removeEventListener("ended", endEvents[name], true); }
-        for (i = 0; i < playing.length; i++) {
-            if (!found && playing[i]) { found = true; } 
-            else { tmp.push(playing[i]); }
-        }
-        playing = tmp;
-    };
+            function correct(i) {
+                i.classList.remove("shake", "wrong", "flipInY");
+                i.classList.add("animated", "match", "rubberBand", "open", "show");
+            }
 
-    function play(name) { 
-        if (!game.soundDisabled() && files[name]) {
-            endEvents[name] = function() { ended(name); };
-            playing.push(name);
-            files[name].addEventListener("ended", endEvents[name], true);
-            files[name].play();
-        }
-    };
+            function worong(i) {
+                i.classList.remove("flipInY");
+                i.classList.add("animated", "wrong", "shake", "open", "show");
+            }
 
-    function pause() { for (var i = 0; i < playing.length; i++) { if (files[playing[i]]) files[playing[i]].pause(); } };
-    function resume() { for (var i = 0; i < playing.length; i++) { if (files[playing[i]]) files[playing[i]].play(); } };
-    
-    return { "disableSound": disableSound, "load": load, "play": play, "pause": pause, "resume": resume };
-};
+            return {
+                drow,
+                gttingDeck,
+                clicked,
+                correct,
+                worong,
+                timerUpdate,
+                moverUpdate,
+                rate,
+                showNow,
+                hideNow,
+                updateRate,
+                playAgain,
+                gameOver
+            };
+        })();
 
-var PACMAN = (function () {
-    var state = WAITING, audio = null, ghosts = [], ghostSpecs = ["#00FFDE", "#FF0000", "#FFB8DE", "#FFB847"],
-        eatenCount = 0, level = 0, tick = 0, ghostPos, userPos, stateChanged = true, timerStart = null,
-        lastTime = 0, ctx = null, timer = null, map = null, user = null, stored = null;
+        const game = (function () {
+            let currentClicked = [];
 
-    function getTick() { return tick; };
+            function runer(even) {
+                ui.updateRate();
+                // Mengambil elemen kartu bahkan jika user mengklik child element-nya
+                let cardTarget = even.target.closest('.card');
+                
+                if (cardTarget && cardTarget.classList.contains("card")) {
+                    if (lock === 0) {
+                        lock = 1;
+                        window.current.timer();
+                    }
 
-    function drawScore(text, position) {
-        ctx.fillStyle = "#FFFFFF";
-        ctx.font      = Math.floor(map.blockSize * 0.8) + "px sans-serif";
-        ctx.fillText(text, (position["new"]["x"] / 10) * map.blockSize, ((position["new"]["y"] + 5) / 10) * map.blockSize);
-    }
-    
-    function dialog(text) {
-        ctx.fillStyle = "#FFFF00";
-        ctx.font      = Math.floor(map.blockSize * 0.85) + "px sans-serif";
-        var width = ctx.measureText(text).width,
-            x     = ((map.width * map.blockSize) - width) / 2;        
-        ctx.fillText(text, x, (map.height * map.blockSize / 2));
-    }
-
-    function soundDisabled() { return localStorage["soundDisabled"] === "true"; };
-    
-    function startLevel() {        
-        user.resetPosition();
-        for (var i = 0; i < ghosts.length; i += 1) { ghosts[i].reset(); }
-        audio.play("start");
-        timerStart = tick;
-        setState(COUNTDOWN);
-    }    
-
-    function startNewGame() {
-        setState(WAITING);
-        level = 1;
-        user.reset();
-        map.reset();
-        map.draw(ctx);
-        startLevel();
-    }
-
-    function keyDown(e) {
-        if (e.keyCode === KEY.N || e.keyCode === KEY.ENTER || e.keyCode === KEY.DPAD_CENTER) {
-            if (state === WAITING) { startNewGame(); }
-        } else if (e.keyCode === KEY.S) {
-            audio.disableSound();
-            localStorage["soundDisabled"] = !soundDisabled();
-        } else if (e.keyCode === KEY.P && state === PAUSE) {
-            audio.resume();
-            map.draw(ctx);
-            setState(stored);
-        } else if (e.keyCode === KEY.P) {
-            stored = state;
-            setState(PAUSE);
-            audio.pause();
-            map.draw(ctx);
-            dialog("Paused");
-        } else if (state !== PAUSE) {   
-            return user.keyDown(e);
-        }
-        return true;
-    }    
-
-    function loseLife() {        
-        setState(WAITING);
-        user.loseLife();
-        if (user.getLives() > 0) { startLevel(); }
-    }
-
-    function setState(nState) { state = nState; stateChanged = true; };
-    
-    function collided(user, ghost) {
-        return (Math.sqrt(Math.pow(ghost.x - user.x, 2) + Math.pow(ghost.y - user.y, 2))) < 10;
-    };
-
-    function drawFooter() {
-        var topLeft  = (map.height * map.blockSize),
-            textBase = topLeft + (map.blockSize * 0.9);
-        
-        ctx.fillStyle = "#000000";
-        ctx.fillRect(0, topLeft, (map.width * map.blockSize), map.blockSize * 1.5);
-        ctx.fillStyle = "#FFFF00";
-
-        for (var i = 0, len = user.getLives(); i < len; i++) {
-            ctx.fillStyle = "#FFFF00";
-            ctx.beginPath();
-            ctx.moveTo(150 + (25 * i) + map.blockSize / 2, (topLeft+1) + map.blockSize / 2);
-            ctx.arc(150 + (25 * i) + map.blockSize / 2, (topLeft+1) + map.blockSize / 2, map.blockSize / 2, Math.PI * 0.25, Math.PI * 1.75, false);
-            ctx.fill();
-        }
-
-        ctx.fillStyle = !soundDisabled() ? "#00FF00" : "#FF0000";
-        ctx.font = "bold " + Math.floor(map.blockSize * 0.7) + "px sans-serif";
-        ctx.fillText("S", 10, textBase);
-
-        ctx.fillStyle = "#FFFF00";
-        ctx.font      = Math.floor(map.blockSize * 0.7) + "px sans-serif";
-        ctx.fillText("Score: " + user.theScore(), 30, textBase);
-        ctx.fillText("Level: " + level, (map.width * map.blockSize) - 90, textBase);
-    }
-
-    function redrawBlock(pos) {
-        map.drawBlock(Math.floor(pos.y/10), Math.floor(pos.x/10), ctx);
-        map.drawBlock(Math.ceil(pos.y/10), Math.ceil(pos.x/10), ctx);
-    }
-
-    function mainDraw() { 
-        var diff, u, i, len, nScore;
-        ghostPos = [];
-
-        for (i = 0, len = ghosts.length; i < len; i += 1) { ghostPos.push(ghosts[i].move(ctx)); }
-        u = user.move(ctx);
-        
-        for (i = 0, len = ghosts.length; i < len; i += 1) { redrawBlock(ghostPos[i].old); }
-        redrawBlock(u.old);
-        
-        for (i = 0, len = ghosts.length; i < len; i += 1) { ghosts[i].draw(ctx); }                     
-        user.draw(ctx);
-        
-        userPos = u["new"];
-        
-        for (i = 0, len = ghosts.length; i < len; i += 1) {
-            if (collided(userPos, ghostPos[i]["new"])) {
-                if (ghosts[i].isVunerable()) { 
-                    audio.play("eatghost");
-                    ghosts[i].eat();
-                    eatenCount += 1;
-                    nScore = eatenCount * 50;
-                    drawScore(nScore, ghostPos[i]);
-                    user.addScore(nScore);                    
-                    setState(EATEN_PAUSE);
-                    timerStart = tick;
-                } else if (ghosts[i].isDangerous()) {
-                    audio.play("die");
-                    setState(DYING);
-                    timerStart = tick;
+                    if (currentClicked.length < 2 && !cardTarget.classList.contains("open")) {
+                        fliping(cardTarget);
+                        currentClicked.push(cardTarget);
+                        if (currentClicked.length === 2) {
+                            window.current.addMove();
+                            gap(currentClicked);
+                            currentClicked = [];
+                        }
+                    }
                 }
             }
-        }                             
-    };
 
-    function mainLoop() {
-        var diff;
-        if (state !== PAUSE) { ++tick; }
-
-        map.drawPills(ctx);
-
-        if (state === PLAYING) {
-            mainDraw();
-        } else if (state === WAITING && stateChanged) {            
-            stateChanged = false;
-            map.draw(ctx);
-            dialog("Tekan OK / Enter Untuk Mulai");            
-        } else if (state === EATEN_PAUSE && (tick - timerStart) > (Pacman.FPS / 3)) {
-            map.draw(ctx);
-            setState(PLAYING);
-        } else if (state === DYING) {
-            if (tick - timerStart > (Pacman.FPS * 2)) { 
-                loseLife();
-            } else { 
-                redrawBlock(userPos);
-                for (var i = 0, len = ghosts.length; i < len; i += 1) {
-                    redrawBlock(ghostPos[i].old);
-                    ghostPos.push(ghosts[i].draw(ctx));
-                }                                   
-                user.drawDead(ctx, (tick - timerStart) / (Pacman.FPS * 2));
+            function fliping(tareget) {
+                ui.clicked(tareget);
             }
-        } else if (state === COUNTDOWN) {
-            diff = 5 + Math.floor((timerStart - tick) / Pacman.FPS);
-            if (diff === 0) {
-                map.draw(ctx);
-                setState(PLAYING);
-            } else {
-                if (diff !== lastTime) { 
-                    lastTime = diff;
-                    map.draw(ctx);
-                    dialog("Starting in: " + diff);
+
+            function gap(currentClicked) {
+                setTimeout(function () {
+                    judger(currentClicked);
+                }, 300);
+            }
+
+            function judger(currentClicked) {
+                let first = currentClicked[0].firstElementChild.className;
+                let second = currentClicked[1].firstElementChild.className;
+                if (first === second) {
+                    correctGuess(currentClicked);
+                } else {
+                    wrongGuess(currentClicked);
                 }
             }
-        } 
 
-        drawFooter();
-    }
+            function correctGuess(items) {
+                window.current.plusTry();
+                window.current.addMatched();
+                if (window.current.matched === 8) {
+                    document.querySelector('#playername').innerHTML = window.current.playerName;
+                    ui.updateRate();
+                    ui.showNow();
+                }
+                items.forEach(function (i) {
+                    ui.correct(i);
+                });
+            }
 
-    function eatenPill() {
-        audio.play("eatpill");
-        timerStart = tick;
-        eatenCount = 0;
-        for (var i = 0; i < ghosts.length; i += 1) { ghosts[i].makeEatable(ctx); }        
-    };
-    
-    function completedLevel() {
-        setState(WAITING);
-        level += 1;
-        map.reset();
-        user.newLevel();
-        startLevel();
-    };
+            function wrongGuess(items) {
+                window.current.rating();
+                items.forEach(function (i) {
+                    ui.worong(i);
+                    setTimeout(function () {
+                        i.classList.remove("animated", "wrong", "shake", "open", "show");
+                    }, 800);
+                });
+            }
 
-    function keyPress(e) { 
-        if (state !== WAITING && state !== PAUSE) { 
-            e.preventDefault();
-            e.stopPropagation();
+            return { runer, wrongGuess, correctGuess, judger, gap, fliping, currentClicked };
+        })();
+
+        function int() {
+            let gameStarter = document.querySelector(".chose");
+            gameStarter.querySelectorAll(".chose-item").forEach(function (i) {
+                i.addEventListener("click", function () {
+                    if (this.classList.contains("chose-item")) {
+                        if (this.classList.contains("active")) {
+                            this.classList.remove("active");
+                        } else {
+                            if (gameStarter.querySelector(".active")) {
+                                gameStarter.querySelector(".active").classList.remove("active");
+                                this.classList.add("active");
+                            } else {
+                                this.classList.add("active");
+                            }
+                        }
+                    }
+                });
+            });
+
+            document.querySelector("#startTheGame").addEventListener('click', function (e) {
+                let playername = document.getElementById("palyername");
+                if (playername.value !== "" && gameStarter.querySelector(".active")) {
+                    let gameType = gameStarter.querySelector(".active").getAttribute("data-type");
+                    let data = featch.getData();
+                    data.then(function (data) {
+                        const gameObject = creatProfile(playername.value, gameType, data);
+                        gameObject.current = new gameObject.data.gameState();
+                        const current = gameObject.current;
+                        window.current = current;
+                        current.sethtml(data);
+
+                        function exe() {
+                            document.querySelector(".loading").style.zIndex = 50;
+                            setTimeout(function () {
+                                document.querySelector("#gamestarting").remove();
+                                document.querySelector("main").style.display = "block";
+                                ui.drow(current.intialHtml);
+                            }, 2000);
+                        }
+
+                        exe();
+                    });
+                } else {
+                    alert("Make sure you entered your name and chose a card type!");
+                }
+            });
         }
-    };
-    
-    function init(wrapper, root) {
-        var i, len, ghost,
-            // Membuat resolusi internal canvas jauh lebih tinggi agar sangat tajam di TV 4K/FHD
-            blockSize = 30,
-            canvas    = document.createElement("canvas");
-        
-        canvas.setAttribute("width", (blockSize * 19) + "px");
-        canvas.setAttribute("height", (blockSize * 22) + (blockSize * 1.5) + "px");
 
-        wrapper.appendChild(canvas);
+        int();
 
-        ctx  = canvas.getContext('2d');
-        audio = new Pacman.Audio({"soundDisabled":soundDisabled});
-        map   = new Pacman.Map(blockSize);
-        user  = new Pacman.User({ "completedLevel" : completedLevel, "eatenPill" : eatenPill }, map);
+        /* ============================================================
+           SISTEM NAVIGASI REMOTE STB / ANDROID TV
+           ============================================================ */
 
-        for (i = 0, len = ghostSpecs.length; i < len; i += 1) {
-            ghost = new Pacman.Ghost({"getTick":getTick}, map, ghostSpecs[i]);
-            ghosts.push(ghost);
+        const STB_KEYS = {
+            LEFT: [37, 21],       // Panah Kiri / D-Pad Left
+            UP: [38, 19],         // Panah Atas / D-Pad Up
+            RIGHT: [39, 22],      // Panah Kanan / D-Pad Right
+            DOWN: [40, 20],       // Panah Bawah / D-Pad Down
+            ENTER: [13, 23, 66]   // OK / Select / Enter
+        };
+
+        let activeFocusIndex = 0;
+
+        function getFocusableElements() {
+            if (document.querySelector("#gamestarting")) {
+                return Array.from(document.querySelectorAll("#palyername, .chose-item, #startTheGame"));
+            }
+            if (document.querySelector("main").style.display === "block") {
+                if (document.querySelector("#result").classList.contains("active")) {
+                    return Array.from(document.querySelectorAll("#play-again"));
+                }
+                return Array.from(document.querySelectorAll(".restart, .deck .card"));
+            }
+            return [];
         }
-        
-        map.draw(ctx);
-        dialog("Loading ...");
 
-        var extension = Modernizr.audio.ogg ? 'ogg' : 'mp3';
-        var audio_files = [
-            ["start", root + "audio/opening_song." + extension],
-            ["die", root + "audio/die." + extension],
-            ["eatghost", root + "audio/eatghost." + extension],
-            ["eatpill", root + "audio/eatpill." + extension],
-            ["eating", root + "audio/eating.short." + extension],
-            ["eating2", root + "audio/eating.short." + extension]
-        ];
+        function updateFocus(elements) {
+            if (!elements || !elements.length) return;
+            
+            if (activeFocusIndex >= elements.length) activeFocusIndex = elements.length - 1;
+            if (activeFocusIndex < 0) activeFocusIndex = 0;
 
-        load(audio_files, function() { loaded(); });
-    };
-
-    function load(arr, callback) { 
-        if (arr.length === 0) { 
-            callback();
-        } else { 
-            var x = arr.pop();
-            audio.load(x[0], x[1], function() { load(arr, callback); });
+            elements.forEach((el, index) => {
+                if (index === activeFocusIndex) {
+                    el.focus();
+                    el.classList.add("stb-focused");
+                } else {
+                    el.classList.remove("stb-focused");
+                }
+            });
         }
-    };
-        
-    function loaded() {
-        dialog("Tekan OK / Enter Untuk Mulai");
-        document.addEventListener("keydown", keyDown, true);
-        document.addEventListener("keypress", keyPress, true); 
-        timer = window.setInterval(mainLoop, 1000 / Pacman.FPS);
-    };
-    
-    return { "init" : init };
-}());
 
-var KEY = {
-	'BACKSPACE': 8, 'TAB': 9, 'ENTER': 13, 'PAUSE': 19, 'ESCAPE': 27, 'SPACEBAR': 32, 
-	'ARROW_LEFT': 37, 'ARROW_UP': 38, 'ARROW_RIGHT': 39, 'ARROW_DOWN': 40,
-	'DPAD_UP': 19, 'DPAD_DOWN': 20, 'DPAD_LEFT': 21, 'DPAD_RIGHT': 22, 'DPAD_CENTER': 23,
-	'MEDIA_PLAY_PAUSE': 85
-};
+        window.addEventListener("keydown", function (e) {
+            const focusables = getFocusableElements();
+            if (!focusables.length) return;
 
-(function () {
-	for (var i = 48; i <= 57; i++) { KEY['' + (i - 48)] = i; }
-	for (i = 65; i <= 90; i++) { KEY['' + String.fromCharCode(i)] = i; }
-})();
+            const key = e.keyCode;
 
-Pacman.WALL    = 0;
-Pacman.BISCUIT = 1;
-Pacman.EMPTY   = 2;
-Pacman.BLOCK   = 3;
-Pacman.PILL    = 4;
+            if (STB_KEYS.RIGHT.includes(key) || STB_KEYS.DOWN.includes(key)) {
+                e.preventDefault();
+                activeFocusIndex = (activeFocusIndex + 1) % focusables.length;
+                updateFocus(focusables);
+            } 
+            else if (STB_KEYS.LEFT.includes(key) || STB_KEYS.UP.includes(key)) {
+                e.preventDefault();
+                activeFocusIndex = (activeFocusIndex - 1 + focusables.length) % focusables.length;
+                updateFocus(focusables);
+            } 
+            else if (STB_KEYS.ENTER.includes(key)) {
+                e.preventDefault();
+                const currentEl = focusables[activeFocusIndex];
+                if (currentEl) {
+                    currentEl.click();
+                }
+            }
+        });
 
-Pacman.MAP = [
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-	[0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0],
-	[0, 4, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 4, 0],
-	[0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0],
-	[0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
-	[0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0],
-	[0, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 0],
-	[0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0],
-	[2, 2, 2, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 2, 2, 2],
-	[0, 0, 0, 0, 1, 0, 1, 0, 0, 3, 0, 0, 1, 0, 1, 0, 0, 0, 0],
-	[2, 2, 2, 2, 1, 1, 1, 0, 3, 3, 3, 0, 1, 1, 1, 2, 2, 2, 2],
-	[0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0],
-	[2, 2, 2, 0, 1, 0, 1, 1, 1, 2, 1, 1, 1, 0, 1, 0, 2, 2, 2],
-	[0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0],
-	[0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0],
-	[0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0],
-	[0, 4, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 4, 0],
-	[0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0],
-	[0, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 0],
-	[0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0],
-	[0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
-	[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-];
-
-Pacman.WALLS = [
-    [{"move": [0, 9.5]}, {"line": [3, 9.5]},
-     {"curve": [3.5, 9.5, 3.5, 9]}, {"line": [3.5, 8]},
-     {"curve": [3.5, 7.5, 3, 7.5]}, {"line": [1, 7.5]},
-     {"curve": [0.5, 7.5, 0.5, 7]}, {"line": [0.5, 1]},
-     {"curve": [0.5, 0.5, 1, 0.5]}, {"line": [9, 0.5]},
-     {"curve": [9.5, 0.5, 9.5, 1]}, {"line": [9.5, 3.5]}],
-
-    [{"move": [9.5, 1]},
-     {"curve": [9.5, 0.5, 10, 0.5]}, {"line": [18, 0.5]},
-     {"curve": [18.5, 0.5, 18.5, 1]}, {"line": [18.5, 7]},
-     {"curve": [18.5, 7.5, 18, 7.5]}, {"line": [16, 7.5]},
-     {"curve": [15.5, 7.5, 15.5, 8]}, {"line": [15.5, 9]},
-     {"curve": [15.5, 9.5, 16, 9.5]}, {"line": [19, 9.5]}],
-
-    [{"move": [2.5, 5.5]}, {"line": [3.5, 5.5]}],
-
-    [{"move": [3, 2.5]},
-     {"curve": [3.5, 2.5, 3.5, 3]},
-     {"curve": [3.5, 3.5, 3, 3.5]},
-     {"curve": [2.5, 3.5, 2.5, 3]},
-     {"curve": [2.5, 2.5, 3, 2.5]}],
-
-    [{"move": [15.5, 5.5]}, {"line": [16.5, 5.5]}],
-
-    [{"move": [16, 2.5]}, {"curve": [16.5, 2.5, 16.5, 3]},
-     {"curve": [16.5, 3.5, 16, 3.5]}, {"curve": [15.5, 3.5, 15.5, 3]},
-     {"curve": [15.5, 2.5, 16, 2.5]}],
-
-    [{"move": [6, 2.5]}, {"line": [7, 2.5]}, {"curve": [7.5, 2.5, 7.5, 3]},
-     {"curve": [7.5, 3.5, 7, 3.5]}, {"line": [6, 3.5]},
-     {"curve": [5.5, 3.5, 5.5, 3]}, {"curve": [5.5, 2.5, 6, 2.5]}],
-
-    [{"move": [12, 2.5]}, {"line": [13, 2.5]}, {"curve": [13.5, 2.5, 13.5, 3]},
-     {"curve": [13.5, 3.5, 13, 3.5]}, {"line": [12, 3.5]},
-     {"curve": [11.5, 3.5, 11.5, 3]}, {"curve": [11.5, 2.5, 12, 2.5]}],
-
-    [{"move": [7.5, 5.5]}, {"line": [9, 5.5]}, {"curve": [9.5, 5.5, 9.5, 6]},
-     {"line": [9.5, 7.5]}],
-    [{"move": [9.5, 6]}, {"curve": [9.5, 5.5, 10.5, 5.5]},
-     {"line": [11.5, 5.5]}],
-
-    [{"move": [5.5, 5.5]}, {"line": [5.5, 7]}, {"curve": [5.5, 7.5, 6, 7.5]},
-     {"line": [7.5, 7.5]}],
-    [{"move": [6, 7.5]}, {"curve": [5.5, 7.5, 5.5, 8]}, {"line": [5.5, 9.5]}],
-
-    [{"move": [13.5, 5.5]}, {"line": [13.5, 7]},
-     {"curve": [13.5, 7.5, 13, 7.5]}, {"line": [11.5, 7.5]}],
-    [{"move": [13, 7.5]}, {"curve": [13.5, 7.5, 13.5, 8]},
-     {"line": [13.5, 9.5]}],
-
-    [{"move": [0, 11.5]}, {"line": [3, 11.5]}, {"curve": [3.5, 11.5, 3.5, 12]},
-     {"line": [3.5, 13]}, {"curve": [3.5, 13.5, 3, 13.5]}, {"line": [1, 13.5]},
-     {"curve": [0.5, 13.5, 0.5, 14]}, {"line": [0.5, 17]},
-     {"curve": [0.5, 17.5, 1, 17.5]}, {"line": [1.5, 17.5]}],
-    [{"move": [1, 17.5]}, {"curve": [0.5, 17.5, 0.5, 18]}, {"line": [0.5, 21]},
-     {"curve": [0.5, 21.5, 1, 21.5]}, {"line": [18, 21.5]},
-     {"curve": [18.5, 21.5, 18.5, 21]}, {"line": [18.5, 18]},
-     {"curve": [18.5, 17.5, 18, 17.5]}, {"line": [17.5, 17.5]}],
-    [{"move": [18, 17.5]}, {"curve": [18.5, 17.5, 18.5, 17]},
-     {"line": [18.5, 14]}, {"curve": [18.5, 13.5, 18, 13.5]},
-     {"line": [16, 13.5]}, {"curve": [15.5, 13.5, 15.5, 13]},
-     {"line": [15.5, 12]}, {"curve": [15.5, 11.5, 16, 11.5]},
-     {"line": [19, 11.5]}],
-
-    [{"move": [5.5, 11.5]}, {"line": [5.5, 13.5]}],
-    [{"move": [13.5, 11.5]}, {"line": [13.5, 13.5]}],
-
-    [{"move": [2.5, 15.5]}, {"line": [3, 15.5]},
-     {"curve": [3.5, 15.5, 3.5, 16]}, {"line": [3.5, 17.5]}],
-    [{"move": [16.5, 15.5]}, {"line": [16, 15.5]},
-     {"curve": [15.5, 15.5, 15.5, 16]}, {"line": [15.5, 17.5]}],
-
-    [{"move": [5.5, 15.5]}, {"line": [7.5, 15.5]}],
-    [{"move": [11.5, 15.5]}, {"line": [13.5, 15.5]}],
-    
-    [{"move": [2.5, 19.5]}, {"line": [5, 19.5]},
-     {"curve": [5.5, 19.5, 5.5, 19]}, {"line": [5.5, 17.5]}],
-    [{"move": [5.5, 19]}, {"curve": [5.5, 19.5, 6, 19.5]},
-     {"line": [7.5, 19.5]}],
-
-    [{"move": [11.5, 19.5]}, {"line": [13, 19.5]},
-     {"curve": [13.5, 19.5, 13.5, 19]}, {"line": [13.5, 17.5]}],
-    [{"move": [13.5, 19]}, {"curve": [13.5, 19.5, 14, 19.5]},
-     {"line": [16.5, 19.5]}],
-
-    [{"move": [7.5, 13.5]}, {"line": [9, 13.5]},
-     {"curve": [9.5, 13.5, 9.5, 14]}, {"line": [9.5, 15.5]}],
-    [{"move": [9.5, 14]}, {"curve": [9.5, 13.5, 10, 13.5]},
-     {"line": [11.5, 13.5]}],
-
-    [{"move": [7.5, 17.5]}, {"line": [9, 17.5]},
-     {"curve": [9.5, 17.5, 9.5, 18]}, {"line": [9.5, 19.5]}],
-    [{"move": [9.5, 18]}, {"curve": [9.5, 17.5, 10, 17.5]},
-     {"line": [11.5, 17.5]}],
-
-    [{"move": [8.5, 9.5]}, {"line": [8, 9.5]}, {"curve": [7.5, 9.5, 7.5, 10]},
-     {"line": [7.5, 11]}, {"curve": [7.5, 11.5, 8, 11.5]},
-     {"line": [11, 11.5]}, {"curve": [11.5, 11.5, 11.5, 11]},
-     {"line": [11.5, 10]}, {"curve": [11.5, 9.5, 11, 9.5]},
-     {"line": [10.5, 9.5]}]
-];
-
-Object.prototype.clone = function () {
-    var i, newObj = (this instanceof Array) ? [] : {};
-    for (i in this) {
-        if (i === 'clone') { continue; }
-        if (this[i] && typeof this[i] === "object") { newObj[i] = this[i].clone(); } 
-        else { newObj[i] = this[i]; }
-    }
-    return newObj;
-};
-
-$(function(){
-  var el = document.getElementById("pacman");
-  if (Modernizr.canvas && Modernizr.localstorage && Modernizr.audio && (Modernizr.audio.ogg || Modernizr.audio.mp3)) {
-    window.setTimeout(function () { PACMAN.init(el, "https://raw.githubusercontent.com/daleharvey/pacman/master/"); }, 0);
-  } else { 
-    el.innerHTML = "Browser tidak mendukung Canvas/Audio HTML5.";
-  }
-});
-	</script>
+        document.addEventListener("DOMContentLoaded", () => {
+            setTimeout(() => {
+                updateFocus(getFocusableElements());
+            }, 500);
+        });
+    </script>
 </body>
 </html>
