@@ -3,25 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Matching Card Game - STB Compatible</title>
+    <title>Matching Card Game - Responsive TV Landscape Edition</title>
     
     <!-- External Dependencies: Font Awesome & Animate.css -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
 
     <style>
-        /* CSS & Layout */
+        /* CSS Reset & Adaptive Viewport Scaling */
         :root {
-          font-size: 14px;
-        }
-        @media (max-width: 400px) {
-          :root {
-            font-size: 12px;
-          }
+          font-size: clamp(10px, 1.5vh, 18px);
         }
 
         * {
           box-sizing: border-box;
+          margin: 0;
+          padding: 0;
         }
 
         body {
@@ -29,61 +26,63 @@
           background-image: url("//ahmedkorim.github.io/udamemoerygame/img/geometry2.png"), linear-gradient(45deg, rgba(46, 61, 73, 0.6), rgba(46, 61, 73, 0.5));
           background-blend-mode: overlay;
           height: 100vh;
-          margin: 0;
+          width: 100vw;
+          overflow: hidden; /* Mencegah Scrollbar di TV */
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          position: relative;
+        }
+
+        /* Styling Watermark Pojok Kiri Atas */
+        .watermark {
+          position: fixed;
+          top: 15px;
+          left: 20px;
+          z-index: 9999;
+          color: rgba(255, 255, 255, 0.6);
+          font-size: 1.2rem;
+          font-weight: bold;
+          letter-spacing: 1.5px;
+          text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.8);
+          pointer-events: none;
+          user-select: none;
         }
 
         main {
           display: none;
+          height: 100vh;
+          width: 100vw;
         }
 
         .container {
+          width: 90vw;
+          max-width: 1200px;
           margin: auto;
-          padding: 0 15px;
-        }
-        @media (min-width: 320px) {
-          .container {
-            width: 100%;
-          }
-        }
-        @media (min-width: 720px) {
-          .container {
-            width: 720px;
-          }
-        }
-        @media (min-width: 920px) {
-          .container {
-            width: 920px;
-          }
-        }
-        @media (min-width: 1200px) {
-          .container {
-            width: 1200px;
-          }
         }
 
         .row {
           display: flex;
-          margin: 0 -15px;
           align-items: center;
-          align-content: center;
+          justify-content: center;
         }
 
         .AK-btn {
           position: relative;
-          width: 50%;
-          margin: auto;
+          width: 60%;
+          margin: 1vh auto;
         }
         .AK-btn button, .AK-btn input {
           box-shadow: -2px 7px 20px 2px rgba(46, 61, 73, 0.35);
-          border-radius: 20px;
+          border-radius: 12px;
           color: #FFFFFF;
           outline: none;
           border: none;
           display: block;
-          font-size: 1.5rem;
-          padding: 0.5rem 0.25rem;
+          font-size: 1.2rem;
+          padding: 0.8vh 0.5rem;
           width: 100%;
-          transition: all 0.6s ease-in-out;
+          transition: all 0.3s ease-in-out;
           background-color: #2e3d49;
         }
         .AK-btn button[type=text], .AK-btn input[type=text] {
@@ -102,13 +101,13 @@
         .stars {
           padding: 0;
           margin-right: auto;
-          display: block;
+          display: flex;
           list-style: none;
-          flex-wrap: nowrap;
         }
         .stars li {
           color: gold;
           display: inline-block;
+          font-size: 1.2rem;
         }
 
         .text-center {
@@ -116,16 +115,20 @@
         }
 
         .img-resposive {
-          max-width: 90%;
-          pointer-events: none; /* Mencegah gambar mengganggu event click */
+          max-width: 80%;
+          max-height: 80%;
+          pointer-events: none;
         }
 
-        header .col {
-          width: 100%;
-        }
         header h1 {
           text-align: center;
           color: #fff;
+          font-size: 1.8rem;
+          margin-top: 1vh;
+        }
+
+        .score-panel {
+          margin-bottom: 1vh;
         }
 
         .score-panel .wraper, #result .modal-body, #gamestarting .wraper {
@@ -133,105 +136,89 @@
           align-items: center;
           margin: auto;
           display: flex;
-          width: 100%;
-        }
-        @media (min-width: 520px) {
-          .score-panel .wraper, #result .modal-body, #gamestarting .wraper {
-            width: 80%;
-          }
-        }
-        @media (min-width: 680px) {
-          .score-panel .wraper, #result .modal-body, #gamestarting .wraper {
-            width: 70%;
-          }
-        }
-        @media (min-width: 950px) {
-          .score-panel .wraper, #result .modal-body, #gamestarting .wraper {
-            width: 60%;
-          }
-        }
-        @media (min-width: 1200px) {
-          .score-panel .wraper, #result .modal-body, #gamestarting .wraper {
-            width: 50%;
-          }
+          width: 80%;
         }
 
         .score-panel .col {
-          padding: 1%;
+          padding: 0.5vh;
           display: flex;
           justify-content: center;
           align-items: center;
           color: #fff;
+          font-size: 1.1rem;
         }
-        @media (max-width: 400px) {
-          .score-panel .col {
-            font-size: 0.7rem;
-          }
-        }
+
         .score-panel .col:first-of-type, .score-panel .col:nth-of-type(2) {
           width: 50%;
         }
+
         .score-panel .restart {
           overflow: hidden;
-          margin-left: 3rem;
+          margin-left: 1rem;
           cursor: pointer;
-          padding: 5px 10px;
+          padding: 5px 12px;
           border-radius: 8px;
+          background: rgba(255, 255, 255, 0.1);
         }
+
         .score-panel .moves {
           margin: auto;
         }
 
+        /* Responsive Layout Kartu Utama */
         .card-home {
-          padding-bottom: 50px;
+          height: 75vh;
+          display: flex;
+          align-items: center;
         }
-        .card-home .col {
-          width: 50%;
+
+        .card-home .game-body {
+          height: 100%;
+          display: flex;
+          align-items: center;
         }
+
+        .card-home .game-wraper {
+          width: 100%;
+          height: 100%;
+        }
+
         .card-home .deck, #gamestarting .wraper, #result .modal-content {
           background: linear-gradient(160deg, #02ccba 0%, #aa7ecd 100%);
-          border-radius: 10px;
+          border-radius: 12px;
           box-shadow: 12px 15px 20px 0 rgba(46, 61, 73, 0.5);
-          padding: 2%;
-          width: 100%;
+          padding: 1.5vh;
           margin: auto;
-        }
-        @media (min-width: 520px) {
-          .card-home .deck, #gamestarting .wraper, #result .modal-content { width: 80%; }
-        }
-        @media (min-width: 680px) {
-          .card-home .deck, #gamestarting .wraper, #result .modal-content { width: 70%; }
-        }
-        @media (min-width: 950px) {
-          .card-home .deck, #gamestarting .wraper, #result .modal-content { width: 60%; }
-        }
-        @media (min-width: 1200px) {
-          .card-home .deck, #gamestarting .wraper, #result .modal-content { width: 50%; }
         }
 
         .card-home .deck {
-          display: flex;
-          flex-wrap: wrap;
-          justify-content: space-between;
-          align-items: center;
+          display: grid;
+          grid-template-columns: repeat(4, 1fr);
+          grid-template-rows: repeat(4, 1fr);
+          gap: 1.5vh;
+          width: min(70vh, 80vw);
+          height: min(70vh, 80vw);
           list-style: none;
         }
+
         .card-home .deck li.card, #gamestarting .callToAction .chose .chose-item {
           background: #2e3d49;
           color: #2e3d49;
           border-radius: 8px;
           cursor: pointer;
-          box-shadow: 5px 2px 20px 0 rgba(46, 61, 73, 0.5);
+          box-shadow: 5px 2px 15px 0 rgba(46, 61, 73, 0.5);
         }
+
         .card-home .deck li.card {
           font-size: 0;
           display: flex;
           justify-content: center;
           align-items: center;
-          padding: 2%;
-          width: 20%;
-          margin: 1.66667%;
+          width: 100%;
+          height: 100%;
+          margin: 0;
         }
+
         .card-home .deck li.card .img-resposive {
           visibility: hidden;
         }
@@ -241,7 +228,7 @@
           cursor: default;
         }
         .card-home .deck li.card.show {
-          font-size: 33px;
+          font-size: 2rem;
         }
         .card-home .deck li.card.show .img-resposive {
           visibility: visible;
@@ -249,34 +236,44 @@
         .card-home .deck li.card.match {
           cursor: default;
           background: #02ccba;
-          font-size: 33px;
+          font-size: 2rem;
         }
         .card-home .deck li.card.wrong {
           background: #e5534d;
         }
 
+        /* Screen Tampilan Awal */
         #gamestarting {
           text-align: center;
+          height: 100vh;
+          display: flex;
+          align-items: center;
         }
         #gamestarting .row {
           justify-content: center;
           align-items: center;
+          width: 100%;
+        }
+        #gamestarting h1 {
+          font-size: 2rem;
+          margin-bottom: 1vh;
         }
         #gamestarting p {
           text-align: center;
-          font-size: 1.4rem;
+          font-size: 1.2rem;
+          margin-bottom: 1vh;
         }
         #gamestarting .col {
           width: 100%;
           display: flex;
           justify-content: center;
           align-items: center;
-          height: 100vh;
         }
         #gamestarting .wraper {
           position: relative;
-          padding: 2rem 1rem;
+          padding: 2vh 2vw;
           flex-direction: column;
+          max-width: 700px;
         }
         #gamestarting .loading {
           position: absolute;
@@ -292,30 +289,28 @@
         #gamestarting .loading img {
           display: block;
           width: 100%;
+          height: 100%;
+          object-fit: cover;
         }
         #gamestarting .callToAction {
           margin: auto;
           width: 100%;
         }
-        @media (min-width: 450px) {
-          #gamestarting .callToAction {
-            width: 70%;
-          }
-        }
         #gamestarting .callToAction .chose {
           display: flex;
-          flex-wrap: wrap;
           justify-content: space-between;
           align-items: center;
-          width: 90%;
-          margin: auto;
+          width: 100%;
+          margin: 1vh auto;
         }
         #gamestarting .callToAction .chose .chose-item {
           position: relative;
-          width: 40%;
-          margin: 5%;
-          padding: 5%;
-          display: block;
+          width: 22%;
+          height: 12vh;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          padding: 1vh;
         }
         #gamestarting .callToAction .chose .chose-item.active .chose-icon {
           opacity: 1;
@@ -323,57 +318,59 @@
         #gamestarting .callToAction .chose .chose-item .chose-icon {
           transition: all 0.3s ease-in-out;
           position: absolute;
-          top: 0.1rem;
+          top: 0.3rem;
           left: 0.3rem;
-          font-size: 1.5rem;
+          font-size: 1.2rem;
           opacity: 0;
           color: #1aee1a;
         }
 
+        /* Modal Hasil */
         #result {
           overflow: hidden;
           background-color: rgba(0, 0, 0, 0.7);
           height: 100vh;
-          width: 100%;
+          width: 100vw;
           position: fixed;
           top: 0;
           left: 0;
           display: none;
+          z-index: 100;
         }
         #result.active {
-          display: block;
-        }
-        #result .col {
-          width: 100%;
-        }
-        #result .modal {
-          transition: all 1s ease-in-out;
-          transform: translate(2000px);
-          height: 100vh;
           display: flex;
           align-items: center;
+          justify-content: center;
+        }
+        #result .modal {
+          transition: all 0.5s ease-in-out;
+          width: 100%;
+          display: flex;
+          justify-content: center;
         }
         #result p {
           font-size: 1.5rem;
-        }
-        #result ul {
-          font-size: 1.8rem;
+          margin-bottom: 2vh;
         }
         #result .modal-content {
-          padding-top: 10%;
-          padding-bottom: 10%;
-          width: 100%;
+          padding: 4vh;
+          max-width: 500px;
         }
 
-        /* STB Focus Outline Styling */
+        /* High Visibility STB Remote Focus Indicator */
         .stb-focused {
-          outline: 5px solid #FFD700 !important;
-          outline-offset: 3px !important;
-          box-shadow: 0 0 20px #FFD700 !important;
+          outline: 4px solid #FFD700 !important;
+          outline-offset: 2px !important;
+          box-shadow: 0 0 25px #FFD700 !important;
+          transform: scale(1.05);
+          z-index: 10;
         }
     </style>
 </head>
 <body>
+
+    <!-- Watermark Pojok Kiri Atas -->
+    <div class="watermark">mrzyb</div>
 
     <!-- Main Game Section -->
     <main>
@@ -400,13 +397,17 @@
                                 <li><i class="fa fa-star"></i></li>
                                 <li><i class="fa fa-star"></i></li>
                             </ul>
-                            <div class="timer">
+                            <div class="timer" style="margin-left: 15px;">
                                 <span>00 : 00 : 00</span>
                             </div>
                         </div>
                         <div class="col">
-                            <div class="restart" tabindex="0">
-                                <i class="fa fa-rotate-right"></i>
+                            <!-- Tombol Kembali Ke Menu Utama -->
+                            <div class="restart" id="btn-back-menu" tabindex="0" title="Kembali ke Menu">
+                                <i class="fa fa-home"></i> Menu
+                            </div>
+                            <div class="restart" id="btn-restart-game" tabindex="0" title="Ulang Game">
+                                <i class="fa fa-rotate-right"></i> Restart
                             </div>
                             <div class="moves"> Moves : 0</div>
                         </div>
@@ -434,13 +435,13 @@
                         <div class="loading">
                             <img src="//ahmedkorim.github.io/udamemoerygame/img/loading.gif" alt="loading">
                         </div>
-                        <h1>Welcome to Matching Card Game</h1>
-                        <p>Enter your name, choose game type and click start to play</p>
+                        <h1>Matching Card Game</h1>
+                        <p>Enter name, choose card set, & press start</p>
                         <div class="callToAction" id="newplayer">
                             <div class="AK-btn">
-                                <input type="text" id="palyername" value="skip" placeholder="Enter your name" tabindex="0">
+                                <input type="text" id="palyername" value="Player 1" placeholder="Enter your name" tabindex="0">
                             </div>
-                            <p>Now choose game cards you like</p>
+                            <p>Select Card Category:</p>
                             <div class="chose">
                                 <div class="chose-item active" data-type="pakemonGo" title="pakemonGo cards" tabindex="0">
                                     <span class="chose-icon"><i class="fa fa-check-square"></i></span>
@@ -460,7 +461,7 @@
                                 </div>
                             </div>
                             <div class="AK-btn">
-                                <input type="submit" value="start" class="AK-btn" id="startTheGame" tabindex="0">
+                                <input type="submit" value="Start Game" class="AK-btn" id="startTheGame" tabindex="0">
                             </div>
                         </div>
                     </div>
@@ -477,8 +478,8 @@
                     <div class="col">
                         <div class="modal-body">
                             <div class="modal-content text-center">
-                                <p>Congratulations <span id="playername"></span>, you made it!</p>
-                                <ul class="stars">
+                                <p>Congratulations <span id="playername"></span>, you won!</p>
+                                <ul class="stars" style="justify-content: center; margin-bottom: 2vh;">
                                     <li><i class="fa fa-star"></i></li>
                                     <li><i class="fa fa-star"></i></li>
                                     <li><i class="fa fa-star"></i></li>
@@ -487,7 +488,8 @@
                                     <li><i class="fa fa-star"></i></li>
                                     <li><i class="fa fa-star"></i></li>
                                 </ul>
-                                <div class="AK-btn"><button id="play-again" tabindex="0">Play Again</button></div>
+                                <div class="AK-btn" style="margin-bottom: 1vh;"><button id="play-again" tabindex="0">Play Again</button></div>
+                                <div class="AK-btn"><button id="btn-result-menu" tabindex="0">Main Menu</button></div>
                             </div>
                         </div>
                     </div>
@@ -597,7 +599,6 @@
                         let cardsArr = cardsData[this.gameType];
                         cardsArr = cardsCreartor.getCards(cardsArr);
                         
-                        // Buat elemen parser untuk menambahkan tabindex pada string HTML kartu
                         let tempDiv = document.createElement('div');
                         let placeHodlder = "";
                         cardsArr.forEach(function (i) {
@@ -605,7 +606,6 @@
                         });
                         tempDiv.innerHTML = placeHodlder;
                         
-                        // Memastikan setiap elemen kartu memiliki atribut tabindex="0"
                         tempDiv.querySelectorAll('li').forEach(li => {
                             li.setAttribute('tabindex', '0');
                         });
@@ -643,29 +643,33 @@
                 document.querySelector('#result .stars').innerHTML = data;
             }
 
-            document.querySelector('.restart').addEventListener('click', function () {
+            document.querySelector('#btn-restart-game').addEventListener('click', function () {
                 ui.playAgain();
             });
 
+            document.querySelector('#btn-back-menu').addEventListener('click', function () {
+                backToMainMenu();
+            });
+
+            document.querySelector('#btn-result-menu').addEventListener('click', function () {
+                backToMainMenu();
+            });
+
             function hideNow() {
-                document.querySelector('.modal').style.transform = "translate(2000px)";
-                setTimeout(function () {
-                    document.querySelector('#result').className = "";
-                }, 600);
+                document.querySelector('#result').classList.remove("active");
             }
 
             function showNow() {
-                document.querySelector('#play-again').addEventListener('click', function () {
+                document.querySelector('#play-again').onclick = function () {
                     ui.hideNow();
                     ui.playAgain();
-                });
+                };
 
-                document.querySelector('#result').className = "active";
-                document.querySelector('.modal').style.transform = "translate(0px)";
+                document.querySelector('#result').classList.add("active");
                 setTimeout(() => {
-                    activeFocusIndex = 0;
-                    updateFocus(getFocusableElements());
-                }, 700);
+                    const focusables = getFocusableElements();
+                    if(focusables.length) setFocus(focusables[0]);
+                }, 100);
             }
 
             function gameOver(state) {
@@ -702,21 +706,15 @@
                 deck.innerHTML = html;
                 document.querySelector("#player-name").innerHTML = `${window.current.gameType} Matching`;
                 
-                const cardEl = document.querySelector('.card');
-                if (cardEl) {
-                    const height = parseInt(getComputedStyle(cardEl).width.slice(0, -2));
-                    deck.querySelectorAll('.card').forEach(function (i) {
-                        i.setAttribute('tabindex', '0');
-                        i.style.height = height + "px";
-                    });
-                }
+                deck.querySelectorAll('.card').forEach(function (i) {
+                    i.setAttribute('tabindex', '0');
+                });
                 
                 cardsCreartor.eventLoeder(deck);
                 
-                // Set fokus remote ke elemen kartu pertama
                 setTimeout(() => {
-                    activeFocusIndex = 0;
-                    updateFocus(getFocusableElements());
+                    const focusables = getFocusableElements();
+                    if(focusables.length) setFocus(focusables[0]);
                 }, 100);
             }
 
@@ -771,7 +769,6 @@
 
             function runer(even) {
                 ui.updateRate();
-                // Mengambil elemen kartu bahkan jika user mengklik child element-nya
                 let cardTarget = even.target.closest('.card');
                 
                 if (cardTarget && cardTarget.classList.contains("card")) {
@@ -838,6 +835,24 @@
             return { runer, wrongGuess, correctGuess, judger, gap, fliping, currentClicked };
         })();
 
+        /* FUNGSI KEMBALI KE MENU AWAL (PEMILIHAN KARTU) */
+        function backToMainMenu() {
+            if (window.current && window.current.interval) {
+                clearInterval(window.current.interval);
+            }
+            lock = 0;
+            
+            document.querySelector("main").style.display = "none";
+            document.querySelector("#result").classList.remove("active");
+            document.querySelector("#gamestarting").style.display = "flex";
+            document.querySelector(".loading").style.zIndex = -1;
+
+            setTimeout(() => {
+                const focusables = getFocusableElements();
+                if (focusables.length) setFocus(focusables[0]);
+            }, 100);
+        }
+
         function int() {
             let gameStarter = document.querySelector(".chose");
             gameStarter.querySelectorAll(".chose-item").forEach(function (i) {
@@ -872,16 +887,16 @@
                         function exe() {
                             document.querySelector(".loading").style.zIndex = 50;
                             setTimeout(function () {
-                                document.querySelector("#gamestarting").remove();
+                                document.querySelector("#gamestarting").style.display = "none";
                                 document.querySelector("main").style.display = "block";
                                 ui.drow(current.intialHtml);
-                            }, 2000);
+                            }, 1500);
                         }
 
                         exe();
                     });
                 } else {
-                    alert("Make sure you entered your name and chose a card type!");
+                    alert("Pastikan nama sudah diisi dan kategori kartu telah dipilih!");
                 }
             });
         }
@@ -889,77 +904,132 @@
         int();
 
         /* ============================================================
-           SISTEM NAVIGASI REMOTE STB / ANDROID TV
+           SISTEM NAVIGASI SPASIAL 2D REMOTE STB & HANDLER TOMBOL BACK
            ============================================================ */
 
         const STB_KEYS = {
-            LEFT: [37, 21],       // Panah Kiri / D-Pad Left
-            UP: [38, 19],         // Panah Atas / D-Pad Up
-            RIGHT: [39, 22],      // Panah Kanan / D-Pad Right
-            DOWN: [40, 20],       // Panah Bawah / D-Pad Down
-            ENTER: [13, 23, 66]   // OK / Select / Enter
+            LEFT: [37, 21],
+            UP: [38, 19],
+            RIGHT: [39, 22],
+            DOWN: [40, 20],
+            ENTER: [13, 23, 66],
+            BACK: [8, 27, 461, 10009, 88] // Backspace, ESC, dan KeyCode Back TV
         };
 
-        let activeFocusIndex = 0;
+        let currentFocusedElement = null;
 
         function getFocusableElements() {
-            if (document.querySelector("#gamestarting")) {
+            if (document.querySelector("#result").classList.contains("active")) {
+                return Array.from(document.querySelectorAll("#play-again, #btn-result-menu"));
+            }
+            if (document.querySelector("#gamestarting").style.display !== "none") {
                 return Array.from(document.querySelectorAll("#palyername, .chose-item, #startTheGame"));
             }
             if (document.querySelector("main").style.display === "block") {
-                if (document.querySelector("#result").classList.contains("active")) {
-                    return Array.from(document.querySelectorAll("#play-again"));
-                }
-                return Array.from(document.querySelectorAll(".restart, .deck .card"));
+                return Array.from(document.querySelectorAll("#btn-back-menu, #btn-restart-game, .deck .card"));
             }
             return [];
         }
 
-        function updateFocus(elements) {
-            if (!elements || !elements.length) return;
+        function setFocus(targetEl) {
+            if (!targetEl) return;
             
-            if (activeFocusIndex >= elements.length) activeFocusIndex = elements.length - 1;
-            if (activeFocusIndex < 0) activeFocusIndex = 0;
+            const allFocusables = getFocusableElements();
+            allFocusables.forEach(el => el.classList.remove("stb-focused"));
 
-            elements.forEach((el, index) => {
-                if (index === activeFocusIndex) {
-                    el.focus();
-                    el.classList.add("stb-focused");
-                } else {
-                    el.classList.remove("stb-focused");
+            currentFocusedElement = targetEl;
+            currentFocusedElement.focus();
+            currentFocusedElement.classList.add("stb-focused");
+        }
+
+        function getNextSpatialFocus(direction) {
+            const focusables = getFocusableElements();
+            if (!focusables.length) return null;
+
+            if (!currentFocusedElement || !focusables.includes(currentFocusedElement)) {
+                return focusables[0];
+            }
+
+            const currentRect = currentFocusedElement.getBoundingClientRect();
+            const currentCenter = {
+                x: currentRect.left + currentRect.width / 2,
+                y: currentRect.top + currentRect.height / 2
+            };
+
+            let bestCandidate = null;
+            let shortestDistance = Infinity;
+
+            focusables.forEach(el => {
+                if (el === currentFocusedElement) return;
+
+                const rect = el.getBoundingClientRect();
+                const center = {
+                    x: rect.left + rect.width / 2,
+                    y: rect.top + rect.height / 2
+                };
+
+                const dx = center.x - currentCenter.x;
+                const dy = center.y - currentCenter.y;
+
+                let isInDirection = false;
+                if (direction === "LEFT" && dx < -5) isInDirection = true;
+                if (direction === "RIGHT" && dx > 5) isInDirection = true;
+                if (direction === "UP" && dy < -5) isInDirection = true;
+                if (direction === "DOWN" && dy > 5) isInDirection = true;
+
+                if (isInDirection) {
+                    let mainAxis = (direction === "LEFT" || direction === "RIGHT") ? Math.abs(dx) : Math.abs(dy);
+                    let crossAxis = (direction === "LEFT" || direction === "RIGHT") ? Math.abs(dy) : Math.abs(dx);
+                    
+                    let weightedDistance = mainAxis + (crossAxis * 2.5);
+
+                    if (weightedDistance < shortestDistance) {
+                        shortestDistance = weightedDistance;
+                        bestCandidate = el;
+                    }
                 }
             });
+
+            return bestCandidate || currentFocusedElement;
         }
 
         window.addEventListener("keydown", function (e) {
-            const focusables = getFocusableElements();
-            if (!focusables.length) return;
-
             const key = e.keyCode;
+            let direction = null;
 
-            if (STB_KEYS.RIGHT.includes(key) || STB_KEYS.DOWN.includes(key)) {
+            if (STB_KEYS.LEFT.includes(key)) direction = "LEFT";
+            else if (STB_KEYS.RIGHT.includes(key)) direction = "RIGHT";
+            else if (STB_KEYS.UP.includes(key)) direction = "UP";
+            else if (STB_KEYS.DOWN.includes(key)) direction = "DOWN";
+
+            if (direction) {
                 e.preventDefault();
-                activeFocusIndex = (activeFocusIndex + 1) % focusables.length;
-                updateFocus(focusables);
-            } 
-            else if (STB_KEYS.LEFT.includes(key) || STB_KEYS.UP.includes(key)) {
-                e.preventDefault();
-                activeFocusIndex = (activeFocusIndex - 1 + focusables.length) % focusables.length;
-                updateFocus(focusables);
+                const nextEl = getNextSpatialFocus(direction);
+                if (nextEl) setFocus(nextEl);
             } 
             else if (STB_KEYS.ENTER.includes(key)) {
                 e.preventDefault();
-                const currentEl = focusables[activeFocusIndex];
-                if (currentEl) {
-                    currentEl.click();
+                if (currentFocusedElement) {
+                    currentFocusedElement.click();
+                }
+            }
+            // TANGKAP TOMBOL BACK REMOTE / HP
+            else if (STB_KEYS.BACK.includes(key)) {
+                if (document.querySelector("main").style.display === "block" || 
+                    document.querySelector("#result").classList.contains("active")) {
+                    e.preventDefault();
+                    backToMainMenu();
                 }
             }
         });
 
         document.addEventListener("DOMContentLoaded", () => {
             setTimeout(() => {
-                updateFocus(getFocusableElements());
-            }, 500);
+                const initialFocusables = getFocusableElements();
+                if (initialFocusables.length > 0) {
+                    setFocus(initialFocusables[0]);
+                }
+            }, 300);
         });
     </script>
 </body>
