@@ -81,14 +81,6 @@
       box-shadow: 0 0 10px rgba(0, 230, 118, 0.5);
     }
 
-    .btn-notif {
-      background: linear-gradient(135deg, #ff9800, #f57c00);
-    }
-
-    .btn-notif:hover {
-      box-shadow: 0 0 10px rgba(255, 152, 0, 0.5);
-    }
-
     .jam-digital {
       text-align: right;
       margin-left: 0.5vw;
@@ -428,7 +420,7 @@
     }
 
     .calendar-grid-header div:nth-child(1) {
-      color: #ff5252; /* Ahad / Minggu Merah */
+      color: #ff5252;
     }
 
     .calendar-grid-days {
@@ -576,7 +568,6 @@
       <p id="info-tanggal-hijri">---</p>
     </div>
     <div class="header-right">
-      <button class="btn-header btn-notif" onclick="requestNotificationPermission()">🔔 Notifikasi Auto</button>
       <button class="btn-header" onclick="openHijriCalendar()">📅 Kalender</button>
       <button class="btn-header" onclick="openQuran()">📖 Baca Al-Qur'an</button>
       <div class="jam-digital">
@@ -705,9 +696,8 @@
   <script>
     let jadwalData = {};
     let kiblatHeading = 0;
-    let notifTriggeredToday = {};
     
-    // ADJUSTER HIJRIAH (Ganti ke -1 / 1 jika perhitungan hilal geser 1 hari)
+    // ADJUSTER HIJRIAH
     const HIJRI_OFFSET = 0;
 
     let currentGregorianMonth = new Date().getMonth(); 
@@ -724,7 +714,7 @@
       "Juli", "Agustus", "September", "Oktober", "November", "Desember"
     ];
 
-    // LIBUR NASIONAL MASEHI (Fixed Date: "MM-DD")
+    // LIBUR NASIONAL MASEHI
     const fixedNationalHolidays = {
       "01-01": "Tahun Baru Masehi",
       "05-01": "Hari Buruh Nasional",
@@ -733,7 +723,7 @@
       "12-25": "Hari Raya Natal"
     };
 
-    // 1. JAM DIGITAL REALTIME & PENGECEKAN NOTIFIKASI
+    // 1. JAM DIGITAL REALTIME
     function updateClock() {
       const now = new Date();
       const hrs = String(now.getHours()).padStart(2, '0');
@@ -744,8 +734,6 @@
       
       const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
       document.getElementById('date').innerText = now.toLocaleDateString('id-ID', options);
-
-      checkAutoNotifications(hrs, mins, secs);
     }
     setInterval(updateClock, 1000);
     updateClock();
@@ -908,51 +896,7 @@
       }, 1000);
     }
 
-    // 6. FITUR NOTIFIKASI BROWSER
-    function requestNotificationPermission() {
-      if ("Notification" in window) {
-        Notification.requestPermission().then(permission => {
-          if (permission === "granted") {
-            alert("Notifikasi Pengingat Otomatis Berhasil Diaktifkan!");
-          } else {
-            alert("Izin notifikasi ditolak.");
-          }
-        });
-      } else {
-        alert("Browser tidak mendukung notifikasi.");
-      }
-    }
-
-    function checkAutoNotifications(hrs, mins, secs) {
-      if (!jadwalData.Imsak || secs !== "00") return;
-      
-      const currentTimeStr = `${hrs}:${mins}`;
-      const clean = (t) => t.split(' ')[0];
-
-      const targets = [
-        { name: "Imsak", time: clean(jadwalData.Imsak), msg: "Waktu Imsak telah tiba! Segera selesaikan sahur Anda." },
-        { name: "Subuh", time: clean(jadwalData.Fajr), msg: "Waktu Shalat Subuh telah tiba." },
-        { name: "Maghrib (Buka Puasa)", time: clean(jadwalData.Maghrib), msg: "Waktu Maghrib telah tiba. Selamat berbuka puasa!" }
-      ];
-
-      targets.forEach(t => {
-        if (currentTimeStr === t.time && !notifTriggeredToday[t.name]) {
-          showBrowserNotification(`Waktu ${t.name} Tiba!`, t.msg);
-          notifTriggeredToday[t.name] = true;
-        }
-      });
-    }
-
-    function showBrowserNotification(title, message) {
-      if ("Notification" in window && Notification.permission === "granted") {
-        new Notification(title, {
-          body: message,
-          icon: "https://cdn-icons-png.flaticon.com/512/2319/2319854.png"
-        });
-      }
-    }
-
-    // 7. ALARM ANDROID INTEGRATION
+    // 6. ALARM ANDROID INTEGRATION
     function setAlarmAndroid(namaWaktu) {
       let key = namaWaktu === 'Subuh' ? 'Fajr' : namaWaktu;
       let waktu = jadwalData[key] ? jadwalData[key].split(' ')[0] : null;
@@ -967,7 +911,7 @@
       }
     }
 
-    // 8. INTEGRASI MODAL & AL-QUR'AN WITH AUDIO
+    // 7. INTEGRASI MODAL & AL-QUR'AN WITH AUDIO
     function openQuran() {
       document.getElementById('modal-quran').style.display = 'flex';
       if (document.getElementById('select-surah').children.length <= 1) {
@@ -1032,7 +976,7 @@
       }
     }
 
-    // 9. ALGORITMA KONVERSI TANGGAL MASEHI TO HIJRIAH
+    // 8. ALGORITMA KONVERSI TANGGAL MASEHI TO HIJRIAH
     function g2h(d) {
       let adjustedDate = new Date(d);
       adjustedDate.setDate(adjustedDate.getDate() + HIJRI_OFFSET);
@@ -1086,7 +1030,7 @@
       return null;
     }
 
-    // 10. LOGIKA KALENDER HYBRID LANDSCAPE
+    // 9. LOGIKA KALENDER HYBRID LANDSCAPE
     function openHijriCalendar() {
       document.getElementById('modal-hijri').style.display = 'flex';
       renderHijriCalendar(currentGregorianMonth, currentGregorianYear);
