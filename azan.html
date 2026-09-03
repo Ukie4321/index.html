@@ -1,0 +1,1195 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="screen-orientation" content="landscape">
+  
+  <!-- FONT ARABIC & SANS-SERIF -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+
+  <title>Jadwal Sholat & Kalender Hybrid Landscape</title>
+  <style>
+    /* RESET & DASAR LAYOUT */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    body, html {
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+      color: #ffffff;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 2vh 3vw;
+    }
+
+    /* HEADER / INFORMASI UTAMA */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 18vh;
+      border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+      padding-bottom: 1vh;
+    }
+
+    .info-kota h1 {
+      font-size: 4vh;
+      color: #00e676;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .info-kota p {
+      font-size: 2vh;
+      color: #b0bec5;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 1vw;
+    }
+
+    .btn-header {
+      background: linear-gradient(135deg, #00c853, #007e33);
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      padding: 1vh 1.2vw;
+      font-size: 1.8vh;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-header:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 10px rgba(0, 230, 118, 0.5);
+    }
+
+    .btn-notif {
+      background: linear-gradient(135deg, #ff9800, #f57c00);
+    }
+
+    .btn-notif:hover {
+      box-shadow: 0 0 10px rgba(255, 152, 0, 0.5);
+    }
+
+    .jam-digital {
+      text-align: right;
+      margin-left: 0.5vw;
+    }
+
+    .jam-digital #clock {
+      font-size: 6vh;
+      font-weight: bold;
+      color: #ffffff;
+      line-height: 1;
+    }
+
+    .jam-digital #date {
+      font-size: 2vh;
+      color: #b0bec5;
+    }
+
+    /* MIDDLE CONTAINER: TIMER + KOMPAS KIBLAT */
+    .middle-container {
+      display: flex;
+      gap: 2vw;
+      height: 18vh;
+    }
+
+    .countdown-box {
+      flex: 2;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 12px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 15px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .countdown-title {
+      font-size: 2.5vh;
+      color: #ffeb3b;
+    }
+
+    .countdown-timer {
+      font-size: 4.5vh;
+      font-weight: bold;
+      color: #00e676;
+    }
+
+    /* FITUR KOMPAS KIBLAT */
+    .kiblat-box {
+      flex: 1;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      padding: 0 1.5vw;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .compass-container {
+      position: relative;
+      width: 12vh;
+      height: 12vh;
+      border: 2px solid #00e676;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .compass-arrow {
+      position: absolute;
+      width: 4px;
+      height: 10vh;
+      background: linear-gradient(to top, transparent 50%, #ff5252 50%);
+      border-radius: 2px;
+      transition: transform 0.2s ease-out;
+    }
+
+    .compass-arrow::after {
+      content: '▲';
+      position: absolute;
+      top: -8px;
+      left: -5px;
+      color: #ff5252;
+      font-size: 12px;
+    }
+
+    .kiblat-info {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .kiblat-title {
+      font-size: 1.8vh;
+      color: #b0bec5;
+    }
+
+    .kiblat-degree {
+      font-size: 2.5vh;
+      font-weight: bold;
+      color: #ffeb3b;
+    }
+
+    .btn-kompas {
+      margin-top: 5px;
+      padding: 3px 8px;
+      font-size: 1.2vh;
+      background: #00c853;
+      border: none;
+      color: white;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    /* GRID JADWAL SHOLAT (6 KOLOM TERMASUK IMSAK) */
+    .grid-sholat {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 1.2vw;
+      height: 48vh;
+    }
+
+    .card-sholat {
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 15px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+      align-items: center;
+      padding: 1.5vh 1vw;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.3s ease;
+    }
+
+    /* KHUSUS KARTU IMSAK */
+    .card-sholat.card-imsak {
+      background: rgba(255, 235, 59, 0.08);
+      border-color: rgba(255, 235, 59, 0.3);
+    }
+
+    .card-sholat.card-imsak h2 {
+      color: #ffeb3b;
+    }
+
+    .card-sholat.active {
+      background: linear-gradient(180deg, #00c853, #007e33);
+      border: 2px solid #ffffff;
+      transform: scale(1.03);
+      box-shadow: 0 0 20px rgba(0, 230, 118, 0.5);
+    }
+
+    .card-sholat h2 {
+      font-size: 2.8vh;
+      font-weight: 600;
+    }
+
+    .card-sholat .waktu {
+      font-size: 4.5vh;
+      font-weight: bold;
+    }
+
+    .btn-alarm {
+      background: #ff9800;
+      color: #fff;
+      border: none;
+      padding: 1vh 1.2vw;
+      font-size: 1.6vh;
+      border-radius: 20px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background 0.2s;
+    }
+
+    .btn-alarm:active {
+      background: #e65100;
+    }
+
+    /* MODAL GENERAL STYLES */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.9);
+      z-index: 999;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-container {
+      background: #1e293b;
+      width: 96vw;
+      height: 94vh;
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      overflow: hidden;
+    }
+
+    .modal-header {
+      padding: 1.5vh 2vw;
+      background: #0f172a;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .btn-close {
+      background: #ef4444;
+      color: white;
+      border: none;
+      padding: 8px 18px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 2vh;
+    }
+
+    /* MODAL AL-QUR'AN */
+    .quran-header select {
+      padding: 10px 16px;
+      background: #334155;
+      color: #fff;
+      border: 1px solid #475569;
+      border-radius: 6px;
+      font-size: 2.2vh;
+      outline: none;
+    }
+
+    .quran-body {
+      flex: 1;
+      padding: 3vh 4vw;
+      overflow-y: auto;
+      user-select: text;
+    }
+
+    .ayat-card {
+      background: rgba(255, 255, 255, 0.04);
+      border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+      padding: 3vh 2vw;
+      margin-bottom: 2vh;
+      border-radius: 8px;
+    }
+
+    .ayat-header {
+      color: #00e676;
+      font-size: 2.2vh;
+      font-weight: bold;
+      margin-bottom: 15px;
+    }
+
+    .ayat-arab {
+      font-size: 5vh;
+      text-align: right;
+      line-height: 2.2;
+      color: #ffffff;
+      margin-bottom: 20px;
+      font-family: 'Amiri', 'Traditional Arabic', serif;
+      direction: rtl;
+    }
+
+    .ayat-terjemahan {
+      font-size: 2.5vh;
+      color: #e2e8f0;
+      line-height: 1.6;
+    }
+
+    /* MODAL KALENDER HYBRID LANDSCAPE */
+    .hijri-nav {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .btn-nav-cal {
+      background: #334155;
+      color: #fff;
+      border: 1px solid #475569;
+      padding: 6px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 2vh;
+      font-weight: bold;
+    }
+
+    .btn-nav-cal:hover {
+      background: #475569;
+    }
+
+    .cal-title-container {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .hijri-month-title {
+      font-size: 2.3vh;
+      color: #ffeb3b;
+      font-weight: bold;
+    }
+
+    .masehi-month-title {
+      font-size: 1.8vh;
+      color: #94a3b8;
+    }
+
+    /* SPLIT-SCREEN LANDSCAPE LAYOUT */
+    .calendar-landscape-body {
+      flex: 1;
+      display: flex;
+      padding: 1.5vh 2vw;
+      gap: 2vw;
+      overflow: hidden;
+    }
+
+    /* SISI KIRI: GRID KALENDER */
+    .calendar-left-pane {
+      flex: 3;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .calendar-grid-header {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      text-align: center;
+      font-weight: bold;
+      font-size: 1.8vh;
+      color: #00e676;
+      padding-bottom: 0.8vh;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .calendar-grid-header div:nth-child(1) {
+      color: #ff5252; /* Ahad / Minggu Merah */
+    }
+
+    .calendar-grid-days {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      grid-template-rows: repeat(6, 1fr);
+      flex: 1;
+      gap: 4px;
+      margin-top: 0.8vh;
+    }
+
+    /* DESAIN SEL TANGGAL */
+    .day-cell {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 6px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 4px 6px;
+      position: relative;
+    }
+
+    .day-cell.empty {
+      background: transparent;
+      border: none;
+    }
+
+    /* WARNA TANGGAL MERAH / HARI LIBUR */
+    .day-cell.red-day {
+      background: rgba(239, 68, 68, 0.12);
+      border-color: rgba(239, 68, 68, 0.4);
+    }
+
+    .day-cell.red-day .masehi-num {
+      color: #ff5252;
+      font-weight: bold;
+    }
+
+    /* HARI INI (TODAY) */
+    .day-cell.today {
+      background: linear-gradient(135deg, rgba(0, 200, 83, 0.3), rgba(0, 126, 51, 0.3));
+      border: 2px solid #00e676;
+    }
+
+    .cell-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .masehi-num {
+      font-size: 2.2vh;
+      font-weight: bold;
+      color: #ffffff;
+    }
+
+    .hijri-num {
+      font-size: 1.8vh;
+      font-weight: bold;
+      color: #ffeb3b;
+    }
+
+    .event-badge {
+      font-size: 1.1vh;
+      background: #ef4444;
+      color: white;
+      border-radius: 3px;
+      padding: 1px 3px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-top: 2px;
+    }
+
+    .event-badge.islamic {
+      background: #00c853;
+    }
+
+    /* SISI KANAN: LIST EVENT & HARI RAYA */
+    .calendar-right-pane {
+      flex: 1.2;
+      background: rgba(0, 0, 0, 0.25);
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 1.5vh 1vw;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .pane-title {
+      font-size: 2vh;
+      color: #ffeb3b;
+      font-weight: bold;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding-bottom: 1vh;
+      margin-bottom: 1vh;
+    }
+
+    .event-list {
+      flex: 1;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1vh;
+    }
+
+    .event-item {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 1vh;
+      border-radius: 6px;
+      border-left: 4px solid #ef4444;
+    }
+
+    .event-item.islamic {
+      border-left-color: #00e676;
+    }
+
+    .event-item-date {
+      font-size: 1.4vh;
+      color: #94a3b8;
+    }
+
+    .event-item-name {
+      font-size: 1.8vh;
+      font-weight: bold;
+      color: #ffffff;
+    }
+
+    @media screen and (max-aspect-ratio: 13/9) {
+      .grid-sholat {
+        grid-template-columns: repeat(6, 1fr);
+      }
+      .card-sholat .waktu { font-size: 3vh; }
+      .card-sholat h2 { font-size: 2vh; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <div class="info-kota">
+      <h1 id="nama-kota">MENGAMBIL LOKASI...</h1>
+      <p id="info-tanggal-hijri">---</p>
+    </div>
+    <div class="header-right">
+      <button class="btn-header btn-notif" onclick="requestNotificationPermission()">🔔 Notifikasi Auto</button>
+      <button class="btn-header" onclick="openHijriCalendar()">📅 Kalender Landscape</button>
+      <button class="btn-header" onclick="openQuran()">📖 Baca Al-Qur'an</button>
+      <div class="jam-digital">
+        <div id="clock">00:00:00</div>
+        <div id="date">---, -- --- ----</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- MIDDLE SECTION: COUNTDOWN & KOMPAS KIBLAT -->
+  <div class="middle-container">
+    <div class="countdown-box">
+      <div class="countdown-title" id="next-sholat-title">Menghitung waktu sholat...</div>
+      <div class="countdown-timer" id="countdown-timer">-:-:-</div>
+    </div>
+
+    <!-- BOX KOMPAS KIBLAT -->
+    <div class="kiblat-box">
+      <div class="compass-container">
+        <div class="compass-arrow" id="compass-arrow"></div>
+      </div>
+      <div class="kiblat-info">
+        <span class="kiblat-title">Arah Kiblat</span>
+        <span class="kiblat-degree" id="kiblat-degree">---°</span>
+        <button class="btn-kompas" onclick="initKompas()">Aktifkan Kompas</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTAINER JADWAL SHOLAT + IMSAK -->
+  <div class="grid-sholat">
+    <div class="card-sholat card-imsak" id="card-Imsak">
+      <h2>IMSAK</h2>
+      <div class="waktu" id="time-Imsak">--:--</div>
+      <button class="btn-alarm" onclick="setAlarmAndroid('Imsak')">🔔 Alarm</button>
+    </div>
+
+    <div class="card-sholat" id="card-Subuh">
+      <h2>SUBUH</h2>
+      <div class="waktu" id="time-Subuh">--:--</div>
+      <button class="btn-alarm" onclick="setAlarmAndroid('Subuh')">🔔 Alarm</button>
+    </div>
+
+    <div class="card-sholat" id="card-Dhuhr">
+      <h2>DZUHUR</h2>
+      <div class="waktu" id="time-Dhuhr">--:--</div>
+      <button class="btn-alarm" onclick="setAlarmAndroid('Dhuhr')">🔔 Alarm</button>
+    </div>
+
+    <div class="card-sholat" id="card-Asr">
+      <h2>ASHAR</h2>
+      <div class="waktu" id="time-Asr">--:--</div>
+      <button class="btn-alarm" onclick="setAlarmAndroid('Asr')">🔔 Alarm</button>
+    </div>
+
+    <div class="card-sholat" id="card-Maghrib">
+      <h2>MAGHRIB</h2>
+      <div class="waktu" id="time-Maghrib">--:--</div>
+      <button class="btn-alarm" onclick="setAlarmAndroid('Maghrib')">🔔 Alarm</button>
+    </div>
+
+    <div class="card-sholat" id="card-Isha">
+      <h2>ISYA</h2>
+      <div class="waktu" id="time-Isha">--:--</div>
+      <button class="btn-alarm" onclick="setAlarmAndroid('Isha')">🔔 Alarm</button>
+    </div>
+  </div>
+
+  <!-- MODAL AL-QUR'AN -->
+  <div class="modal-overlay" id="modal-quran">
+    <div class="modal-container">
+      <div class="modal-header quran-header">
+        <select id="select-surah" onchange="loadSurah(this.value)">
+          <option value="">-- Pilih Surah --</option>
+        </select>
+        <button class="btn-close" onclick="closeQuran()">Tutup ✖</button>
+      </div>
+      <div class="quran-body" id="quran-body">
+        <p style="text-align: center; color: #94a3b8; margin-top: 10vh; font-size: 2.5vh;">Pilih surah untuk mulai membaca...</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL KALENDER HYBRID LANDSCAPE -->
+  <div class="modal-overlay" id="modal-hijri">
+    <div class="modal-container">
+      <div class="modal-header">
+        <div class="hijri-nav">
+          <button class="btn-nav-cal" onclick="changeHijriMonth(-1)">❮ Sebelum</button>
+          <div class="cal-title-container">
+            <span class="hijri-month-title" id="hijri-month-title">Memuat...</span>
+            <span class="masehi-month-title" id="masehi-month-title">---</span>
+          </div>
+          <button class="btn-nav-cal" onclick="changeHijriMonth(1)">Selanjutnya ❯</button>
+        </div>
+        <button class="btn-close" onclick="closeHijriCalendar()">Tutup ✖</button>
+      </div>
+      <div class="calendar-landscape-body">
+        <!-- SISI KIRI: GRID TANGGAL -->
+        <div class="calendar-left-pane">
+          <div class="calendar-grid-header">
+            <div>Ahad</div>
+            <div>Senin</div>
+            <div>Selasa</div>
+            <div>Rabu</div>
+            <div>Kamis</div>
+            <div>Jumat</div>
+            <div>Sabtu</div>
+          </div>
+          <div class="calendar-grid-days" id="calendar-days">
+            <!-- Grid diisi via JavaScript -->
+          </div>
+        </div>
+
+        <!-- SISI KANAN: DETAIL EVENT / HARI RAYA -->
+        <div class="calendar-right-pane">
+          <div class="pane-title">📌 Hari Libur & Hari Besar</div>
+          <div class="event-list" id="event-list">
+            <!-- Event list diisi via JavaScript -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let jadwalData = {};
+    let kiblatHeading = 0;
+    let notifTriggeredToday = {};
+    
+    // ADJUSTER HIJRIAH (Ganti ke -1 / 1 jika perhitungan hilal geser 1 hari)
+    const HIJRI_OFFSET = 0;
+
+    let currentGregorianMonth = new Date().getMonth(); 
+    let currentGregorianYear = new Date().getFullYear();
+
+    const namaBulanHijri = [
+      "Muharram", "Safar", "Rabi'ul Awwal", "Rabi'ul Akhir",
+      "Jumadil Awwal", "Jumadil Akhir", "Rajab", "Sya'ban",
+      "Ramadhan", "Syawwal", "Zulqa'dah", "Zulhijjah"
+    ];
+
+    const namaBulanMasehi = [
+      "Januari", "Februari", "Maret", "April", "Mei", "Juni",
+      "Juli", "Agustus", "September", "Oktober", "November", "Desember"
+    ];
+
+    // LIBUR NASIONAL MASEHI (Fixed Date: "MM-DD")
+    const fixedNationalHolidays = {
+      "01-01": "Tahun Baru Masehi",
+      "05-01": "Hari Buruh Nasional",
+      "06-01": "Hari Lahir Pancasila",
+      "08-17": "Hari Kemerdekaan RI",
+      "12-25": "Hari Raya Natal"
+    };
+
+    // 1. JAM DIGITAL REALTIME & PENGECEKAN NOTIFIKASI
+    function updateClock() {
+      const now = new Date();
+      const hrs = String(now.getHours()).padStart(2, '0');
+      const mins = String(now.getMinutes()).padStart(2, '0');
+      const secs = String(now.getSeconds()).padStart(2, '0');
+      
+      document.getElementById('clock').innerText = `${hrs}:${mins}:${secs}`;
+      
+      const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+      document.getElementById('date').innerText = now.toLocaleDateString('id-ID', options);
+
+      checkAutoNotifications(hrs, mins, secs);
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    // 2. AMBIL JADWAL SHOLAT & LOKASI
+    async function getJadwalSholat() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          pos => fetchByCoords(pos.coords.latitude, pos.coords.longitude),
+          err => fetchByCity("Jakarta")
+        );
+      } else {
+        fetchByCity("Jakarta");
+      }
+    }
+
+    async function fetchByCoords(lat, lng) {
+      try {
+        const response = await fetch(`https://api.aladhan.com/v1/timings?latitude=${lat}&longitude=${lng}&method=11`);
+        const data = await response.json();
+        processJadwalData(data, "LOKASI SAYA");
+        calculateQiblaAngle(lat, lng);
+      } catch (err) {
+        fetchByCity("Jakarta");
+      }
+    }
+
+    async function fetchByCity(cityName) {
+      try {
+        const response = await fetch(`https://api.aladhan.com/v1/timingsByCity?city=${cityName}&country=Indonesia&method=11`);
+        const data = await response.json();
+        processJadwalData(data, `${cityName.toUpperCase()} DAN SEKITARNYA`);
+        calculateQiblaAngle(data.data.meta.latitude, data.data.meta.longitude);
+      } catch (error) {
+        document.getElementById('nama-kota').innerText = "JAKARTA DAN SEKITARNYA";
+      }
+    }
+
+    function processJadwalData(data, lokasiLabel) {
+      jadwalData = data.data.timings;
+      document.getElementById('nama-kota').innerText = lokasiLabel;
+      
+      const hData = data.data.date.hijri;
+      document.getElementById('info-tanggal-hijri').innerText = 
+        `${hData.day} ${hData.month.en} ${hData.year} H`;
+
+      const cleanTime = (t) => t ? t.split(' ')[0] : "--:--";
+
+      document.getElementById('time-Imsak').innerText = cleanTime(jadwalData.Imsak);
+      document.getElementById('time-Subuh').innerText = cleanTime(jadwalData.Fajr);
+      document.getElementById('time-Dhuhr').innerText = cleanTime(jadwalData.Dhuhr);
+      document.getElementById('time-Asr').innerText = cleanTime(jadwalData.Asr);
+      document.getElementById('time-Maghrib').innerText = cleanTime(jadwalData.Maghrib);
+      document.getElementById('time-Isha').innerText = cleanTime(jadwalData.Isha);
+
+      startCountdown();
+    }
+
+    // 3. HITUNG SUDUT KIBLAT
+    function calculateQiblaAngle(latitude, longitude) {
+      const kaabaLat = 21.422487 * (Math.PI / 180);
+      const kaabaLng = 39.826206 * (Math.PI / 180);
+      const myLat = latitude * (Math.PI / 180);
+      const myLng = longitude * (Math.PI / 180);
+
+      const y = Math.sin(kaabaLng - myLng);
+      const x = Math.cos(myLat) * Math.tan(kaabaLat) - Math.sin(myLat) * Math.cos(kaabaLng - myLng);
+      
+      let qibla = Math.atan2(y, x) * (180 / Math.PI);
+      kiblatHeading = (qibla + 360) % 360;
+      
+      document.getElementById('kiblat-degree').innerText = `${Math.round(kiblatHeading)}° NW`;
+      document.getElementById('compass-arrow').style.transform = `rotate(${kiblatHeading}deg)`;
+    }
+
+    // 4. SENSOR KOMPAS
+    function initKompas() {
+      if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+        DeviceOrientationEvent.requestPermission()
+          .then(permissionState => {
+            if (permissionState === 'granted') {
+              window.addEventListener('deviceorientation', handleOrientation, true);
+            } else {
+              alert('Izin sensor kompas ditolak.');
+            }
+          })
+          .catch(console.error);
+      } else if (window.DeviceOrientationEvent) {
+        window.addEventListener('deviceorientation', handleOrientation, true);
+      } else {
+        alert('Fitur sensor kompas tidak didukung di perangkat ini.');
+      }
+    }
+
+    function handleOrientation(event) {
+      let compassHeading = event.alpha;
+      if (event.webkitCompassHeading) {
+        compassHeading = event.webkitCompassHeading;
+      }
+
+      if (compassHeading !== null) {
+        const finalDegree = kiblatHeading - compassHeading;
+        document.getElementById('compass-arrow').style.transform = `rotate(${finalDegree}deg)`;
+      }
+    }
+
+    // 5. TIMER HITUNG MUNDUR & HIGHLIGHT
+    function startCountdown() {
+      setInterval(() => {
+        if (!jadwalData.Fajr) return;
+        
+        const now = new Date();
+        const clean = (t) => t.split(' ')[0];
+
+        const listWaktu = [
+          { name: 'Imsak', key: 'card-Imsak', time: clean(jadwalData.Imsak) },
+          { name: 'Subuh', key: 'card-Subuh', time: clean(jadwalData.Fajr) },
+          { name: 'Dzuhur', key: 'card-Dhuhr', time: clean(jadwalData.Dhuhr) },
+          { name: 'Ashar', key: 'card-Asr', time: clean(jadwalData.Asr) },
+          { name: 'Maghrib (Buka Puasa)', key: 'card-Maghrib', time: clean(jadwalData.Maghrib) },
+          { name: 'Isya', key: 'card-Isha', time: clean(jadwalData.Isha) }
+        ];
+
+        let nextItem = null;
+        let targetTime = null;
+
+        for (let item of listWaktu) {
+          const [h, m] = item.time.split(':');
+          const itemDate = new Date();
+          itemDate.setHours(parseInt(h), parseInt(m), 0);
+
+          if (itemDate > now) {
+            nextItem = item;
+            targetTime = itemDate;
+            break;
+          }
+        }
+
+        if (!nextItem) {
+          nextItem = listWaktu[0];
+          const [h, m] = listWaktu[0].time.split(':');
+          targetTime = new Date();
+          targetTime.setDate(targetTime.getDate() + 1);
+          targetTime.setHours(parseInt(h), parseInt(m), 0);
+        }
+
+        document.querySelectorAll('.card-sholat').forEach(el => el.classList.remove('active'));
+        if (document.getElementById(nextItem.key)) {
+          document.getElementById(nextItem.key).classList.add('active');
+        }
+
+        const diff = targetTime - now;
+        const hours = Math.floor(diff / (1000 * 60 * 60));
+        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+        document.getElementById('next-sholat-title').innerText = `MENUJU ${nextItem.name.toUpperCase()}`;
+        document.getElementById('countdown-timer').innerText = 
+          `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+      }, 1000);
+    }
+
+    // 6. FITUR NOTIFIKASI BROWSER
+    function requestNotificationPermission() {
+      if ("Notification" in window) {
+        Notification.requestPermission().then(permission => {
+          if (permission === "granted") {
+            alert("Notifikasi Pengingat Otomatis Berhasil Diaktifkan!");
+          } else {
+            alert("Izin notifikasi ditolak.");
+          }
+        });
+      } else {
+        alert("Browser tidak mendukung notifikasi.");
+      }
+    }
+
+    function checkAutoNotifications(hrs, mins, secs) {
+      if (!jadwalData.Imsak || secs !== "00") return;
+      
+      const currentTimeStr = `${hrs}:${mins}`;
+      const clean = (t) => t.split(' ')[0];
+
+      const targets = [
+        { name: "Imsak", time: clean(jadwalData.Imsak), msg: "Waktu Imsak telah tiba! Segera selesaikan sahur Anda." },
+        { name: "Subuh", time: clean(jadwalData.Fajr), msg: "Waktu Shalat Subuh telah tiba." },
+        { name: "Maghrib (Buka Puasa)", time: clean(jadwalData.Maghrib), msg: "Waktu Maghrib telah tiba. Selamat berbuka puasa!" }
+      ];
+
+      targets.forEach(t => {
+        if (currentTimeStr === t.time && !notifTriggeredToday[t.name]) {
+          showBrowserNotification(`Waktu ${t.name} Tiba!`, t.msg);
+          notifTriggeredToday[t.name] = true;
+        }
+      });
+    }
+
+    function showBrowserNotification(title, message) {
+      if ("Notification" in window && Notification.permission === "granted") {
+        new Notification(title, {
+          body: message,
+          icon: "https://cdn-icons-png.flaticon.com/512/2319/2319854.png"
+        });
+      }
+    }
+
+    // 7. ALARM ANDROID INTEGRATION
+    function setAlarmAndroid(namaWaktu) {
+      let key = namaWaktu === 'Subuh' ? 'Fajr' : namaWaktu;
+      let waktu = jadwalData[key] ? jadwalData[key].split(' ')[0] : null;
+
+      if (!waktu) return alert("Data waktu belum siap.");
+
+      if (window.AndroidApp && window.AndroidApp.setAlarm) {
+        const [jam, menit] = waktu.split(":");
+        window.AndroidApp.setAlarm(namaWaktu, parseInt(jam), parseInt(menit));
+      } else {
+        alert(`Alarm ${namaWaktu} diatur untuk jam ${waktu} (Mode Web/Browser)`);
+      }
+    }
+
+    // 8. INTEGRASI MODAL & AL-QUR'AN WITH AUDIO
+    function openQuran() {
+      document.getElementById('modal-quran').style.display = 'flex';
+      if (document.getElementById('select-surah').children.length <= 1) {
+        initDaftarSurah();
+      }
+    }
+
+    function closeQuran() {
+      document.getElementById('modal-quran').style.display = 'none';
+    }
+
+    async function initDaftarSurah() {
+      try {
+        const response = await fetch('https://equran.id/api/v2/surat');
+        const result = await response.json();
+        const select = document.getElementById('select-surah');
+        
+        result.data.forEach(surah => {
+          const opt = document.createElement('option');
+          opt.value = surah.nomor;
+          opt.innerText = `${surah.nomor}. ${surah.namaLatin} (${surah.nama})`;
+          select.appendChild(opt);
+        });
+      } catch (err) {
+        alert('Gagal memuat daftar surah Al-Qur\'an');
+      }
+    }
+
+    async function loadSurah(nomorSurah) {
+      if (!nomorSurah) return;
+      const body = document.getElementById('quran-body');
+      body.innerHTML = '<p style="text-align: center; color: #00e676; margin-top: 10vh; font-size: 2.5vh;">Memuat ayat...</p>';
+
+      try {
+        const response = await fetch(`https://equran.id/api/v2/surat/${nomorSurah}`);
+        const result = await response.json();
+        const data = result.data;
+
+        let html = `
+          <div style="text-align:center; margin-bottom: 3vh;">
+            <h2 style="color:#ffeb3b; font-size: 4vh; margin-bottom: 10px;">${data.namaLatin} (${data.nama})</h2>
+            <audio controls style="width: 80%; max-width: 500px;">
+              <source src="${data.audioFull['05']}" type="audio/mpeg">
+              Browser Anda tidak mendukung pemutar audio.
+            </audio>
+          </div>
+        `;
+        
+        data.ayat.forEach(ayat => {
+          html += `
+            <div class="ayat-card">
+              <div class="ayat-header">Ayat ${ayat.nomorAyat}</div>
+              <div class="ayat-arab">${ayat.teksArab}</div>
+              <div class="ayat-terjemahan">${ayat.teksIndonesia}</div>
+            </div>
+          `;
+        });
+
+        body.innerHTML = html;
+      } catch (err) {
+        body.innerHTML = '<p style="text-align: center; color: #ef4444; font-size: 2.5vh;">Gagal memuat isi surah.</p>';
+      }
+    }
+
+    // 9. ALGORITMA KONVERSI TANGGAL MASEHI TO HIJRIAH
+    function g2h(d) {
+      let adjustedDate = new Date(d);
+      adjustedDate.setDate(adjustedDate.getDate() + HIJRI_OFFSET);
+
+      let date = adjustedDate.getDate();
+      let month = adjustedDate.getMonth();
+      let year = adjustedDate.getFullYear();
+
+      if (month < 2) {
+        year -= 1;
+        month += 12;
+      }
+
+      let a = Math.floor(year / 100);
+      let b = 2 - a + Math.floor(a / 4);
+      let jd = Math.floor(365.25 * (year + 4716)) + Math.floor(30.6001 * (month + 1)) + date + b - 1524.5;
+
+      let z = jd + 0.5;
+      let i = Math.floor((z - 1867216.25) / 36524.25);
+      let A = z + 1 + i - Math.floor(i / 4);
+      let B = A + 1524;
+      let C = Math.floor((B - 122.1) / 365.25);
+      let D = Math.floor(365.25 * C);
+      let E = Math.floor((B - D) / 30.6001);
+
+      let day = B - D - Math.floor(30.6001 * E);
+      let m = E < 14 ? E - 1 : E - 13;
+      let y = m > 2 ? C - 4716 : C - 4715;
+
+      let l = jd - 1948440 + 10632;
+      let n = Math.floor((l - 1) / 10631);
+      l = l - 10631 * n + 354;
+      let j = (Math.floor((10985 - l) / 5316)) * (Math.floor((50 * l) / 17719)) + (Math.floor(l / 5670)) * (Math.floor((43 * l) / 15238));
+      l = l - (Math.floor((30 - j) / 15)) * (Math.floor((17719 * j) / 50)) - (Math.floor(j / 16)) * (Math.floor((15238 * j) / 43)) + 29;
+      let m_hijri = Math.floor((24 * l) / 709);
+      let d_hijri = l - Math.floor((709 * m_hijri) / 24);
+      let y_hijri = 30 * n + j - 30;
+
+      return { day: Math.round(d_hijri), month: m_hijri, year: y_hijri };
+    }
+
+    function getIslamicEvent(hDay, hMonth) {
+      if (hMonth === 1 && hDay === 1) return "Tahun Baru Islam";
+      if (hMonth === 3 && hDay === 12) return "Maulid Nabi";
+      if (hMonth === 7 && hDay === 27) return "Isra Mi'raj";
+      if (hMonth === 9 && hDay === 1) return "Awal Ramadhan";
+      if (hMonth === 10 && hDay === 1) return "Hari Raya Idul Fitri";
+      if (hMonth === 10 && hDay === 2) return "Idul Fitri Day 2";
+      if (hMonth === 12 && hDay === 9) return "Hari Arafah";
+      if (hMonth === 12 && hDay === 10) return "Hari Raya Idul Adha";
+      return null;
+    }
+
+    // 10. LOGIKA KALENDER HYBRID LANDSCAPE
+    function openHijriCalendar() {
+      document.getElementById('modal-hijri').style.display = 'flex';
+      renderHijriCalendar(currentGregorianMonth, currentGregorianYear);
+    }
+
+    function closeHijriCalendar() {
+      document.getElementById('modal-hijri').style.display = 'none';
+    }
+
+    function changeHijriMonth(offset) {
+      currentGregorianMonth += offset;
+      if (currentGregorianMonth > 11) {
+        currentGregorianMonth = 0;
+        currentGregorianYear++;
+      } else if (currentGregorianMonth < 0) {
+        currentGregorianMonth = 11;
+        currentGregorianYear--;
+      }
+      renderHijriCalendar(currentGregorianMonth, currentGregorianYear);
+    }
+
+    function renderHijriCalendar(month, year) {
+      const daysContainer = document.getElementById('calendar-days');
+      const eventListContainer = document.getElementById('event-list');
+      const hijriTitle = document.getElementById('hijri-month-title');
+      const masehiTitle = document.getElementById('masehi-month-title');
+
+      const firstDayOfMonth = new Date(year, month, 1);
+      const totalDaysInMonth = new Date(year, month + 1, 0).getDate();
+      const firstWeekday = firstDayOfMonth.getDay(); 
+
+      const hStart = g2h(firstDayOfMonth);
+      const hEnd = g2h(new Date(year, month, totalDaysInMonth));
+
+      hijriTitle.innerText = `${namaBulanHijri[hStart.month - 1]} - ${namaBulanHijri[hEnd.month - 1]} ${hStart.year} H`;
+      masehiTitle.innerText = `${namaBulanMasehi[month]} ${year}`;
+
+      const todayObj = new Date();
+      const isCurrentMonth = todayObj.getMonth() === month && todayObj.getFullYear() === year;
+
+      let html = '';
+      let eventsInMonth = [];
+
+      for (let i = 0; i < firstWeekday; i++) {
+        html += `<div class="day-cell empty"></div>`;
+      }
+
+      for (let day = 1; day <= totalDaysInMonth; day++) {
+        const currentDate = new Date(year, month, day);
+        const dayOfWeek = currentDate.getDay();
+        const hDate = g2h(currentDate);
+
+        const monthPad = String(month + 1).padStart(2, '0');
+        const dayPad = String(day).padStart(2, '0');
+        const keyMasehi = `${monthPad}-${dayPad}`;
+
+        const nationalHoliday = fixedNationalHolidays[keyMasehi];
+        const islamicHoliday = getIslamicEvent(hDate.day, hDate.month);
+
+        const isSunday = (dayOfWeek === 0);
+        const isRedDay = isSunday || nationalHoliday || islamicHoliday;
+        const isToday = (isCurrentMonth && day === todayObj.getDate()) ? 'today' : '';
+
+        let badgeHtml = '';
+        if (nationalHoliday) {
+          badgeHtml = `<div class="event-badge">${nationalHoliday}</div>`;
+          eventsInMonth.push({ date: `${day} ${namaBulanMasehi[month]}`, title: nationalHoliday, type: 'national' });
+        } else if (islamicHoliday) {
+          badgeHtml = `<div class="event-badge islamic">${islamicHoliday}</div>`;
+          eventsInMonth.push({ date: `${day} ${namaBulanMasehi[month]} (${hDate.day} ${namaBulanHijri[hDate.month-1]})`, title: islamicHoliday, type: 'islamic' });
+        }
+
+        html += `
+          <div class="day-cell ${isRedDay ? 'red-day' : ''} ${isToday}">
+            <div class="cell-top">
+              <span class="masehi-num">${day}</span>
+              <span class="hijri-num">${hDate.day}</span>
+            </div>
+            ${badgeHtml}
+          </div>
+        `;
+      }
+
+      daysContainer.innerHTML = html;
+
+      if (eventsInMonth.length === 0) {
+        eventListContainer.innerHTML = `<p style="color: #64748b; font-size: 1.6vh; text-align: center; margin-top: 2vh;">Tidak ada hari raya / libur khusus di bulan ini.</p>`;
+      } else {
+        let eventHtml = '';
+        eventsInMonth.forEach(e => {
+          eventHtml += `
+            <div class="event-item ${e.type === 'islamic' ? 'islamic' : ''}">
+              <div class="event-item-date">${e.date}</div>
+              <div class="event-item-name">${e.title}</div>
+            </div>
+          `;
+        });
+        eventListContainer.innerHTML = eventHtml;
+      }
+    }
+
+    // Jalankan pemuatan data utama
+    getJadwalSholat();
+  </script>
+</body>
+</html>
