@@ -214,7 +214,7 @@
       height: 120px;
       background: linear-gradient(to top, transparent 50%, #00e676 50%);
       border-radius: 3px;
-      transition: transform 0.2s ease-out;
+      transition: transform 0.15s ease-out;
     }
 
     .compass-arrow-main::after {
@@ -488,7 +488,7 @@
     let currentGregorianYear = new Date().getFullYear();
     const namaBulanMasehi = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
 
-    // DAFTAR HARl LIBUR NASIONAL TETAP INDONESIA (FALLBACK)
+    // DAFTAR HARI LIBUR NASIONAL TETAP INDONESIA (FALLBACK)
     const fixedNationalHolidays = {
       "01-01": "Tahun Baru Masehi",
       "05-01": "Hari Buruh Internasional",
@@ -497,7 +497,7 @@
       "12-25": "Hari Raya Natal"
     };
 
-    // SENSOR KOMPAS KIBLAT
+    // SENSOR KOMPAS KIBLAT (REVISED FOR ABSOLUTE DIRECTION & TILT STABILITY)
     function toggleKompas() {
       isKompasActive = !isKompasActive;
       const btn = document.getElementById('btn-toggle-kompas');
@@ -515,29 +515,69 @@
 
     function startKompasSensor() {
       stopKompasSensor();
+      
+      // Minta izin sensor jika di iOS / WebView modern
       if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
         DeviceOrientationEvent.requestPermission()
           .then(permissionState => {
             if (permissionState === 'granted') {
-              window.addEventListener('deviceorientation', handleOrientation, true);
+              bindOrientationEvents();
             }
           }).catch(console.error);
+      } else {
+        bindOrientationEvents();
+      }
+    }
+
+    function bindOrientationEvents() {
+      // Prioritaskan deviceorientationabsolute (Android Utara Sebenarnya)
+      if ('ondeviceorientationabsolute' in window) {
+        window.addEventListener('deviceorientationabsolute', handleOrientationAbsolute, true);
       } else if (window.DeviceOrientationEvent) {
-        window.addEventListener('deviceorientation', handleOrientation, true);
+        window.addEventListener('deviceorientation', handleOrientationStandard, true);
       }
     }
 
     function stopKompasSensor() {
-      window.removeEventListener('deviceorientation', handleOrientation, true);
+      window.removeEventListener('deviceorientationabsolute', handleOrientationAbsolute, true);
+      window.removeEventListener('deviceorientation', handleOrientationStandard, true);
       document.getElementById('compass-arrow').style.transform = `rotate(${kiblatHeading}deg)`;
     }
 
-    function handleOrientation(event) {
+    // Handler Absolute untuk Android WebView
+    function handleOrientationAbsolute(event) {
       if (!isKompasActive) return;
-      let compassHeading = event.alpha;
-      if (event.webkitCompassHeading) compassHeading = event.webkitCompassHeading;
+      let compassHeading = null;
 
+      if (event.alpha !== null) {
+        // Mengubah alpha ke perhitungan derajat utara murni
+        compassHeading = 360 - event.alpha;
+      }
+
+      updateCompassUI(compassHeading);
+    }
+
+    // Handler Standard / Fallback iOS
+    function handleOrientationStandard(event) {
+      if (!isKompasActive) return;
+      let compassHeading = null;
+
+      if (event.webkitCompassHeading) {
+        // iOS Safari
+        compassHeading = event.webkitCompassHeading;
+      } else if (event.alpha !== null) {
+        compassHeading = 360 - event.alpha;
+      }
+
+      updateCompassUI(compassHeading);
+    }
+
+    function updateCompassUI(compassHeading) {
       if (compassHeading !== null && compassHeading !== undefined) {
+        // Normalisasi derajat 0 - 360
+        compassHeading = (compassHeading + 360) % 360;
+        
+        // Hitung sudut panah menunjuk Kiblat
         const finalDegree = kiblatHeading - compassHeading;
         document.getElementById('compass-arrow').style.transform = `rotate(${finalDegree}deg)`;
       }
