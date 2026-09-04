@@ -428,7 +428,7 @@
     <!-- RUNNING TEXT -->
     <div class="running-text-container">
       <div class="running-text">
-        Sesungguhnya shalat itu mencegah dari perbuatan keji dan mungkar." (QS. Al-Ankabut: 45).
+        "Sesungguhnya shalat itu mencegah dari perbuatan keji dan mungkar." (QS. Al-Ankabut: 45).
       </div>
     </div>
   </div>
@@ -497,7 +497,7 @@
       "12-25": "Hari Raya Natal"
     };
 
-    // SENSOR KOMPAS KIBLAT (REVISED FOR ABSOLUTE DIRECTION & TILT STABILITY)
+    // SENSOR KOMPAS KIBLAT
     function toggleKompas() {
       isKompasActive = !isKompasActive;
       const btn = document.getElementById('btn-toggle-kompas');
@@ -515,14 +515,10 @@
 
     function startKompasSensor() {
       stopKompasSensor();
-      
-      // Minta izin sensor jika di iOS / WebView modern
       if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
         DeviceOrientationEvent.requestPermission()
           .then(permissionState => {
-            if (permissionState === 'granted') {
-              bindOrientationEvents();
-            }
+            if (permissionState === 'granted') bindOrientationEvents();
           }).catch(console.error);
       } else {
         bindOrientationEvents();
@@ -530,7 +526,6 @@
     }
 
     function bindOrientationEvents() {
-      // Prioritaskan deviceorientationabsolute (Android Utara Sebenarnya)
       if ('ondeviceorientationabsolute' in window) {
         window.addEventListener('deviceorientationabsolute', handleOrientationAbsolute, true);
       } else if (window.DeviceOrientationEvent) {
@@ -544,40 +539,27 @@
       document.getElementById('compass-arrow').style.transform = `rotate(${kiblatHeading}deg)`;
     }
 
-    // Handler Absolute untuk Android WebView
     function handleOrientationAbsolute(event) {
       if (!isKompasActive) return;
       let compassHeading = null;
-
-      if (event.alpha !== null) {
-        // Mengubah alpha ke perhitungan derajat utara murni
-        compassHeading = 360 - event.alpha;
-      }
-
+      if (event.alpha !== null) compassHeading = 360 - event.alpha;
       updateCompassUI(compassHeading);
     }
 
-    // Handler Standard / Fallback iOS
     function handleOrientationStandard(event) {
       if (!isKompasActive) return;
       let compassHeading = null;
-
       if (event.webkitCompassHeading) {
-        // iOS Safari
         compassHeading = event.webkitCompassHeading;
       } else if (event.alpha !== null) {
         compassHeading = 360 - event.alpha;
       }
-
       updateCompassUI(compassHeading);
     }
 
     function updateCompassUI(compassHeading) {
       if (compassHeading !== null && compassHeading !== undefined) {
-        // Normalisasi derajat 0 - 360
         compassHeading = (compassHeading + 360) % 360;
-        
-        // Hitung sudut panah menunjuk Kiblat
         const finalDegree = kiblatHeading - compassHeading;
         document.getElementById('compass-arrow').style.transform = `rotate(${finalDegree}deg)`;
       }
@@ -609,85 +591,17 @@
       btn.className = azanStatus[waktuKey] ? "btn-azan-item on" : "btn-azan-item off";
     }
 
-    function updateClock() {
-      const now = new Date();
-      document.getElementById('clock').innerText = now.toLocaleTimeString('id-ID');
-      document.getElementById('date').innerText = now.toLocaleDateString('id-ID', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' });
-    }
-    setInterval(updateClock, 1000);
-
-    async function getJadwalSholat() {
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-          pos => fetchByCoords(pos.coords.latitude, pos.coords.longitude),
-          err => fetchByCity("Jakarta")
-        );
-      } else { fetchByCity("Jakarta"); }
-    }
-
-    async function fetchByCoords(lat, lng) {
-      try {
-        const res = await fetch(`https://api.aladhan.com/v1/timings?latitude=${lat}&longitude=${lng}&method=11`);
-        const data = await res.json();
-        processJadwalData(data, "MASJID DIGITAL");
-        calculateQiblaAngle(lat, lng);
-      } catch (err) { fetchByCity("Jakarta"); }
-    }
-
-    async function fetchByCity(cityName) {
-      try {
-        const res = await fetch(`https://api.aladhan.com/v1/timingsByCity?city=${cityName}&country=Indonesia&method=11`);
-        const data = await res.json();
-        processJadwalData(data, `MASJID (${cityName.toUpperCase()})`);
-        calculateQiblaAngle(data.data.meta.latitude, data.data.meta.longitude);
-      } catch (e) {}
-    }
-
-    function processJadwalData(data, lokasiLabel) {
-      jadwalData = data.data.timings;
-      document.getElementById('nama-kota').innerText = lokasiLabel;
-      const hData = data.data.date.hijri;
-      document.getElementById('info-tanggal-hijri').innerText = `${hData.day} ${hData.month.en} ${hData.year} H`;
-
-      const clean = (t) => t ? t.split(' ')[0] : "--:--";
-      document.getElementById('time-Imsak').innerText = clean(jadwalData.Imsak);
-      document.getElementById('time-Subuh').innerText = clean(jadwalData.Fajr);
-      document.getElementById('time-Dhuhr').innerText = clean(jadwalData.Dhuhr);
-      document.getElementById('time-Asr').innerText = clean(jadwalData.Asr);
-      document.getElementById('time-Maghrib').innerText = clean(jadwalData.Maghrib);
-      document.getElementById('time-Isha').innerText = clean(jadwalData.Isha);
-
-      startCountdown();
-      autoScheduleAndroidAlarms();
-    }
-
-    function autoScheduleAndroidAlarms() {
-      if (window.AndroidApp && window.AndroidApp.setAlarm) {
-        ['Imsak', 'Subuh', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'].forEach(w => {
-          if (azanStatus[w]) setAlarmAndroid(w);
-        });
-      }
-    }
-
-    function calculateQiblaAngle(latitude, longitude) {
-      const kaabaLat = 21.422487 * (Math.PI / 180);
-      const kaabaLng = 39.826206 * (Math.PI / 180);
-      const myLat = latitude * (Math.PI / 180);
-      const myLng = longitude * (Math.PI / 180);
-
-      const y = Math.sin(kaabaLng - myLng);
-      const x = Math.cos(myLat) * Math.tan(kaabaLat) - Math.sin(myLat) * Math.cos(kaabaLng - myLng);
-      
-      let qibla = Math.atan2(y, x) * (180 / Math.PI);
-      kiblatHeading = (qibla + 360) % 360;
-      document.getElementById('kiblat-degree').innerText = `${Math.round(kiblatHeading)}° Kiblat`;
-      document.getElementById('compass-arrow').style.transform = `rotate(${kiblatHeading}deg)`;
-    }
-
-    function startCountdown() {
+    // MAIN TICKER (JAM + COUNTDOWN DILAKUKAN DALAM 1 INTERVAL)
+    function startMainLoop() {
       setInterval(() => {
-        if (!jadwalData.Fajr) return;
         const now = new Date();
+        
+        // Update Jam & Tanggal
+        document.getElementById('clock').innerText = now.toLocaleTimeString('id-ID');
+        document.getElementById('date').innerText = now.toLocaleDateString('id-ID', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' });
+
+        // Update Countdown Sholat
+        if (!jadwalData.Fajr) return;
         const clean = (t) => t.split(' ')[0];
 
         const listWaktu = [
@@ -724,12 +638,93 @@
         const seconds = Math.floor((diff % (1000 * 60)) / 1000);
 
         if (hours === 0 && minutes === 0 && seconds === 0 && azanStatus[nextItem.azanKey]) {
-          audioAzan.play().catch(e => console.log("Autoplay diblokir"));
+          audioAzan.play().catch(e => console.log("Autoplay diblokir OS / WebView"));
         }
 
         document.getElementById('next-sholat-title').innerText = `${nextItem.name.toUpperCase()}`;
         document.getElementById('countdown-timer').innerText = `-${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+
       }, 1000);
+    }
+
+    async function getJadwalSholat() {
+      // Buka data cache terlebih dahulu (jika offline)
+      const cached = localStorage.getItem('cachedJadwalSholat');
+      const cachedCity = localStorage.getItem('cachedCityLabel');
+      if (cached) {
+        processJadwalData(JSON.parse(cached), cachedCity || "MASJID DIGITAL");
+      }
+
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          pos => fetchByCoords(pos.coords.latitude, pos.coords.longitude),
+          err => fetchByCity("Jakarta")
+        );
+      } else { fetchByCity("Jakarta"); }
+    }
+
+    async function fetchByCoords(lat, lng) {
+      try {
+        const res = await fetch(`https://api.aladhan.com/v1/timings?latitude=${lat}&longitude=${lng}&method=11`);
+        const data = await res.json();
+        processJadwalData(data, "MASJID DIGITAL");
+        calculateQiblaAngle(lat, lng);
+      } catch (err) { fetchByCity("Jakarta"); }
+    }
+
+    async function fetchByCity(cityName) {
+      try {
+        const res = await fetch(`https://api.aladhan.com/v1/timingsByCity?city=${cityName}&country=Indonesia&method=11`);
+        const data = await res.json();
+        processJadwalData(data, `MASJID (${cityName.toUpperCase()})`);
+        calculateQiblaAngle(data.data.meta.latitude, data.data.meta.longitude);
+      } catch (e) {}
+    }
+
+    function processJadwalData(data, lokasiLabel) {
+      jadwalData = data.data ? data.data.timings : data;
+      localStorage.setItem('cachedJadwalSholat', JSON.stringify(jadwalData));
+      localStorage.setItem('cachedCityLabel', lokasiLabel);
+
+      document.getElementById('nama-kota').innerText = lokasiLabel;
+      
+      if(data.data && data.data.date && data.data.date.hijri) {
+        const hData = data.data.date.hijri;
+        document.getElementById('info-tanggal-hijri').innerText = `${hData.day} ${hData.month.en} ${hData.year} H`;
+      }
+
+      const clean = (t) => t ? t.split(' ')[0] : "--:--";
+      document.getElementById('time-Imsak').innerText = clean(jadwalData.Imsak);
+      document.getElementById('time-Subuh').innerText = clean(jadwalData.Fajr);
+      document.getElementById('time-Dhuhr').innerText = clean(jadwalData.Dhuhr);
+      document.getElementById('time-Asr').innerText = clean(jadwalData.Asr);
+      document.getElementById('time-Maghrib').innerText = clean(jadwalData.Maghrib);
+      document.getElementById('time-Isha').innerText = clean(jadwalData.Isha);
+
+      autoScheduleAndroidAlarms();
+    }
+
+    function autoScheduleAndroidAlarms() {
+      if (window.AndroidApp && window.AndroidApp.setAlarm) {
+        ['Imsak', 'Subuh', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'].forEach(w => {
+          if (azanStatus[w]) setAlarmAndroid(w);
+        });
+      }
+    }
+
+    function calculateQiblaAngle(latitude, longitude) {
+      const kaabaLat = 21.422487 * (Math.PI / 180);
+      const kaabaLng = 39.826206 * (Math.PI / 180);
+      const myLat = latitude * (Math.PI / 180);
+      const myLng = longitude * (Math.PI / 180);
+
+      const y = Math.sin(kaabaLng - myLng);
+      const x = Math.cos(myLat) * Math.tan(kaabaLat) - Math.sin(myLat) * Math.cos(kaabaLng - myLng);
+      
+      let qibla = Math.atan2(y, x) * (180 / Math.PI);
+      kiblatHeading = (qibla + 360) % 360;
+      document.getElementById('kiblat-degree').innerText = `${Math.round(kiblatHeading)}° Kiblat`;
+      document.getElementById('compass-arrow').style.transform = `rotate(${kiblatHeading}deg)`;
     }
 
     function setAlarmAndroid(namaWaktu) {
@@ -742,7 +737,7 @@
       }
     }
 
-    // LOGIKA KALENDER GABUNGAN (NASIONAL & ISLAM)
+    // LOGIKA KALENDER GABUNGAN
     function openHijriCalendar() {
       document.getElementById('modal-hijri').style.display = 'flex';
       renderCalendar();
@@ -764,7 +759,6 @@
       renderCalendar();
     }
 
-    // Ambil Hari Libur Nasional Indonesia dari API External
     async function fetchNationalHolidays(year, month) {
       try {
         const res = await fetch(`https://dayoffapi.vercel.app/api?year=${year}&month=${month + 1}`);
@@ -827,7 +821,6 @@
           const hDayData = hijriDataList[day - 1];
           const hijriDay = hDayData ? hDayData.hijri.day : '--';
 
-          // Cek tanggal merah dari API atau fallback lokal
           const keyMonth = String(currentGregorianMonth + 1).padStart(2, '0');
           const keyDay = String(day).padStart(2, '0');
           const fallbackHoliday = fixedNationalHolidays[`${keyMonth}-${keyDay}`];
@@ -845,7 +838,6 @@
           `;
           calendarDaysContainer.appendChild(cell);
 
-          // Tampilkan daftar libur di panel samping
           if (hasNationalHoliday) {
             const ev = document.createElement('div');
             ev.className = 'event-item';
@@ -899,7 +891,9 @@
       body.innerHTML = html;
     }
 
+    // INSILISASI APLIKASI
     getJadwalSholat();
+    startMainLoop();
   </script>
 </body>
 </html>
